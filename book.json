@@ -1,4 +1,5 @@
-{   
-    "title": "Today I Learned",
-    "author": "Dahye Jeong"
+{
+    "structure": {
+        "readme": "myIntro.md"
+    }
 }
