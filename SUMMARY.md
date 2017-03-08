@@ -8,5 +8,8 @@
     * [Method](Ruby/chapter5.md)
     * [Proc&Lamda](Ruby/chapter6.md)
     * [Class](Ruby/chapter7.md)
+* [Ruby on Rails](ROR/README.md)
+    * [Scaffolding](RoR/Scaffolding.md)
+
 * [HTML/CSS](HTML&CSS/README.md)
     * [Intro to HTML/CSS-Udacity](HTML&CSS/udacity.md)
