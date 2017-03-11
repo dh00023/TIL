@@ -15,3 +15,4 @@
     * [Scaffolding](RoR/Scaffold.md)
     * [Controller](RoR/RailsController.md)
     * [Model-M:N relation](RoR/MNrelation.md)
+    * [Model Validation](RoR/validation.md)
