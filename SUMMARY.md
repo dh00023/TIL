@@ -14,6 +14,7 @@
 * [Ruby on Rails](RoR/README.md)
     * [Scaffolding](RoR/Scaffold.md)
     * [Controller](RoR/RailsController.md)
+    * [Model](RoR/model.md)
     * [Model-M:N relation](RoR/MNrelation.md)
     * [Model Validation](RoR/validation.md)
     * [멋사 10주차 수업(Tip)](RoR/likelion_10week.md)
