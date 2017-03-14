@@ -18,3 +18,5 @@
     * [Model-M:N relation](RoR/MNrelation.md)
     * [Model Validation](RoR/validation.md)
     * [멋사 10주차 수업(Tip)](RoR/likelion_10week.md)
+* [Git](Git/README.md)
+	* [codecademy](Git/git.md)
