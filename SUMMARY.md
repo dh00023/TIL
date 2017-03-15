@@ -20,3 +20,4 @@
     * [멋사 10주차 수업(Tip)](RoR/likelion_10week.md)
 * [Git](Git/README.md)
 	* [codecademy](Git/git.md)
+	* [생활코딩](Git/git_egoing.md)
