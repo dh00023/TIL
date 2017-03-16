@@ -3,6 +3,7 @@
 
 * [HTML/CSS](HTML&CSS/README.md)
     * [Intro to HTML/CSS-Udacity](HTML&CSS/udacity.md)
+    * [Responsive Web Design-Udacity](HTML&CSS/responsive_web_design_fundamentals.md)
 * [Ruby](Ruby/README.md)
     * [variable & input/output](Ruby/chapter1.md)
     * [조건문](Ruby/chapter2.md)
