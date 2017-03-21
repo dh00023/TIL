@@ -27,3 +27,4 @@
 	* [생활코딩](Git/git_egoing.md)
 * [Database](DB/README.md)
 	* [chapter1](DB/chapter1.md)
+	* [chapter2](DB/chapter2.md)
