@@ -1,9 +1,10 @@
 # Summary
 
 * [HTML/CSS](HTML&CSS/README.md)
-    * [Intro to HTML/CSS-Udacity](HTML&CSS/udacity.md)
-    * [Responsive Web Design-Udacity](HTML&CSS/responsive_web_design_fundamentals.md)
-    * [Responsive Images-Udacity](HTML&CSS/responsiveImages.md)
+    * [Udacity - Intro to HTML/CSS](HTML&CSS/udacity.md)
+    * [Udacity - Responsive Web Design](HTML&CSS/responsive_web_design_fundamentals.md)
+    * [Udacity - Responsive Images](HTML&CSS/responsiveImages.md)
+    * [Doit! -  HTML기본다지기](HTML&CSS/chapter1.md)
 * [Ruby](Ruby/README.md)
     * [variable & input/output](Ruby/chapter1.md)
     * [조건문](Ruby/chapter2.md)
