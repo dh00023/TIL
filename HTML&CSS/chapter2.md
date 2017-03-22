@@ -201,3 +201,52 @@
 		</tr>
 	</table>
 </figure>
+
+
+* `<thead>`-제목, `<tbody>`-본문, `<tfoot>`-요약 : 표 구조 정의하기
+* `<col>` : 한 열에 있는 모든 셀에 같은 스타일 적용(닫는 태그 없음)
+* `<colgroup>` : 여러 열을 묶어 스타일 적용 할 수 있다. **묶는 열의 개수**만큼 `<col>`태그를 넣으면된다.
+**`<colgroup>` 와 `<col>`는 `<caption>`태그 뒤 `<tr>`, `<td>`태그 이전에 사용해야한다.**
+```erb
+<table border="1">
+	<caption>colgroup연습</caption>
+	<colgroup>
+		<col>
+		<col span="2" style="background-color: blue;">
+		<col style="background-color: yellow;">
+	</colgroup>
+	<tr>
+		<td></td>
+		<td></td>
+		<td></td>
+		<td></td>
+	</tr>
+	<tr>
+		<td></td>
+		<td></td>
+		<td></td>
+		<td></td>
+	</tr>
+</table>
+```
+<table border="1">
+	<caption>colgroup연습</caption>
+	<colgroup>
+		<col>
+		<col span="2" style="background-color: blue;">
+		<col style="background-color: yellow;">
+	</colgroup>
+	<tr>
+		<td></td>
+		<td></td>
+		<td></td>
+		<td></td>
+	</tr>
+	<tr>
+		<td></td>
+		<td></td>
+		<td></td>
+		<td></td>
+	</tr>
+</table>
+
