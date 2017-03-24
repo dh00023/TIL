@@ -6,6 +6,7 @@
     * [Udacity - Responsive Images](HTML&CSS/responsiveImages.md)
     * [Doit! -  HTML기본다지기](HTML&CSS/chapter1.md)
     * [Doit! -  텍스트관련태그들](HTML&CSS/chapter2.md)
+    * [Doit! -  이미지와 하이퍼링크](HTML&CSS/chapter3.md)
 * [Ruby](Ruby/README.md)
     * [variable & input/output](Ruby/chapter1.md)
     * [조건문](Ruby/chapter2.md)
