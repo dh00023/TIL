@@ -119,3 +119,29 @@
 
 
 ### SVG 이미지
+
+**SVG** 파일 형식은 이미지를 아무리 확대하거나 축소해도 원래의 깨끗한 상태 그대로 유지되는 이미지이다.
+
+[d3.js](http://d3js.org/), [Raphael.js](http://dmitrybaranovskiy.github.io/raphael/)에서 표현하는 방식이 SVG이미지이다.
+
+#### SVG이미지를 지원하지 않는 브라우저([Modernizr](https://modernizr.com/))
+
+```erb
+<!doctype html>
+<html lang="ko">
+<head>
+	<meta charset="utf-8">
+	<title>Insert SVG</title>
+	<script src="modernizr-custom.js"></script>
+</head>
+<body>
+	<h1>SVG 이미지 삽입하기</h1>
+	<img src="images/muffin.svg">
+	<script>
+		if (!modernizr.svg) {
+			$("img").attr("src", "images/muffin.png");
+		}
+	</script>
+</body>
+</html>
+```
