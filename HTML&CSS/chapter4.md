@@ -90,6 +90,7 @@
 ```
 
 * `text` : 텍스트 필드
+
 | 속성 | 설명 |
 |:--------:|:--------|
 |`name`|구별하기 위한 이름|
@@ -104,6 +105,7 @@
 	* `url`은 반드시 `http://`로 시작하는 사이트 주소를 입력해야한다.
 
 * `number`,`range` : 숫자 지정(직접입력, 슬라이드막대)
+
 | 속성 | 설명 |
 |:--------:|:--------|
 |`min`|필드에 입력할 수 있는 최소값(default=0)|
@@ -112,6 +114,7 @@
 |`value`|필드에 표시할 초기값|
 
 * `radio`, `checkbox`
+
 | 속성 | 설명 |
 |:--------:|:--------|
 |`name`|구별하기 위한 이름|
@@ -119,6 +122,7 @@
 |`value`|선택한 라디오버튼 or 체크박스를 서버에 알려 줄 때 넘길 값|
 
 * 날짜 or 시간 [`date`,`month`,`week`,`time`,`datetime`,`datetime-local`]
+
 | 속성 | 설명 |
 |:--------:|:--------|
 |`min`|날짜나 시간의 최소값|
@@ -164,6 +168,124 @@
 |`list`|<datalist>에 미리 정의해 놓은 옵션 값을 <input>안에 나열해 보여준다.|
 |`multiple`|두 개 이상의 값을 입력합니다.|`email`|
 
+
 ### 여러 데이터 나열해 보여 주기
 
+`<select>`,`<optgroup>`, `<option>`태그 : 드롭다운 목록 만들기
 
+
+* `<select>` 속성
+
+| 속성 | 설명 |
+|:--------:|:--------|
+|`multiple`|여러 개의 옵션이 함께 표시되면서 `Ctrl`키를 누른 상태로 드롭다운 메뉴에 있는 여러항목 선택 가능|
+|`size`|화면에 표시될 드롭다운 메뉴의 항목 개수를 지정(크롬의 경우 +1개)|
+
+
+* `<option>` 속성
+
+| 속성 | 설명 |
+|:--------:|:--------|
+|`value`|옵션을 선택했을 때 서버로 넘겨질 값 지정|
+|`selected`|화면에 표시될 때 기본으로 선택되어 있는 옵션 지정|
+
+
+* `<optgroup>` : 옵션끼리 묶기
+
+```erb
+<label for="class" class="reg"> 학과 </label>
+<select id="class">
+	<optgroup label="상경대학">
+		<option value="stat" selected> 응용통계학과 </option>
+		<option value="econ" > 경제학과 </option>
+		<option value="trade" > 국제무역학과 </option>
+	</optgroup>
+	<optgroup label="그외대학">
+		<option value="computer"> 컴퓨터공학과 </option>
+		<option value="phy"> 철학과 </option>
+		<option value="manage"> 경영학과 </option>
+	</optgroup>
+</select>
+```
+
+
+* `<datalist>`  : 데이터 목록 중에서 값 선택하기
+* `<option>` 속성
+
+| 속성 | 설명 |
+|:--------:|:--------|
+|`value`|옵션을 선택했을 때 서버로 넘겨질 값 지정|
+|`label`|사용자를 위해 브라우저에 표시할 레이블|
+
+```erb
+<input type="text" id="interest" list="choices">
+<datalist id="choices">
+	<option value="grammar" label="문법"></option>
+	<option value="voca" label="어휘"></option>
+	<option value="speaking" label="회화"></option>
+	<option value="listening" label="리스닝"></option>
+	<option value="news" label="뉴스청취"></option>
+</datalist>
+```
+
+* `<textarea>` : 여러 줄 입력하는 텍스트 영역
+
+| 속성 | 설명 |
+|:--------:|:--------|
+|`name`|다른 폼 요소와 구분하기 위해 텍스트 영역의 이름을 지정|
+|`cols`|텍스트 영역의 가로 너비를 문자 단위로 지정|
+|`rows`|텍스트 영역의 세로 길이를 줄 단위로 지정|
+
+```erb
+<textarea name="intro" cols="60" rows="5">
+이부분에 글을 쓰면 됩니다.
+</textarea>
+```
+
+### 기타 다양한 폼 요소들
+
+* `<button>` : 버튼 넣기
+
+```erb
+<button [type="submit | reset | button"]>내용</button>
+```
+
+| 속성 값 | 설명 |
+|:--------:|:--------|
+|`submit`|폼을 서버로 전송|
+|`reset`|폼에 입력한 모든 내용 초기화|
+|`button`|버튼 형태만 만들 뿐 자체 기능은 없다.|
+
+> `input`태그 에서의 기능과 비슷함. 하지만 `button`태그 에서는 콘텐츠, 아이콘을 포함 할 수 있고, CSS적용이 가능하다.
+
+* `<output>` : 계산 결과
+
+```erb
+<form oninput="result.value=parseInt(num1.value)+parseInt(num2.value)">
+	<input type="number" name="num1" value="0">
+	+<input type="number" name="num2" value="0">
+	=<output name="result" for="num"></output>
+</form>
+```
+
+> `oninput="result.value=parseInt(num1.value)+parseInt(num2.value)" `은 자바 스크립트 함수가 두 수의 합을 구해주는 것이다.
+>  1. **parseInt(num1.value)** : num1.value는 name이 num1인 필드에 입력된 값이며 parseInt는 그 값을 정수로 바꾸어 주는 함수이다.
+>  2. **result.value** 는 result필드의 값이다.
+>  즉, 폼에 값을 입력하면(oninput) 첫 번째, 두 번째 필드에 입력된 값을 정수로 바꾸어 더해 세반째 필드의 값에 넣는다.
+
+* `<progress>` : 진행 상태 보여주기(작업시작을 0으로 하고, 최종 완료를 최댓값으로 해 얼마나 진척되었는지 숫자로 표현)
+
+| 속성 | 설명 |
+|:--------:|:--------|
+|`value`|작업 진행 상태를 나타내며 부동 소수점으로 표현.0이상 max이하|
+|`max`|작업이 완료되려면 얼마나 많은 작업을 해야되는지 부동소수점 표현. 0보다 커야한다.|
+
+* `<meter>` : 값이 차지하는 크기 표시(전체 크기 중 얼마나 차지하는지)
+
+| 속성 | 설명 |
+|:--------:|:--------|
+|`value`|범위 내에서 차지하는 값|
+|`max`,`min`|최대 ,최소 값 ( defult 0과 1 )|
+|`low`| 이정도면 낮다고 할 정도의 값 지정|
+|`high`|이정도면 높다고 할 정도의 값 지정|
+|`optimum`|이정도면 적당하다고 할 정도의 범위 지정(optimum이 high보다 크면 value가 클 수 록 좋고, low보다 작으면 value가 작을 수록 좋다.)|
