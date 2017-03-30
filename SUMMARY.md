@@ -8,6 +8,8 @@
     * [Doit! -  텍스트관련태그들](HTML&CSS/chapter2.md)
     * [Doit! -  이미지와 하이퍼링크](HTML&CSS/chapter3.md)
     * [Doit! -  폼 관련 태그들](HTML&CSS/chapter4.md)
+    * [Doit! -  HTML5와 시맨틱 태그](HTML&CSS/chapter10.md)
+    * [Doit! -  HTML5와 멀티미디어](HTML&CSS/chapter11.md)
 * [Ruby](Ruby/README.md)
     * [variable & input/output](Ruby/chapter1.md)
     * [조건문](Ruby/chapter2.md)
