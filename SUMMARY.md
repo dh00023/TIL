@@ -11,6 +11,7 @@
     * [Doit! -  HTML5와 시맨틱 태그](HTML&CSS/chapter10.md)
     * [Doit! -  HTML5와 멀티미디어](HTML&CSS/chapter11.md)
     * [Doit! -  CSS 기초](HTML&CSS/chapter5.md)
+    * [Doit! -  텍스트 관련 스타일](HTML&CSS/chapter6.md)
 * [Ruby](Ruby/README.md)
     * [variable & input/output](Ruby/chapter1.md)
     * [조건문](Ruby/chapter2.md)
