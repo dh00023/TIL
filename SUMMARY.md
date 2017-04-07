@@ -14,6 +14,7 @@
     * [Doit! -  텍스트 관련 스타일](HTML&CSS/chapter6.md)
     * [Doit! -  색상과 배경을 위한 스타일](HTML&CSS/chapter7.md)
     * [Doit! -  레이아웃을 위한 스타일](HTML&CSS/chapter8.md)
+    * [Doit! -  CSS 포지셔닝](HTML&CSS/chapter9.md)
 * [Ruby](Ruby/README.md)
     * [variable & input/output](Ruby/chapter1.md)
     * [조건문](Ruby/chapter2.md)
