@@ -16,6 +16,7 @@
     * [Doit! -  레이아웃을 위한 스타일](HTML&CSS/chapter8.md)
     * [Doit! -  CSS 포지셔닝](HTML&CSS/chapter9.md)
     * [Doit! -  다재다능한 CSS3 선택자](HTML&CSS/chapter12.md)
+    * [Doit! -  CSS와 애니메이션](HTML&CSS/chapter13.md)
 * [Ruby](Ruby/README.md)
     * [variable & input/output](Ruby/chapter1.md)
     * [조건문](Ruby/chapter2.md)
