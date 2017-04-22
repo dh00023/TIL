@@ -150,3 +150,177 @@ video{
 화면의 너비 값을 높이 값으로 나눈 것으로 화면비율을 사용할 수 있다.
 
 #### 색상당 비트 수(color)
+
+### 미디어 쿼리를 사용해 사이트 구성하기
+
+#### 외부 CSS파일 연결하기
+
+- `<link>` 사용하기
+
+`<head>`태그 내에 삽입한다.
+
+```xml
+<link rel="stylesheet" media="미디어 쿼리 조건" href="css 파일 경로">
+```
+
+화면 너비에 따라 조건을 추가해서 작성할 수 있다.
+
+```xml
+<link rel="styleshhe" media="screen and (max-width:768px)" href="css/tablet.css">
+```
+
+- `@import`구문 사용하기
+
+`<style>`태그 내에 사용한다.
+
+```css
+@import url(css 파일 경로) 미디어 쿼리 조건
+```
+
+```css
+@import url('css/tablet.css') only screen and (min-width:321px) and (max-width:768px);
+```
+
+실제로 사이트를 만들다 보면 CSS 파일이 많아지는데 이럴 경우에는 `<link>`태그를 사용하기를 권장한다.
+
+#### 웹 문서에서 직접 정의하기
+
+- `<style>`태그 안에서 media속성을 사용해 조건을 지정
+
+```xml
+<style media="screen and (max-widthL320px)">
+	body{
+    	background-color: orange;
+    }
+</style>
+```
+
+- `@media` 구문을 사용해 각 조건별로 스타일 지정
+
+```xml
+<style>
+	@media screen and (max-width:320px){
+    	body{
+        	background-color: orange;
+        }
+    }
+</style>
+```
+
+### 플렉서블 박스 레이아웃
+
+`flex box`를 이용해서 반응형 웹 디자인을 구현할 수 있다.
+**플렉서블 박스 레이아웃**이란 그리드 레이아웃을 기본으로 해 `flex box`를 원하는 위치에 배치하는 것이다. 여유 공간에 따라 너비나 높이, 위치를 자유롭게 변형할 수 있다.
+
+
+- `display` 속성 : 플렉스 컨테이너 지정하기
+
+플렉서블 박스 레이아웃을 만들려면 먼저 웹 콘텐츠를 플렉스 컨테이너로 묶어줘야한다. 즉, 배치하려는 웹 요소들이 있다면 그 요소들을 감싼느 부모요소를 만들어 플렉스 컨테이너로 만들어야한다.
+
+```
+display: flex | inline-flex
+```
+
+브라우저 접두사를 붙여서 브라우저 버전에 따라 설정
+
+```css
+.wrapper{
+	display:-webkit-box; /*iOS 6이하, 사파리3.1*/
+    display:-moz-box; /*파이어폭스 19 이하*/
+    display:-ms-flexbox; /*IE 10*/
+	display:-webkit-flex; /*웹킷 구 버전*/
+    display: flex;/*표준*/
+}
+```
+
+- `flex-direction` : 플렉스 방향 지정하기
+
+플렉스 항목의 주축을 가로로 할지, 세로로할지 지정한다. defualt는 가로
+
+```
+flex-direction: row | row-inverse | column | column-inverse
+```
+
+- `flex-wrap` : 플렉스 항목을 한 줄 또는 여러 줄로 배치하기
+
+```
+flex-wrap: no-wrap | wrap |wrap-reverse
+```
+
+- `flex-flow` : 플렉스 방향과 여러 줄의 배치를 한꺼번에 지정하기
+
+```
+flex-flow: <플렉스 방향> <플렉스 줄 배치>
+```
+
+```css
+flex-flow:row;
+flex-flow:column wrap;
+```
+
+- `order` : 플렉스 항목의 배치 순서 바꾸기
+
+```
+order: 0 | 숫자
+```
+
+```css
+#box1{ order:2; }
+#box2{ order:3; }
+#box3{ order:1; }
+```
+
+- `flex` :  플렉스 항목 크기 조절하기
+
+```
+flex : [<flex-grow> <flex-shrink> <flex-basis>] | auto | initial
+```
+순서대로 늘릴 비율, 줄일 비율, 기본 값이다.
+
+**initial**은 플렉스 컨테이너의 공간이 부족하면 최소크기까지 줄인다.
+
+`<flex-grow>`, `<flex-shrink>`, `<flex-basis>`은 별도의 속성이지만 묶어쓰기를 권한다.
+
+```css
+flex: 1 1 0;
+flex: 2 2 0;
+```
+
+#### 플렉스 항목 배치를 위한 속성
+
+- `justify-content` : 주축 기준의 배치 방법 지정
+
+```
+justify-content: flex-start | flex-end | center | space-between | space-around
+```
+
+![](https://image.slidesharecdn.com/enhancing-responsiveness-with-flexboxcss-day150612-150611211156-lva1-app6891/95/enhancing-responsiveness-with-flexbox-css-day-22-638.jpg?cb=1434057261)
+
+- `align-items`, `align-self` : 교차축 기준의 배치 방법 지정하기
+
+```
+align-items : stretch | flex-start | flex-end | center | baseline
+```
+
+![](https://i-msdn.sec.s-msft.com/dynimg/IC681580.png)
+
+```
+align-self: auto | stretch | flex-start | flex-end | center | baseline
+```
+`align-self`로 특정 항목의 배치 방법을 바꿀 수 있다.
+
+```css
+#container{
+	display: flex;
+    align-item:center;
+}
+#box{
+	aligin-self:flex-start;
+}
+```
+- `align-center` : 여러 줄일 때의 배치 방법 지정하기
+
+```
+align-content: flex-start | flex-end | center | space-between | space-around
+```
+![](http://frontender.info/a-guide-to-flexbox/img/align-content.png)
