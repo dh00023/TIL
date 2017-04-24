@@ -149,3 +149,120 @@ console.log(notInScope === "but you can see me");
 ```
 
 별도의 `function`을 추가해 `with`구문과 똑같은 개념으로 스코프가 생성되고 지속된다.
+`with`가 가진 모호성을 배제하고, 완벽하게 이벤트 처리를 위한 별도의 스코프를 하나 만들어서 사용하게 된다.
+
+**클로저**를 통해서도 해결할 수 있다.
+
+```xml
+<div id="div0">Click me! DIV 0</div>
+<div id="div1">Click me! DIV 1</div>
+<div id="div2">Click me! DIV 2</div>
+<script>
+	var i, len=3;
+	for(i=0;i<len;i++){
+		document.getElementById("div"+i).addEventListener("click", (function(index){
+				return function(){
+					alert("You clicked div #"+ index);
+				};
+		}(i)),false);
+	}
+</script>
+```
+
+구문 안에서 스코프 체인을 `fucntion`으로 만들어 해결하고 있다.
+
+```js
+var func = function(index){/*생략*/}
+var returnValue = func(i);
+returnValue = (function(index){/*생략*/}(i));
+```
+
+위 소스의 위의 두줄을 한줄로 표현한 것이 3번째 줄과 같다. **IIFE**(Immediate Invoke Function Expression)라고 불린다. 스코프 체인을 생성해 클로저를 활용하는 데 매우 유용하게 쓰인다.
+
+#### `with` 구문
+
+사용하면 안 좋은 구문이 두 가지 있다.(**`with` , `eval`**)
+
+`eval`은 보안, 퍼포먼스, 코드의 컨텍스트 변환 등으로 유지보수상 사용하지 말라고 한다.
+`with`는 "처음부터 없었던 것처럼 생각하라"고 말했다.
+
+우선 `with`는 파라미터로 받은 객체를 스코프 체인에 추가해 동작한다.
+
+```js
+with(object)
+	statement;
+```
+```js
+with(object){
+	statement;
+}
+```
+
+`with`구문은 블록 괄호는 옵션이고, 인자로 받는 `object`는 스코프 체인에 추가해 해당 변수들을 로컬 변수처럼 사용할 수 있다.
+
+
+```js
+var user={
+	name: "Dahye",
+	homepage: "dh00023.github.io",
+	language: "Korean"
+}
+with(user){
+	console.log(name === "Dahye");
+	console.log(homepage === "dh00023.github.io");
+	console.log(language === "Korean");
+	language = "javascript";
+	nickname = "crong";
+}
+console.log(user.language === "javascript");
+console.log(user.nickname === "crong");
+// true
+// true
+// true
+// true
+// false
+```
+
+#### `with`구문을 자제해야하는 이유
+
+1. 스코프를 생성함으로써 생기는 추가 자원 소모
+2. 소스의 모호성
+3. ECMAScript6 표준에서 `with` 구문 제외
+4. DOM 스타일 설정 문제와 대안
+
+### 클로저(closure)란?
+
+특정 함수가 참조하는 변수들이 선언된 lexical scope는 계속 유지되는데, 그 함수와 스코프를 묶어서 클로저라고 한다.
+
+클로저가 나타나는 가장 기본적인 환경은 스코프 안에 스코프가 있을 때, 즉, function안에 function이 선언되었을 때이다.
+
+```js
+function outer(){
+	var count = 0; // outer로컬 변수 , 함수 내부에서 접근
+	var inner = function(){
+		return ++count;
+	};
+	return inner;
+}
+var increase = outer();
+
+console.log(increase());
+console.log(increase());
+// 1
+// 2
+```
+
+일반적으로 count변수는 outer()함수의 로컬 변수이므로 외부에서 접근 할 수 없다. 그런데 count변수에 접근하는 또 다른 함수 inner를 outer()함수의 반환값으로 지정하고, 이를 글로벌 영역에 있는 increase변수에 할당함으로써 함수 외부에서도 count변수에 접근할 수 있게 되었다. 이게 가장 기본적인 클로저의 개념이다.
+
+클로저를 가장 많이 사용하는 것은 자바스크리브 라이브러리나 모듈에서 private로 나의 변수를 보호하고 싶을 때나 static 변수를 이용하고 싶을 때이다. 그리고 콜백 함수에 추가적인 값들을 넘겨줘서 활용하거나 처음에 초기화했던 값을 계속 유지하고 싶을 때도 사용할 수 있다.
+
+**"즉, 반복적으로 같은 작업을 할 때, 같은 초기화 작업이 지속적으로 필요할 때, 콜백 함수에 동적인 데이터를 넘겨주고 싶을 때 클로저를 사용하자!"**
+
+#### 클로저의 단점
+
+1. 클로저는 메모리를 소모한다.
+2. 스코프 생성과 이후 변수 조회에 따른 퍼포먼스 손해가 있다.
+
+클로저는 아무 때나 사용하기보다는 정말 필요한 곳에 사용해야한다.
+
+클로저는 함수가 메모리에서 없어질 때까지 유지되며, 같은 함수라도 다른 클로저를 가지고 있을 수 있다.
