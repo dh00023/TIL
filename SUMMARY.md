@@ -39,6 +39,7 @@
     * [jQuery-Udacity](JavaScript/udacity_jQuery.md)
 * [Node.js](Nodejs/README.md)
 	* [Doit! - 노드로 만들 수 있는 대표적인 서버와 용도](Nodejs/chapter0.md)
+	* [Doit! - 노드에 대해 알아보고 개발 도구 설치하기](Nodejs/chapter1.md)
 * [Git](Git/README.md)
 	* [codecademy](Git/git.md)
 	* [생활코딩](Git/git_egoing.md)
