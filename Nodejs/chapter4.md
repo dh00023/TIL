@@ -51,7 +51,7 @@ console.dir(curURL)
 보통은 노드 내부에서 미리 만들어 제공하는 이벤트를 받아 처리하지만, 필요할 때는 직접 이벤트를 만들어 전달할 수 있다.
 
 |메소드|설명|
-|------|-------|
+|-------|-------|
 |on(event,listener)|지정한 이벤트의 리스너를 추가|
 |once(event,listener)|지정한 이벤트의 리스너를 추가하지만 한 번 실행한 후 자동으로 제거|
 |removeListener(event,listener)|지정한 이벤트에 대한 리스너 제거|
@@ -69,6 +69,53 @@ setTimeout(function(){
 ```
 `process` 객체는 노드에서 언제든지 사용할 수 있는 객체인데, 내부적으로 EventEmitter를 상속받도록 만들어져있다.
 
+같은 이름의 이벤트를 사용하는 경우에 충돌이 생길 수 있으므로 별도의 모듈 파일을 만들고 그 안에서 이벤트를 처리하도록 만드는 것이 좋다.
+
+```js
+// calc.js
+var util = require('util');
+// events모듈을 불러들인 후 EventEmitter객체참조
+var EventEmitter = require('events').EventEmitter;
+
+var Calc = function(){
+	//프로토타입 객체로 this를 사용해 자기자신을 가리킴.
+	// 그 객체안에 정의된 속성에 접근
+	var self = this;
+
+	this.on('stop',function(){
+		console.log('Calc에 stop 이벤트 전달');
+	});
+};
+
+// 상속은 util모듈의 inherits()메소드를 이용해서 정의
+util.inherits(Calc,EventEmitter);
+
+// new연산자를 이용해 Calc를 만들었을때 add()함수 사용할 수 있음.
+Calc.prototype.add = function(a,b){
+	return a+b;
+}
+
+// Calc객체 참조할 수 있도록 지
+module.exports = Calc;
+module.exports.title = 'calculator';
+```
+```js
+//test.js
+var Calc = require('./calc');
+
+var cal = new Calc();
+// 인스턴스 객체의 emit() 메소드 호출해 stop이벤트 전
+cal.emit('stop');
+
+console.log(Calc.title+'에 stop 이벤트 전달');
+```
+
 ## 04-3 파일 다루기
+
+노드의 파일 시스템은 파일을 다루는 기능과 디렉터리를 다루는 기능으로 구성되어 있다. 동기식 IO와 비동기식 IO를 함께 제공한다. 동기식 IO 메소드는 **Sync**단어를 붙여 구분한다.
+
+### 파일을 읽어 들이거나 파일에 쓰기
+
+
 
 ## 04-4 로그 파일 남기기
