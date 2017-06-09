@@ -43,6 +43,7 @@
 	* [Doit! - 노드 간단하게 살펴보기](Nodejs/chapter2.md)
 	* [Doit! - 노드의 자바스크립트와 친해지기](Nodejs/chapter3.md)
 	* [Doit! - 노드의 기본 기능 알아보기](Nodejs/chapter4.md)
+	* [Doit! - 웹 서버 만들기](Nodejs/chapter5.md)
 * [Git](Git/README.md)
 	* [codecademy](Git/git.md)
 	* [생활코딩](Git/git_egoing.md)
