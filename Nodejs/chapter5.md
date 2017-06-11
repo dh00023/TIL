@@ -325,6 +325,7 @@ http.createServer(app).listen(app.get('port'),function(){
 - 익스프레스 서버 객체
 
 |메소드|설명|
+|------|------|
 |set(name,value)|서버 설정을 위한 속성을 지정한다.`set()`메소드로 지정한 속성은 `get()`메소드로 꺼내 확인할 수 있다.|
 |get(name)|서버 설정을 위해 지정한 속성을 꺼내온다.|
 |use([,path]function[,function...])|미들웨어 함수를 사용|
@@ -345,7 +346,7 @@ http.createServer(app).listen(app.get('port'),function(){
 
 ![](https://image.slidesharecdn.com/introtonode-140914093424-phpapp01/95/intro-to-nodejs-14-638.jpg?cb=1410687757)
 
-익스프레스에서는 웹 요청과 응답에 관한 정보를 사용해 필요한 처리를 진행할 수 있도록 독립된 함수(미들웨어)로 분리한다. 각각의 미들웨어는 `next()`메소드를 호출해 그다음 미들웨어가 처리할 수 ㅣㅇㅆ도록 순서를 넘길 수 있다.
+익스프레스에서는 웹 요청과 응답에 관한 정보를 사용해 필요한 처리를 진행할 수 있도록 독립된 함수(미들웨어)로 분리한다. 각각의 미들웨어는 `next()`메소드를 호출해 그다음 미들웨어가 처리할 수 있도록 순서를 넘길 수 있다.
  라우터는 클라이언트의 요청 패스를 보고 이 요청 정보를 처리할 수 있는 곳으로 기능을 전달해주는 역할을 한다. 이러한 역할을 흔히 **라우팅**이라 부른다.
 
 ```js
@@ -518,3 +519,457 @@ http.createServer(app).listen(3000,function(){
 	console.log('3000포트에서 시작');
 });
 ```
+
+## 05-4 요청 라우팅하기
+
+**라우터 미들웨어(router middleware)**는 요청 url을 일일이 확인해야하는 번거로운 문제를 해결한다.
+
+### 라우터 미들웨어 사용하기
+
+라우터 미들웨어는 익스프레스에 포함되어있다.
+```js
+//라우터 객체 참조
+var router = express.Router();
+
+//라우팅 함수 등록
+router.route('/process/login').get(...);
+router.route('/process/login').post(...);
+
+//라우터 객체를 app객체에 등록
+app.use('/',router);
+```
+
+#### 요청 패스 메소드
+
+|메소드|설명|
+|------|------|
+|get(callback)|GET 방식으로 특정 패스 요청이 발생했을 때 사용할 콜백 함수 지정|
+|post(callback)|POST 방식으로 특정 패스 요청이 발생했을 때 사용할 콜백 함수 지정|
+|put(callback)|PUT 방식으로 특정 패스 요청이 발생했을 때 사용할 콜백 함수 지정|
+|delete(callback)|DELETE 방식으로 특정 패스 요청이 발생했을 때 사용할 콜백 함수 지정|
+|all(callback)|몯ㄴ 요청 방식을 처리하며, 특정 패스 요청이 발생했을 때 사용할 콜백 함수 지정|
+
+```js
+var router = express.Router();
+
+//라우팅 함수 등록
+router.route('/process/login').post(function(req,res){
+	console.log('/process/login 처리함');
+
+	var paramID = req.body.id || req.query.id;
+	var paramPassword = req.body.password || req.query.password;
+
+	res.writeHead('200',{'Content-Type':'text/html;charset=utf8'});
+	res.write('<h1>Express서버응답</h1>');
+	res.write('<div><p>User-ID :'+paramID+'</p></div>');
+	res.write('<div><p>param password :'+paramPassword+'</p></div>');
+	res.write("<br><br><a href = '/login2.html'>로그인 페이지</a>");
+	res.end();
+});
+
+//라우터 객체를 app객체에 등록
+app.use('/',router);
+```
+
+### URL 파라미터 사용하기
+
+URL 뒤에 `?` 기호를 붙이면 요청 파라미터(query string)를 추가하여 보낼 수 있다. URL 파라미터는 요청 파라미터와는 달리 URL 주소의 일부로 들어간다.
+
+```js
+router.route('/process/login/:name').post(function(req,res){
+	console.log('/process/login/:name 처리함');
+
+	var paramName = req.params.name;
+
+	var paramID = req.body.id || req.query.id;
+	var paramPassword = req.body.password || req.query.password;
+
+	res.writeHead('200',{'Content-Type':'text/html;charset=utf8'});
+	res.write('<h1>Express서버응답</h1>');
+	res.write('<div><p>User-name :'+paramName+'</p></div>');
+	res.write('<div><p>User-ID :'+paramID+'</p></div>');
+	res.write('<div><p>param password :'+paramPassword+'</p></div>');
+	res.write("<br><br><a href = '/login2.html'>로그인 페이지</a>");
+	res.end();
+});
+```
+
+`/process/login/:name`은 뒤에오는 파라미터를 `req.params.name`으로 접근 할 수 있다. 이것을 **토큰(Token)**이라한다.
+
+### 오류 페이지 보여주기
+
+```js
+app.all('*',function(req,res){
+	res.status(404).send('<h1>ERROR - 페이지를 찾을 수 없습니다.</h1>');
+});
+```
+다른 사람이 만들어 둔 미들웨어를 사용할 수도 있다.
+
+### express-error-handler 미들웨어로 오류페이지 보내기
+
+```xml
+//404.html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>오류페이지</title>
+</head>
+<body>
+	<h3>ERROR - 페이지를 찾을 수 없습니다.</h3>
+	<hr>
+	<p>/public/404.html 파일의 오류 페이지 표시</p>
+</body>
+</html>
+```
+```js
+var errorHandler=expressErrorHandler({
+	static: {
+		'404': './public/404.html'
+	}
+});
+
+app.use(expressErrorHandler.httpError(404));
+app.use(errorHandler);
+```
+
+### 토큰과 함께 요청한 정보 처리하기
+
+```js
+//라우터 객체 참조
+var router = express.Router();
+
+//라우팅 함수 등록
+router.route('/process/users/:id').get(function(req,res){
+	console.log('/process/users/:id 처리함');
+
+	var paramid = req.params.id;
+	
+	console.log('/process/users와 토큰 %s를 이용해 처리',paramid);
+
+	res.writeHead('200',{'Content-Type':'text/html;charset=utf8'});
+	res.write('<h1>Express서버응답</h1>');
+	res.write('<div><p>User-ID :'+paramid+'</p></div>');
+	res.end();
+});
+
+//라우터 객체를 app객체에 등록
+app.use('/',router);
+```
+
+`http://localhost:3000/process/users/2` 이렇게 토큰을 사용하면 사용자 리스트 중에서 특정 사용자 정보를 id 값으로 조회하기에 편리하다.
+
+## 05-5 쿠키와 세션 관리하기
+
+사용자가 로그인한 상태인지 아닌지 확인하고 싶을 때에는 **쿠키**나 **세션**을 사용한다. 쿠키는 클라이언트 웹 브라우저에 저장되는 정보이며, 세션은 웹 서버에 저장되는 정보이다.
+
+### 쿠키 처리하기
+
+**cookie-parser 미들웨어**를 사용해 쿠키를 설정하거나 확인할 수 있다.
+
+```js
+var cookieParser = require('cookie-parser');
+
+...
+
+app.use(cookieParser());
+
+...
+
+//라우터 객체 참조
+var router = express.Router();
+
+//라우팅 함수 등록
+router.route('/process/showCookie').get(function(req,res){
+	console.log('/process/showCookie 처리함');
+
+	res.send(req.cookies);
+});
+
+router.route('/process/setUserCookie').get(function(req,res){
+	console.log('/process/setUserCookie 처리함');
+
+	res.cookie('user',{
+		id: 'dahye',
+		name: '정다혜',
+		authorized: true
+	});
+
+	res.redirect('/process/showCookie');
+});
+
+//라우터 객체를 app객체에 등록
+app.use('/',router);
+```
+
+쿠키가 브라우저에 제대로 되었는지 확인하기 위해서는 [개발자도구-Application -Cookies]에서 확인할 수 있다.
+
+### 세션 처리하기
+
+```xml
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>상품 페이지</title>
+</head>
+<body>
+	<h3>상품 정보 페이지</h3>
+	<hr>
+	<p>로그인 후 볼 수 있는 상품정보 페이지</p>
+	<br><br>
+	<a href="/process/logout">로그아웃하</a>
+</body>
+</html>
+```
+```js
+//product
+var cookieParser = require('cookie-parser');
+var expressSession = require('express-session');
+
+app.use(cookieParser());
+app.use(expressSession({
+	secret: 'my kye',
+	resave: true,
+	saveUninitialized: true
+}));
+
+router.route('/process/product').get(function(req,res){
+	console.log('/process/product 처리함');
+
+	if(req.session.user){
+		res.redirect('/product.html');
+	}else{
+		res.redirect('/login2.html');
+	}
+});
+```
+```js
+//login
+router.route('/process/login').post(function(req,res){
+	console.log('/process/login 처리함');
+
+	var paramId = req.body.id || req.query.id;
+	var paramPassword = req.body.password || req.query.password;
+
+	if(req.session.user){
+		console.log('이미 로그인되어 상품 페이지로 이동');
+
+		res.redirect('/product.html');
+	}else{
+		//세션저장
+		req.session.user = {
+			id: paramId,
+			name: '박우진',
+			authorized: true
+		};
+
+	res.writeHead('200',{'Content-Type':'text/html;charset=utf8'});
+	res.write('<h1>로그인 성공</h1>');
+	res.write('<div><p>User-ID :'+paramId+'</p></div>');
+	res.write('<div><p>param password :'+paramPassword+'</p></div>');
+	res.write("<br><br><a href = '/process/product'>상품페이지 페이지</a>");
+	res.end();
+
+	}
+});
+```
+```js
+//logout
+router.route('/process/logout').get(function(req,res){
+	console.log('/process/logout 처리함');
+
+	if(req.session.user){
+		console.log('로그아웃합니다.');
+
+		req.session.destroy(function(err){
+			if(err) {throw err;}
+
+			console.log('세션을 삭제하고 로그아웃함.');
+			res.redirect('/login2.html');
+		});
+	}else{
+		console.log('아직 로그인 안되어ㅣㅆ습니다.');
+		res.redirect('/login2.html');
+	}
+});
+```
+로그인하여 세션이 만들어지면 **connect.sid 쿠키**가 브라우저에 저장된다. 이 쿠키는 세션 정보를 저장할 때 만들어진 것이다.
+
+## 05-6 파일 업로드 기능 만들기
+
+파일을 업로드할 때는 멀티파트포맷으로 된 파일 업로드 기능을 사용하여 파일 업로드 상태를 확인할 수 있다.
+
+### multer 미들웨어 설치해서 파일 업로드하기
+
+파일을 업로드할 때는 클라이언트에서 POST 방식으로 데이터를 전송하므로 body-parser 미들웨어 함께 사용한다.
+
+- multer미들웨어 사용 : 미둘웨어 사용 순서가 중요하다. **body-parser->multer->router**
+
+#### 주요속성
+|속성 / 메소드 | 설명 |
+|------|------|
+|**destination**|업로드한 파일이 저장될 폴더를 지정|
+|filename|업로드한 파일의 이름을 바꾼다.|
+|limits|파일 크기나 파일 개수 등의 제한 속성을 설정하는 객체|
+
+### 클라이언트의 요청 처리 함수 추가하기
+
+```js
+//Express 기본 모듈
+var express = require('express') 
+	, http = require('http')
+	, path = require('path');
+
+//익스프레스 미들웨어 불러오기
+var bodyParser = require('body-parser')
+	,cookieParser = require('cookie-parser')
+	,static = require('serve-static')
+	,errorHandler=require('errorhandler');
+
+//오류 핸들러 모듈 사용
+var expressErrorHandler = require('express-error-handler');
+
+//Session 미들웨어
+var expressSession = require('express-session');
+
+//파일 업로드용 미들웨어
+var multer = require('multer');
+var fs = require('fs');
+
+//클라이언트에서 ajax로 요청했을 때 CORS(다중서버) 지원
+var cors = require('cors');
+
+//익스프레스 객체 생성
+var app = express();
+// 기본 속성설정
+app.set('port',process.env.PORT || 3000);
+
+// body-parser를 사용해 application/x-www-form-urlencoded 파싱
+app.use(bodyParser.urlencoded({extended: false}));
+
+// body-parser를 사용해 application/json 파싱
+app.use(bodyParser.json());
+
+//public,uploads 폴더 오픈
+app.use('/public',static(path.join(__dirname,'public')));
+app.use('/uploads',static(path.join(__dirname,'uploads')));
+
+//cookie - parser 설정
+app.use(cookieParser());
+
+//session설정
+app.use(expressSession({
+	secret: 'my kye',
+	resave: true,
+	saveUninitialized: true
+}));
+
+//ajax 요청했을때 다중서버접속 지원
+app.use(cors());
+
+//multer미들웨어 사용 : 미둘웨어 사용 순서가 중요하다. body-parser->multer->router
+//파일 제한 10개,1G
+var storage = multer.diskStorage({
+	destination: function(req,file,callback){
+		callback(null,'uploads');
+	},
+	filename: function(req,file,callback){
+		callback(null,file.originalname+Date.now());
+	}
+});
+
+var upload = multer({
+	storage: storage,
+	limits: {
+		files: 10,
+		filesize: 1024*1024*1024
+	}
+});
+
+//라우터 사용해 라우팅 함수 등록
+var router = express.Router();
+
+
+router.route('/process/photo').post(upload.array('photo',1),function(req,res){
+	console.log('/process/photo 처리함');
+
+	try{
+		var files = req.files;
+
+		console.dir('#===== 업로드된 첫번째 파일 정보 =====#');
+		console.dir(req.files[0]);
+		console.dir('#================================#');
+
+		//현재의 파일 정보를 저장할 변수 선언
+		var originalname ='',
+			filename = '',
+			mimetype='',
+			size=0;
+
+			//배열에 들어가 있는 경우(설정에서 1개의 파일도 배열에 넣음)
+			if(Array.isArray(files)){
+				console.log('배열에 들어있는 파일 수 : %d',files.length);
+
+				for (var index = 0; index< files.length; index ++) {
+					originalname=files[index].originalname;
+					filename=files[index].filename;
+					mimetype=files[index].mimetype;
+					size=files[index].size;
+				}
+			}else{ // 배열에 들어가 있지않은 경우
+				console.log('파일 갯수 : 1');
+
+				originalname=files[index].originalname;
+				filename=files[index].filename;
+				mimetype=files[index].mimetype;
+				size=files[index].size;
+			}
+			console.log('현재 파일 정보 : '+originalname+','+filename+','+mimetype+','+size);
+
+			//클라이언트에 응답 전송
+
+			res.writeHead('200',{'Content-Type':'text/html;charset=utf8'});
+			res.write('<h3>파일업로드 성공</h3>');
+			res.write('<hr>');
+			res.write('<p>원본 파일 이름 :'+originalname+'-> 저장 파일명 : '+filename+'</p>');
+			res.write('<p>mime type :'+mimetype+'</p>');
+			res.write('<p>파일 크기 :'+size+'</p>');
+			res.end();
+		}catch(err){
+			console.dir(err.stack);
+		}
+});
+
+//라우터 객체를 app객체에 등록
+app.use('/',router);
+
+http.createServer(app).listen(3000,function(){
+	console.log('3000포트에서 시작');
+});
+```
+
+```xml
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>파일 업로드</title>
+</head>
+<body>
+	<h1>파일업로드</h1>
+	<br>
+	<form action="/process/photo" method="post" enctype="multipart/form-data">
+		<table>
+			<tr>
+				<td><label>파일</label></td>
+				<td><input type="file" name="photo"></td>
+			</tr>
+		</table>
+		<input type="submit" value="업로드" name="submit">
+	</form>
+</body>
+</html>
+```
+
+[http://expressjs.com/ko/guide/using-middleware.html](http://expressjs.com/ko/guide/using-middleware.html)에 미들웨어 설명 참조하기
