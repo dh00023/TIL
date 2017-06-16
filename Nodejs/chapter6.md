@@ -761,3 +761,21 @@ var authUser = function(database, id, password, callback) {
 
 ...
 ```
+
+## 06-6 MySQL 데이터 베이스 설치하기
+
+`$ npm install mysql --save`
+
+관계형 데이터베이스에 연결할 때는 보통 **Connection Pool**을 사용한다. 데이터베이스 연결 객체가 너무 많이 만들어지는 것을 막고 한번 만든 연결을 다시 사용할 수 있게 한다.
+
+#### creatPool 메소드
+|속성|설명|
+|-----|------|
+|connectionLimit|커넥션 풀에서 만들 수 있는 최대 연결 개수 설정|
+|host|연결할 호스트 이름 설정|
+|port|데이터베이스가 사용하는 포트번호설정(MySQL : 3306)|
+|user|데이터베이스 사용자 아이디 설정(루트권한 root)|
+|password|데이터베이스 사용자 비밀번호 설정|
+|database|데이터베이스 이름설정|
+|debug|데이터베이스 처리 과정 로그로 남길 것인지 설정|
+
