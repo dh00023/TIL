@@ -46,6 +46,7 @@
 	* [Doit! - 웹 서버 만들기](Nodejs/chapter5.md)
     * [Doit! - 데이터베이스 사용하기](Nodejs/chapter6.md)
     * [Doit! - 익스프레스 프로젝트를 모듈화하기](Nodejs/chapter7.md)
+    * [Doit! - 뷰 템플릿 적용하기](Nodejs/chapter8.md)
 * [Git](Git/README.md)
 	* [codecademy](Git/git.md)
 	* [생활코딩](Git/git_egoing.md)
