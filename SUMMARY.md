@@ -48,6 +48,7 @@
     * [Doit! - 익스프레스 프로젝트를 모듈화하기](Nodejs/chapter7.md)
     * [Doit! - 뷰 템플릿 적용하기](Nodejs/chapter8.md)
     * [Doit! - 패스포트로 사용자 인증하기](Nodejs/chapter9.md)
+    * [Doit! - 채팅서버 만들기](Nodejs/chapter10.md)
 * [Git](Git/README.md)
 	* [codecademy](Git/git.md)
 	* [생활코딩](Git/git_egoing.md)
