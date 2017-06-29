@@ -171,3 +171,367 @@ socket.on('connect', function() {
 |------|------|
 |io.sockets.emit(event,object)|나를 포함한 모든 클라이언트에 전송|
 |socket.broadcast.emit(event,object)|나를 제외한 모든 클라이언트에 전송|
+
+## 10-2 일대일 채팅하기
+
+일대일 채팅은 상대방을 지정하여 메시지를 보내야 하므로 서버에 연결된 각 클라이언트마다 고유한 정보가 있어야한다. 클라이언트가 로그인할 때 사용하는 로그인 아이디를 사용해 클라이언트를 구별할 수 있도록 하는 것이 좋다.
+
+```xml
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>채팅 클라이언트 03</title>
+        
+        <script src="jquery-3.1.1.min.js"></script>    
+        <script src="socket.io.js"></script>
+        
+        <script>
+            var host;
+            var port;
+            var socket;
+            
+            // 문서 로딩 후 실행됨
+            $(function() {
+
+                // 연결하기 버튼 클릭 처리
+                $("#connectButton").bind('click', function(event) {
+                    println('connectButton이 클릭되었습니다.');
+                    
+                    host = $('#hostInput').val();
+                    port = $('#portInput').val();
+
+                    connectToServer();
+                });
+
+                // 전송 버튼 클릭 시 처리
+                $("#sendButton").bind('click', function(event) {
+                    var sender = $('#senderInput').val();
+                    var recepient = $('#recepientInput').val();
+                    var data = $('#dataInput').val();
+
+                    var output = {sender:sender, recepient:recepient, command:'chat', type:'text', data:data};
+                    console.log('서버로 보낼 데이터 : ' + JSON.stringify(output));
+
+                    if (socket == undefined) {
+                        alert('서버에 연결되어 있지 않습니다. 먼저 서버에 연결하세요.');
+                        return;
+                    }
+
+                    socket.emit('message', output);
+                });
+
+                // 로그인 버튼 클릭 시 처리
+                $("#loginButton").bind('click', function(event) {
+                    var id = $('#idInput').val();
+                    var password = $('#passwordInput').val();
+                    var alias = $('#aliasInput').val();
+                    var today = $('#todayInput').val();
+
+                    var output = {id:id, password:password, alias:alias, today:today};
+                    console.log('서버로 보낼 데이터 : ' + JSON.stringify(output));
+
+                    if (socket == undefined) {
+                        alert('서버에 연결되어 있지 않습니다. 먼저 서버에 연결하세요.');
+                        return;
+                    }
+
+                    socket.emit('login', output);
+                });
+
+            });
+            
+            // 서버에 연결하는 함수 정의
+            function connectToServer() {
+
+                var options = {'forceNew':true};
+                var url = 'http://' + host + ':' + port;
+                socket = io.connect(url, options);
+
+                socket.on('connect', function() {
+                    println('웹소켓 서버에 연결되었습니다. : ' + url);
+
+                    socket.on('message', function(message) {
+                        console.log(JSON.stringify(message));
+
+                        println('<p>수신 메시지 : ' + message.sender + ', ' + message.recepient + ', ' + message.command + ', ' + message.data + '</p>');
+                    });
+
+                    socket.on('response', function(response) {
+                        console.log(JSON.stringify(response));
+                        println('응답 메시지를 받았습니다. : ' + response.command + ', ' + response.code + ', ' + response.message);
+                    });
+                    
+                });
+
+                socket.on('disconnect', function() {
+                    println('웹소켓 연결이 종료되었습니다.');
+                });
+
+            }
+            
+            function println(data) {
+                console.log(data);
+                $('#result').append('<p>' + data + '</p>');
+            }
+        </script>
+    </head>
+<body>
+    <h3>채팅 클라이언트 03 : 일대일 채팅하기</h3>
+    <br>
+    <div>
+        <input type="text" id="hostInput" value="localhost" />
+        <input type="text" id="portInput" value="3000" />
+
+        <input type="button" id="connectButton" value="연결하기" />
+    </div>
+    <br>
+    <div>
+        <input type="text" id="idInput" value="test01" />
+        <input type="password" id="passwordInput" value="123456" />
+        <input type="text" id="aliasInput" value="소녀시대" />
+        <input type="text" id="todayInput" value="좋은 날!" />
+
+        <input type="button" id="loginButton" value="로그인" />
+        <input type="button" id="logoutButton" value="로그아웃" />
+    </div>
+    <br>
+    <div>
+        <div><span>보내는사람 아이디 :</span> <input type="text" id="senderInput" value="test01" /></div>
+        <div><span>받는사람 아이디 :</span> <input type="text" id="recepientInput" value="ALL" /></div>
+        <div><span>메시지 데이터 :</span> <input type="text" id="dataInput" value="안녕!"/> </div>
+        <br>
+        <input type="button" id="sendButton" value="전송" />
+    </div>    
+        
+    <hr/>
+    <p>결과 : </p>
+    <div id="result"></div>
+        
+</body>
+</html>
+```
+
+```js
+// Express 기본 모듈 불러오기
+var express = require('express')
+  , http = require('http')
+  , path = require('path');
+
+// Express의 미들웨어 불러오기
+var bodyParser = require('body-parser')
+  , cookieParser = require('cookie-parser')
+  , static = require('serve-static')
+  , errorHandler = require('errorhandler');
+
+// 에러 핸들러 모듈 사용
+var expressErrorHandler = require('express-error-handler');
+
+// Session 미들웨어 불러오기
+var expressSession = require('express-session');
+  
+
+//===== Passport 사용 =====//
+var passport = require('passport');
+var flash = require('connect-flash');
+
+
+// 모듈로 분리한 설정 파일 불러오기
+var config = require('./config/config');
+
+// 모듈로 분리한 데이터베이스 파일 불러오기
+var database = require('./database/database');
+
+// 모듈로 분리한 라우팅 파일 불러오기
+var route_loader = require('./routes/route_loader');
+
+ 
+
+// Socket.IO 사용
+var socketio = require('socket.io');
+
+// cors 사용 - 클라이언트에서 ajax로 요청 시 CORS(다중 서버 접속) 지원
+var cors = require('cors');
+
+
+
+// 익스프레스 객체 생성
+var app = express();
+
+
+//===== 뷰 엔진 설정 =====//
+app.set('views', __dirname + '/views');
+app.set('view engine', 'ejs');
+console.log('뷰 엔진이 ejs로 설정되었습니다.');
+
+
+//===== 서버 변수 설정 및 static으로 public 폴더 설정  =====//
+console.log('config.server_port : %d', config.server_port);
+app.set('port', process.env.PORT || 3000);
+ 
+
+// body-parser를 이용해 application/x-www-form-urlencoded 파싱
+app.use(bodyParser.urlencoded({ extended: false }))
+
+// body-parser를 이용해 application/json 파싱
+app.use(bodyParser.json())
+
+// public 폴더를 static으로 오픈
+app.use('/public', static(path.join(__dirname, 'public')));
+ 
+// cookie-parser 설정
+app.use(cookieParser());
+
+// 세션 설정
+app.use(expressSession({
+  secret:'my key',
+  resave:true,
+  saveUninitialized:true
+}));
+
+
+
+//===== Passport 사용 설정 =====//
+// Passport의 세션을 사용할 때는 그 전에 Express의 세션을 사용하는 코드가 있어야 함
+app.use(passport.initialize());
+app.use(passport.session());
+app.use(flash());
+ 
+
+//클라이언트에서 ajax로 요청 시 CORS(다중 서버 접속) 지원
+app.use(cors());
+
+
+
+//라우팅 정보를 읽어들여 라우팅 설정
+var router = express.Router();
+route_loader.init(app, router);
+
+
+// 패스포트 설정
+var configPassport = require('./config/passport');
+configPassport(app, passport);
+
+// 패스포트 라우팅 설정
+var userPassport = require('./routes/user_passport');
+userPassport(router, passport);
+
+
+
+//===== 404 에러 페이지 처리 =====//
+var errorHandler = expressErrorHandler({
+ static: {
+   '404': './public/404.html'
+ }
+});
+
+app.use( expressErrorHandler.httpError(404) );
+app.use( errorHandler );
+
+
+//===== 서버 시작 =====//
+
+//확인되지 않은 예외 처리 - 서버 프로세스 종료하지 않고 유지함
+process.on('uncaughtException', function (err) {
+  console.log('uncaughtException 발생함 : ' + err);
+  console.log('서버 프로세스 종료하지 않고 유지함.');
+  
+  console.log(err.stack);
+});
+
+// 프로세스 종료 시에 데이터베이스 연결 해제
+process.on('SIGTERM', function () {
+    console.log("프로세스가 종료됩니다.");
+    app.close();
+});
+
+app.on('close', function () {
+  console.log("Express 서버 객체가 종료됩니다.");
+  if (database.db) {
+    database.db.close();
+  }
+});
+
+// 시작된 서버 객체를 리턴받도록 합니다. 
+var server = http.createServer(app).listen(app.get('port'), function(){
+  console.log('서버가 시작되었습니다. 포트 : ' + app.get('port'));
+
+  // 데이터베이스 초기화
+  database.init(app, config);
+   
+});
+
+
+//===== Socket.IO를 이용한 채팅 테스트 부분 =====//
+
+
+// 로그인 아이디 매핑 (로그인 ID -> 소켓 ID)
+var login_ids = {};
+
+
+// socket.io 서버를 시작합니다.
+var io = socketio.listen(server);
+console.log('socket.io 요청을 받아들일 준비가 되었습니다.');
+
+// 클라이언트가 연결했을 때의 이벤트 처리
+io.sockets.on('connection', function(socket) {
+  console.log('connection info :', socket.request.connection._peername);
+
+    // 소켓 객체에 클라이언트 Host, Port 정보 속성으로 추가
+    socket.remoteAddress = socket.request.connection._peername.address;
+    socket.remotePort = socket.request.connection._peername.port;
+    
+
+    // 'login' 이벤트를 받았을 때의 처리
+    socket.on('login', function(login) {
+      console.log('login 이벤트를 받았습니다.');
+      console.dir(login);
+
+        // 기존 클라이언트 ID가 없으면 클라이언트 ID를 맵에 추가
+        console.log('접속한 소켓의 ID : ' + socket.id);
+        login_ids[login.id] = socket.id;
+        socket.login_id = login.id;
+
+        console.log('접속한 클라이언트 ID 갯수 : %d', Object.keys(login_ids).length);
+
+        // 응답 메시지 전송
+        sendResponse(socket, 'login', '200', '로그인되었습니다.');
+    });
+
+    
+    // 'message' 이벤트를 받았을 때의 처리
+    socket.on('message', function(message) {
+      console.log('message 이벤트를 받았습니다.');
+      console.dir(message);
+      
+        if (message.recepient =='ALL') {
+            // 나를 포함한 모든 클라이언트에게 메시지 전달
+          console.dir('나를 포함한 모든 클라이언트에게 message 이벤트를 전송합니다.')
+            io.sockets.emit('message', message);
+        } else {
+          // 일대일 채팅 대상에게 메시지 전달
+          if (login_ids[message.recepient]) {
+            io.sockets.connected[login_ids[message.recepient]].emit('message', message);
+            
+            // 응답 메시지 전송
+            sendResponse(socket, 'message', '200', '메시지를 전송했습니다.');
+          } else {
+            // 응답 메시지 전송
+            sendResponse(socket, 'login', '404', '상대방의 로그인 ID를 찾을 수 없습니다.');
+          }
+        }
+    });
+    
+});
+
+
+// 응답 메시지 전송 메소드
+function sendResponse(socket, command, code, message) {
+  var statusObj = {command: command, code: code, message: message};
+  socket.emit('response', statusObj);
+}
+```
+
+대상 소켓을 찾기위해서는 `io.sockets.connected[login_ids[messagae.recepient]]`를 사용해야한다.
+
+배열의 요소는 `delete`키워드나 배열의 `splice()`메소드등을 이용해 여러가지 방법을 사용할 수 있다.
