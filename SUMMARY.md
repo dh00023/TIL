@@ -34,6 +34,7 @@
     * [Model Validation](RoR/validation.md)
     * [멋사 10주차 수업(Tip)](RoR/likelion_10week.md)
 * [Javascript](JavaScript/README.md)
+    * [Doit! -  자바스크립트 시작하기](JavaScript/chapter1.md)
     * [속 깊은 자바스크립트 - 스코프와 클로저](JavaScript/chapter2.md)
     * [속 깊은 자바스크립트 - 변수](JavaScript/chapter3.md)
     * [jQuery-Udacity](JavaScript/udacity_jQuery.md)
