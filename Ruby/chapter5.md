@@ -118,14 +118,28 @@ end
 ```ruby
 def method_name(argument, *argu)
     # Do something!
-	return somting
+	return someting
 end
 
 method_name(argument)
 ```
 여러개의 argument를 사용하고 싶을 때는 *를 이용한다.(splat)
 함수호출은 함수이름을 적어 호출한다. 
-return은 함수의 반환값
+return은 함수의 반환값이다.
+
+```ruby
+def hello(names)
+    names.each do |n|
+        puts "Hello, #{n.upcase}"
+    end
+end
+
+rubies = %w[MRI jruby rubinius]
+
+hello(rubies)
+```
+
+
 
 ### parameters and arguments
 arguments는 전달되는 값을 뜻하며, parameters는 그 이름을 뜻한다.

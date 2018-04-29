@@ -1,4 +1,5 @@
 ## Data type
+
 * Numbers (숫자)
  > `my_num = 5`
 
@@ -31,7 +32,7 @@ print와 puts의 차이는 puts 는 자동으로 blank line을 추가한다.
  ```ruby
  print "Hello"
  puts "Konkuk Likelion 5th"
-```
+ ```
 - - -
 
 ## String Method
@@ -90,12 +91,13 @@ i.gsub!(/a/,"e")
 ## 주석(Comment)
 ###### 주석은 코드를 짤 때 넣는 설명문이다. 코드를 읽는 사람으로 하여금 쉽게 이해할 수 있게 하기 위한 것으로 실행에는 영향을 미치지 않는다.
 * `#`은 한 줄의 주석으로 사용된다.
-*  `=begin =end`는 주석을 여러줄 사용해야하는경우
+* `=begin =end`는 주석을 여러줄 사용해야하는경우
   ```ruby
- =begin
- I'm a comment.
- 주석을 여러줄로 쓰는경우!
- =end
+   =begin
+   I'm a comment.
+   주석을 여러줄로 쓰는경우!
+   =end
+  ```
  ```
 - - -
 
