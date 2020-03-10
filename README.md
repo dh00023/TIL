@@ -2,7 +2,7 @@
 
 매일 공부한 내용을 기록하는 Repository 입니다.(1일 1commit)
 
-## [HTML/CSS](HTML&CSS/README.md)
+## [HTML/CSS](HTML&CSS)
 
 * [Udacity - Intro to HTML/CSS](HTML&CSS/udacity.md)
 * [Udacity - Responsive Web Design](HTML&CSS/responsive_web_design_fundamentals.md)
@@ -22,7 +22,7 @@
 * [Doit! -  CSS와 애니메이션](HTML&CSS/chapter13.md)
 * [Doit! -  반응형 웹이란?](HTML&CSS/chapter14.md)
 
-## [JavaScript](javascript/README.md)
+## [JavaScript](javascript)
 
 * [OBJECT MODEL](javascript/2019-09-06-objectModel.md)
 * [JABASCRIPT BASIC](javascript/2019-10-04-basic.md)
@@ -37,14 +37,14 @@
 * [SCOPE](javascript/2019-10-07-scope.md)
 * [EXECUTION CONTEXT](javascript/2019-10-07-executionContext.md)
 
-## [Backbone.js](javascript/backbone/README.md)
+## [Backbone.js](javascript/backbone)
 
 * [Model](javascript/backbone/2019-01-28-model.md)
 * [Collection](javascript/backbone/2019-01-17-collection.md)
 * [Sync](javascript/backbone/2019-01-29-sync.md)
 * [view](javascript/backbone/2019-01-30-view.md)
 
-## [Ruby](./ruby/README.md)
+## [Ruby](ruby)
     
 * [variable & input/output](./ruby/chapter1.md)
 * [조건문](./ruby/chapter2.md)
@@ -54,7 +54,7 @@
 * [Proc&Lamda](./ruby/chapter6.md)
 * [Class](./ruby/chapter7.md)
 
-## [Ruby on Rails](RubyOnRails/README.md)
+## [Ruby on Rails](RubyOnRails)
 
 * [Scaffolding](RubyOnRails/Scaffold.md)
 * [Controller](RubyOnRails/RailsController.md)
@@ -63,7 +63,7 @@
 * [Model Validation](RubyOnRails/validation.md)
 * [멋사 10주차 수업(Tip)](RubyOnRails/likelion_10week.md)
 
-## [Node.js](Nodejs/README.md)
+## [Node.js](Nodejs)
 
 * [Doit! - 노드로 만들 수 있는 대표적인 서버와 용도](Nodejs/chapter0.md)
 * [Doit! - 노드에 대해 알아보고 개발 도구 설치하기](Nodejs/chapter1.md)
@@ -78,7 +78,7 @@
 * [Doit! - 채팅서버 만들기](Nodejs/chapter10.md)
 * [Doit! - JSON-RPC 서버 만들기](Nodejs/chapter11.md)
 
-## [Django](django/README.md)
+## [Django](django)
 
 * Basic
   * [환경설정](django/2019-02-17-install.md)
@@ -210,7 +210,7 @@
   * [Forwarding](jsp/chap17.md )
   * [MVC 게시판](jsp/chap18.md )
 
-## [Git](git/README.md)
+## [Git](git)
 
 * [Basic](git/2019-01-09-git-basic.md)
 * [Remote Repository](git/2019-01-09-git-remote.md)
