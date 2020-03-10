@@ -1,0 +1,141 @@
+# HTML5 + CSS3 웹 표준의 정석
+
+## Chapter7. 색상과 배경을 위한 스타일
+
+### 웹에서 색상 표현하기
+
+1. 16진수 표기법
+`#ffff00`처럼 # 기호 다음에 6자리의 16진수로 표기하는 것으로 가장 기본적인 방법이다. `#RRGGBB` 형식으로 표시한다. 입력 가능한 값은 #000000(검정색)~#ffffff(흰색)까지이다.
+
+2. rgb와 rgba 표기법
+16진수가 아닌 십진수로 표현한다. rgb(red값, green값, blue값), rgba(red값, green값, blue값, alpha 값(불투명도0~1)) 입력가능한 값은 0~255까지이다.
+
+3. hsl과 hsla 표기법
+hsl(hue(색상), saturation(채도), lightness(밝기)), hsla(hue(색상), saturation(채도), lightness(밝기), alpha)
+
+4. 색상 이름 표기법
+
+색상 추출 사이트 [Color Picker](www.colorpicker.com) 참조
+
+### 배경 색과 배경이미지
+
+- `background-color` : 배경 색 지정
+```css
+background-color:#00ff00;
+background-color:rgb(0,255,0);
+background-color:green;
+```
+`background-color`값은 상속되지 않는다.
+
+- `background-clip` : 배경 적용 범위 조절
+```css
+background-clip: border-box | padding-box | content-box
+```
+박스 모델의 가장 외각 테두리(border-box), 테두리를 뺀 패딩(padding-box), 내용부분에만(content-box) 등 박스 모델관점에서 배경 적용 범위를 조절 할 수 있다.
+
+- `background-image` : 웹 요소에 배경 이미지 넣기
+```css
+background-image: url(파일경로)
+```
+
+- `background-repeat` : 배경 이미지 반복 방법 지정
+```css
+background-repeat: repeat | repeat-x | repeat-y | no-repeat
+```
+**repeat**가 default값으로 화면에 가득찰 때까지 가로와 세로로 반복하며, -x와 -y는 각각 가로, 세로로 반복한다.
+
+- `background-size` : 배경 이미지 크기 조절
+```css
+background-size: auto | contain | cover | <크기 값> | <백분율>
+```
+
+	- auto : 원래 배경 이미지 크기만큼
+	- contain : 배경 이미지의 너비/높이 비율을 유지하면서 확대/축소하는데 너비나 높이가 짧은 부분에 맞춤.
+	- cover : 배경 이미지의 너비/높이 비율을 유지하면서 확대/축소하는데 너비나 높이가 긴 부분에 맞춤.
+	- <크기 값> : 너비 값과 높이 값을 지정
+	- <백분율> : 원래 배경 이미지를 기준으로 확대, 축소
+
+- `background-position` : 배경 이미지 위치 조절
+```css
+background-position: <수평위치> <수직위치>;
+수평위치 : left | center | right | <백분율> | <길이 값>
+수직위치 : top | center | bottom | <백분율> | <길이 값>
+```
+
+- `background-origin` : 배경 이미지 배치할 기준 조절
+```css
+background-clip: border-box | padding-box | content-box
+```
+박스 모델의 가장 외각 테두리(border-box), 테두리를 뺀 패딩(padding-box), 내용부분에만(content-box) 등 박스 모델관점에서 배경 적용 범위를 조절 할 수 있다.
+
+- `background-attachment` : 배경 이미지 고정
+```css
+background-attachment: scroll | fixed
+```
+**scroll**은 배경 이미지도 스크롤 되며, fixed는 이미지가 고정된다.
+
+- `background` : 속성하나로 배경 이미지 제어
+
+### 그라데이션 효과로 배경 꾸미기
+
+| 접두사 | 브라우저 버전 |선형 위치 속성|
+|--------|--------|--------|--------|
+|-webkit-|사파리 5.1 ~ 6.0|그라데이션 시작 위치 기준|
+|-moz-|파이어폭스 3.6 ~ 15|그라데이션 끝 위치 기준, 키워드 to 사용하지않음|
+|-o-|오페라 11.1 ~ 12.0|그라데이션 끝 위치 기준, 키워드 to 사용하지않음|
+
+#### 선형 그라데이션
+```css
+linear-gradient(<각도> to <방향> , color-stop, [color-stop,...])
+```
+
+| 방향 속성 값 | 설명 |
+|--------|--------|
+|to top|아래에서 위로|
+|to left|오른쪽에서 왼쪽으로|
+|to right|왼쪽에서 오른쪽으로|
+|to bottom|위에서 아래로|
+
+- 각도는 `deg`로 표시한다. `270deg` 이런식으로 표시.
+
+```css
+#방향
+background: -webkit-linear-gradient(left top, blue, white);
+background: -moz-linear-gradient(right bottom, blue, white);
+background: -o-linear-gradient(right bottom, blue, white);
+background: linear-gradient(to right bottom, blue, white);
+#각도
+background: -webkit-linear-gradient(45deg, #ff0000, #ffffff;
+background: -moz-linear-gradient(45deg, #ff0000, #ffffff);
+background: -o-linear-gradient(45deg, #ff0000, #ffffff);
+background: linear-gradient(45deg, #ff0000, #ffffff);
+# 색상 중지 점(시작색상, 중지 점 색상과 위치, 끝색상)
+background: linear-gradient(to bottom, #06f, white 30%, #06f);
+```
+
+#### 원형 그라데이션
+```css
+radial-gradient(<최종모양> <크기> at <위치> , color-stop, [color-stop,...])
+```
+
+- 모양(circle, **ellipse**)
+- 위치(원의 중심 지정할 수 있음) : 브라우저 접두사를 붙일 때는 at키워드 없이 구문의 맨 앞에 위치를 표시.
+```css
+background: -webkit-radial-gradient(10% 10%, circle, white,blue);
+background: -moz-radial-gradient(10% 10%, circle,white,blue);
+background: -o-radial-gradient(10% 10%, circle, white,blue);
+background: radial-gradient(circle at 10% 10%,white,blue);
+```
+
+- 크기
+	- closest-side : 가장 가까운 모서리에 닿을때까지 그라데이션을 그림
+	- closest-corner : 가장 가까운 코너에 닿을때까지 그라데이션 그림
+	- farthest-side : 가장 먼 모서리에 닿을때까지 그라데이션을 그림
+	- **farthest-corner** : 가장 먼 코너에 닿을때까지 그라데이션을 그림
+
+#### 그라데이션 반복
+
+- 선형그라데이션 반복 : `repeating-linear-gradient`
+- 원형그라데이션 반복 : `repeating-radial-gradient`
+
+
