@@ -1,8 +1,10 @@
-![](https://www.baeldung.com/wp-content/uploads/2017/10/springaop-process.png)
+# JDK Proxy
+
+![https://www.baeldung.com/wp-content/uploads/2017/10/springaop-process.png](./assets/springaop-process.png)
+
+
 
 스프링에서는 **JDK 동적 프록시**와 **CGLib 프록시**를 사용하고 있다.
-
-### JDK Proxy
 
 #### 다이나믹 프록시란 무엇일까?
 

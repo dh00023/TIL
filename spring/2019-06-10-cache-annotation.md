@@ -18,7 +18,7 @@
 
 첫 번째 요청에서는 하드 디스크는 캐시를 확인하여 **캐시 미스( cache miss)**를 발생시킨다. 그리고 하드 드라이브로부터 데이터를 가져와 추후에 다시 요청 받을 수 있음을 가정하고 캐시에 저장한다.
 
-이후 요청뿌터는 캐시 조회시 **캐시 히트(cache hit)**를 발생시킨다. 이 데이터는 캐시 미스를 일으키기 전까지 버퍼에서 제공된다.
+이후 요청부터는 캐시 조회시 **캐시 히트(cache hit)**를 발생시킨다. 이 데이터는 캐시 미스를 일으키기 전까지 버퍼에서 제공된다.
 
 > Cache Miss
 >
@@ -64,6 +64,40 @@
 
 ![](./assets/1.png)
 
+## Varnish 란?
+
+![https://www.eurovps.com/blog/wp-content/uploads/2012/10/varnish-diagram.jpg](./assets/varnish-diagram.jpg)
+
+Varnish는 BSD 라이선스를 따르는 오픈 소스 웹 캐시 소프트웨어이다. 
+
+주로 nginx 앞단에서 url 기반으로 동일한 url이 들어오면 응답값을 그대로 보내줄때 사용한다.
+
+### VCL
+
+Varnish는 설정을 위해 VCL이라는 별도의 DSL(Domain-Specific Language)을 제공한다. 사용자는 VCL을 사용하여 설정 파일을 작성한다. VCL로 작성된 설정 파일의 내용은 C 프로그램으로 변환되었다가 공유 라이브러리로 컴파일된다. Varnish는 시작할 때나 실행 중일 때 이 공유 라이브러리 파일을 로드하여 사용한다. 동시에 여러 개의 설정을 로드한 후에 Varnish 실행 중에 설정을 변경할 수 있다.
+
+![https://www.varnish-software.com/static/book/VCL_Basics.html](./assets/helloworld-352076-2.png)
+
+다음 그림은 Varnish가 웹 요청을 처리하는 과정을 간략하게 나타낸 것이다.
+
+### purge
+
+purge는 캐싱되어 있는 데이터를 TTL(Time - To - Live)이 지나가기전에 강제로 삭제하는 기능이다. 다음과 같은 두가지 형태로 purge 기능을 제공해주고 있다.
+
+1. 특정 url을 지정하여 해당 데이터 삭제
+2. 정규표현식을 사용해 해당 패턴의 데이터가 사용되지 않도록 하는 방법
+   - 실제로 데이터를 삭제하지는 않기 때문에 `ban` 이라고 한다.
+
+두 번째는 실제로 데이터를 삭제하지는 않기 때문에 ban이라고 한다. 캐시에서 데이터를 검색할 때 ban으로 지정된 정규 표현식에 해당하는지 검사한다. 정규 표현식을 추가할 때에는 데이터가 정규 표현식에 일치하는지 검사하지 않는다. 데이터를 검색할 때 새로이 추가된 ban 조건을 검사하여, 조건을 만족시키면 저장된 데이터를 사용하지 않는다.
+
+```
+ban req.http.host == "www.naver.com" && req.url ~ "\\.jpg$"
+```
+
+다음과 같이 ban을 지정할 수 있고, 해당 패턴에 포함되는 데이터는 캐싱되지 않는다.
+
+> 예를 들어 쇼핑몰 상품상세 페이지는 변경이 적으니 url 기반으로 varnish cache를 태워 서버까지 안보내고, redis는 서비스 요청이 늘어나는 경우 DB 부하가 가중되는 API에 걸어서 메모리에 실시간으로 저장시키는 것이다.
+
 ## Spring Cache
 
 Spring Caching Abstraction는 다른 캐시 솔루션을 Spring CacheManager를 통해서 쉽게 사용할 수 있도록 해준다. Spring Caching Abstraction는 **자바 메소드에 캐싱을 적용**하며, 메소드가 실행될 때 넘어온 **파라미터 값에 따라서 캐시**를 적용한다.
@@ -93,13 +127,13 @@ Spring Caching Abstraction는 다른 캐시 솔루션을 Spring CacheManager를 
 
 #### Annotation 속성
 
-| 어노테이션     | 설명                                                    |
-| :------------- | :------------------------------------------------------ |
-| value          | 캐시의 이름                                             |
-| key            | 캐시할 키를 설정(기본설정하지 않으면 파라미터로 설정됨) |
-| condition      | 특정 조건에 따라 캐시를 할지 않을지 결정                |
-| cacheManager등 | 해당 캐시 매니저 설정가능                               |
+| 어노테이션   | 설명                                                    |
+| :----------- | :------------------------------------------------------ |
+| value        | 캐시의 이름                                             |
+| key          | 캐시할 키를 설정(기본설정하지 않으면 파라미터로 설정됨) |
+| condition    | 특정 조건에 따라 캐시를 할지 않을지 결정                |
+| cacheManager | 해당 캐시 매니저 설정가능                               |
 
 - [https://goodgid.github.io/Redis/](https://goodgid.github.io/Redis/)
-
 - [공식문서](https://docs.spring.io/spring/docs/3.2.x/spring-framework-reference/html/cache.html)
+- [Naver D2 -Varnish 이야기](https://d2.naver.com/helloworld/352076)
