@@ -1,4 +1,4 @@
-# 10. 예외 처리
+# 예외 처리
 
 컴퓨터 하드웨어의 오동작 또는 고장으로 인해 응용프로그램 실행 오류가 발생하는 것을 error라고 한다. 에러는 JVM 실행에 문제가 생겼다는 것이므로 개발자는 이런 에러에 대처할 방법이 전혀 없다.
 
@@ -18,7 +18,7 @@ JVM은 프로그램 실행하는 도중에 예외가 발생하면 해당 예외 
 
 실행 예외는 자바 컴파일러가 체크하지 않기 때문에 개발자의 경험에 의해서 예외처리 코드를 삽입해야한다.
 
-#### NullPointerException
+### NullPointerException
 
 가장 빈번하게 발생하는 실행 예외 일 것이다. 이것은 객체 참조가 없는 상태, 즉 null값을 갖는 참조 변수로 객체 접근 연산자인 `.`을 사용 했을 때 발생한다. 객체가 없는 상태에서 객체를 사용하려해 예외가 발생하는 것이다.
 
@@ -36,7 +36,7 @@ Exception in thread "main" java.lang.NullPointerException
 	at Test.main(Test.java:4)
 ```
 
-#### ArrayIndexOutOfBoundsException
+### ArrayIndexOutOfBoundsException
 
 배열에서 인덱시 범위를 초과하여 사용할 경우 발생하는 실행 예외이다.
 
@@ -73,7 +73,7 @@ public class ArrayIndexOutOfBoundsExceptionEX{
 }
 ```
 
-#### NumberFormatException
+### NumberFormatException
 
 문자열로 되어 있는 데이터를 숫자로 변경하는 경우가 자주 발생하는데 그 중에 다음 두가지가 많이 사용된다.
 
@@ -104,7 +104,7 @@ Exception in thread "main" java.lang.NumberFormatException: For input string: "a
 	at Test.main(Test.java:8)
 ```
 
-#### ClassCastException
+### ClassCastException
 
 타입 변환(Casting)은 상위 클래스와 하위 클래스 간에 발생하고 구현 클래스와 인터페이스 간에도 발생한다. 이러한 관계가 아니라면 클래스는 다른 클래스로 타입 변환을 할 수 없다. 억지로 타입 변환을 시도할 경우 예외가 발생한다.
 
@@ -446,7 +446,7 @@ main()메소드에서도 throws 키워드르 사용해서 예외를 떠넘길 �
 
 애플리케이션 예외(Application Exception)는 개발자가 직접 정의해서 만들어야 하므로 사용자 정의 예외라고도 한다.
 
-#### Application Exception 클래스 선언
+### Application Exception 클래스 선언
 
 사용자 정의 예외 클래스는 컴파일러가 체크하는 일반 예외로 선언할 수도 있고, 컴파일러가 체크하지 않는 실행 예외로 선언할 수도 있다. 일반 예외로 선언할 경우 Exception을 상속, 실행 예외로 선언할 경우에는 RuntimeException을 상속하면된다.
 
@@ -459,7 +459,7 @@ public class XXXException extends [ Exception | RuntimeException ]{
 
 사용자 정의 예외 클래스 이름은 Exception으로 끝나는 것이 좋다. 사용자 정의 예외 클래스도 필드, 생성자, 메소드 선언을 포함할 수 있지만 대부분 생성자 선언만을 포함한다. 생성자는 매개 변수가 없는 기본생성자, 예외 발생 원인(메시지)을 전달하기 위한 매개변수를 갖는 생성자 두 개를 선언하는 것이 일반적이다. 예외 메세지는 catch{} 블록의 예외 처리 코드 에서 이용하기 위해서이다.
 
-#### 예외 발생시키기
+### 예외 발생시키기
 
 ```java
 throw new XXXException();
