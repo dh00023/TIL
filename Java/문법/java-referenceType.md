@@ -1,12 +1,12 @@
-# 05. 참조 타입
+# 참조 타입(Reference Type)
 
-## 5.1 데이터 타입 분류
+## 데이터 타입 분류
 
 - 기본타입(primitive type) : 정수, 실수, 문자, 논리 리터럴
 - 참조타입(reference type) : 객체(Object)의 번지를 참조하는 타입으로 배열, 열거, 클래스, 인터페이스
 
 
-## 5.2 메모리 사용 영역
+## 메모리 사용 영역
 
 ![](http://bestforjava.com/images/jvm_architecture.jpg)
 
@@ -24,18 +24,18 @@
 
 JVM 스택 영역은 각 스레드마다 존재하며, 스레드가 시작될 때 할당된다.JVM 스택은 메소드를 호출할 때마다 Frame을 추가(push)하고, 메소드가 종료되면 해당 프레임을 제거(pop)하는 동작을 수행한다.
 
-## 5.3 참조 변수의 `==`,`!=`연산
+## 참조 변수의 `==`,`!=`연산
 
 참조 변수에서 `==`,`!=` 연산은 동일한 객체를 참조하는지, 다른 객체를 참조하는지 알아볼 때 사용된다.
 참조 타입 변수의 값은 힙 영역의 객체 주소이므로 결국 주소 값을 비교하는 것이 된다.
 
-## 5.4 `null`과 `NullPionterException`
+## `null`과 `NullPionterException`
 
 참조 타입 변수는 힙 영역의 객체를 참조하지 않는 뜻으로 `null`값을 가질 수 있다. null값도 초기값으로 사용할 수 있기 때문에 null로 초기화된 참조 변수는 스택 영역에 생성된다.
 
 자바에서 프로그램 실행 도중 발생하는 오류를 Exception이라 한다. 참조 변수를 사용하면서 가장 많이 발생하는 오류로 **NullpointerExceptoin**이 있다. 이 예외는 참조 타입 변수를 잘못 사용하면 발생한다. 참조 변수가 null을 가지고 있으면 참조 타입 변수는 사용할 수 없다.
 
-## 5.5 String 타입
+## String 타입
 
 자바는 문자열을 String변수에 저장한다.
 
@@ -67,7 +67,7 @@ String name2 = new String("Faker");
 boolean result = str1.equals(str2);
 ```
 
-## 5.6 배열 타입
+## 배열 타입
 
 배열은 같은 타입의 데이터를 연속된 공간에 나열시키고, 각 데이터에 인덱스를 부여해 놓은 자료구조이다.
 
@@ -101,23 +101,7 @@ new연산자로 생성할 경우 자동적으로 기본값으로 초기화한다
 int[][] scores = new int[2][3];
 ```
 
-#### 향상된 for문
-
-```java
-public class AdvancedForExample{
-	public static void main(Sting[] args){
-    	int[] scores = {95,71,84,93,87};
-        
-        int sum = 0;
-        for(int score : scores){
-        	sum = sum+score;
-        }
-        System.out.println("점수총합="+sum);
-    }
-}
-```
-
-## 5.7 열거 타입(enumeration type)
+## 열거 타입(enumeration type)
 
 ```java
 public enum 열거타입이름 {...}
