@@ -147,7 +147,6 @@
 * [history.scrollRestoration](javascript/2020-03-15-scrollRestoration.md)
 * [Intersection Observer](javascript/2020-03-15-intersectionObserver.md)
 
-
 ## [Vue.js](vuejs)
 
   * [환경설정](vuejs/2019-10-01-settings.md)
@@ -163,7 +162,6 @@
   * [Djnago와 연동하기](https://dh00023.github.io/web/2019/10/29/web-djangoAndVuejs/)
 
 ## [Backbone.js](javascript/backbone)
-
 * [Model](javascript/backbone/2019-01-28-model.md)
 * [Collection](javascript/backbone/2019-01-17-collection.md)
 * [Sync](javascript/backbone/2019-01-29-sync.md)

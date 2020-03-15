@@ -2,7 +2,7 @@
 
 동영상 레이어 플레이어 작업을 진행하면서, 현재 특정 element가 보이는지 여부에 따라서 레이어 플레이어 혹은 상단 비디오 플레이어를 노출 이벤트를 처리해야하는 경우가 생겼다.
 
-![무제.001](./assets/무제.001.jpeg)
+![cjmall Screenshot](./assets/observer.jpeg)
 
 Intersection Observer API는 element가 viewport에서 "보이는지 안보이는지"(visible)에 따라 비동기로 이벤트 처리를 할 수 있게 해준다.
 
