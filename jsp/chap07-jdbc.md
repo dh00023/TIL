@@ -1,157 +1,10 @@
-# Database
-
-## 데이터 베이스의 개요
-
-많은 데이터를 관리하기 위한 수단으로 데이터 베이스가 있다. 데이터 베이스는 데이터의 추가, 삭제, 검색, 이동 등의 기능이 쉽게 되어 있어서 사용자로 하여금 원하는 데이터를 빠른 시간 내에 이용할 수 있게 한다.
-
-### DBMS
-
-데이터 베이스를 관리하는 도구로 DataBase Management System의 약자이다. DBMS는 언어와 데이터 베이스를 연결해 주는 도구이며 일반적으로 Databse와 동일시 한다.
-
-### RDBMS
-
-Relational DataBase Management System의 약자로 관계형데이터 베이스이다.
-
-## 기본 SQL문 익히기
-
-SQL(Structed Query Language)을 사용해서 데이터베이스를 다룬다.
-
-### 테이블 생성
-
-```sql
-CREATE table 테이블명(컬럼명 자료형);
-```
-
-#### 예제
-
-```sql
-mysql> CREATE table member( id varchar(20) primary key, pw varchar(20), name varchar(20), phone varchar(20)); 
-Query OK, 0 rows affected (0.04 sec)
-```
-
-
-
-### 테이블 보기
-
-```sql
-mysql> SHOW tables;
-```
-
-
-
-### 레코드 추가
-
-```sql
-INSERT INTO 테이블명 (컬럼명) VALUES (컬럼값);
-```
-
-#### 예제
-
-```sql
-mysql> INSERT INTO member (id, pw, name, phone) VALUES('abcde','123','박지민','010-1111-1111');
-Query OK, 1 row affected (0.02 sec)
-```
-
-
-
-### 레코드 검색
-
-```sql
-SELECT 컬럼명 FROM 테이블명;
-/*전체검색*/
-SELECT * FROM 테이블명;
-```
-
-#### 예제
-
-```sql
-mysql> SELECT * FROM member;
-+-------+------+-----------+---------------+
-| id    | pw   | name      | phone         |
-+-------+------+-----------+---------------+
-| abcde | 123  | 박지민    | 010-1111-1111 |
-| fghi  | 456  | 전정국    | 010-1111-1112 |
-| jklmn | 789  | 강승윤    | 010-1111-1113 |
-+-------+------+-----------+---------------+
-3 rows in set (0.00 sec)
-```
-
-```sql
-mysql> SELECT id, name FROM member;
-+-------+-----------+
-| id    | name      |
-+-------+-----------+
-| abcde | 박지민    |
-| fghi  | 전정국    |
-| jklmn | 강승윤    |
-+-------+-----------+
-3 rows in set (0.00 sec)
-```
-
-
-
-### 레코드 삭제
-
-```sql
-DELETE FROM 테이블명 WHERE 조건;
-```
-
-#### 예제
-
-```sql
-mysql> DELETE FROM member WHERE name = "강승윤";
-Query OK, 1 row affected (0.04 sec)
-```
-
-
-
-### 데이터 변경
-
-```sql
-UPDATE 테이블명 SET 컬럼이름=값,....WHERE 조건;
-```
-
-#### 예제
-
-```sql
-UPDATE member SET pw='000' WHERE id='abcde';
-Query OK, 1 row affected (0.05 sec)
-Rows matched: 1  Changed: 1  Warnings: 0
-```
-
-
-
-### 테이블 삭제
-
-```sql
-DROP TABLE 테이블명;
-```
-
-#### 예제
-
-```sql
-mysql> DROP TABLE member;
-Query OK, 0 rows affected (0.06 sec)
-
-mysql> SHOW tables;
-+---------------------+
-| Tables_in_workbench |
-+---------------------+
-| author              |
-| topic               |
-+---------------------+
-2 rows in set (0.00 sec)
-```
-
-
-
-## JDBC
+# JDBC
 
 JAVA 프로그램에서 SQL문을 실행하여 데이터를 관리하기 위한 JAVA API이다.
 
 JDBC의 특징은 다양한 데이터 베이스에 대해서 별도의 프로그램을 만들 필요 없이, **해당 데이터 베이스의 JDBC를 이용하면 하나의 프로그램으로 데이터 베이스를 관리할 수 있다.**
 
-### MySQL 연동하기
+## MySQL 연동하기
 
 1. https://dev.mysql.com/downloads/connector/j/5.1.html 에서 **Platform Independent (Architecture Independent), Compressed TAR Archive** 를 다운받는다.
 2. 압축을 푼 후 `mysql-connector-java-5.1.46-bin.jar` 파일을 복사한다.
@@ -163,9 +16,9 @@ JDBC의 특징은 다양한 데이터 베이스에 대해서 별도의 프로그
 
 
 
-### JDBC 살펴보기
+## JDBC 살펴보기
 
-#### 데이터 베이스 연결 순서
+### 데이터 베이스 연결 순서
 
 ![](https://www.ntu.edu.sg/home/ehchua/programming/java/images/JDBC_Cycle.png)
 
@@ -202,13 +55,13 @@ ResultSet rs = statement.executeUpdate();
 
 
 
-### Statement 객체 살펴보기
+## Statement 객체 살펴보기
 
-#### executeQuery()
+### executeQuery()
 
 SQL문 실행 후 여러 개의 결과 값이 생기는 경우에 사용한다. (ex) select
 
-#### ResultSet
+### ResultSet
 
 executeQuery() 실행 후 반환되는 레코드 셋이다.
 

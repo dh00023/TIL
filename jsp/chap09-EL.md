@@ -16,10 +16,10 @@ EL은 `${value}` 로 표현된다.
 <title>Insert title here</title>
 </head>
 <body>
-	${10 }<br/>
-	${99.99 }<br/>
-	${"ABC" }<br/>
-	${true}<br/>
+	${ 10 }<br/>
+	${ 99.99 }<br/>
+	${ "ABC" }<br/>
+	${ true }<br/>
 </body>
 </html>
 ```
@@ -34,17 +34,17 @@ EL은 `${value}` 로 표현된다.
 | 논리   | &&, \|\|              |
 
 ```jsp
-${1+2 }
-${1-2 }
-${1*2 }
-${(1>2)?1:2 }
+${ 1+2 }
+${ 1-2 }
+${ 1*2 }
+${ (1>2)?1:2 }
 ```
 
 
 
 ## 액션태그로 사용되는 EL
 
-`<jsp:getProperty name=*"member" property="name"/>* ` 를 `${member.name } ` 로 사용할 수 있다.
+`<jsp:getProperty name=*"member" property="name"/>* ` 를 `${ member.name } ` 로 사용할 수 있다.
 
 ```java
 package com.javalec.ex;
@@ -97,9 +97,9 @@ public class MemberInfo {
 	
 	<hr />
 	
-	이름 : ${member.name }<br />
-	아이다 : ${member.id }<br />
-	비밀번호 : ${member.pw }<br />
+	이름 : ${ member.name }<br />
+	아이다 : ${ member.id }<br />
+	비밀번호 : ${ member.pw }<br />
 	
 </body>
 </html>
