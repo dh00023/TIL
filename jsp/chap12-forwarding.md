@@ -6,7 +6,7 @@
 
 ## RequestDispatcher 클래스
 
-![](http://way2java.com/wp-content/uploads/2014/03/ima32.png)
+![](./assets/include-2.png)
 
 요청받은 요청객체(request)를 위임받는 컴포넌트(S2)에 동일하게 전달할 수 있다.
 

@@ -1,6 +1,10 @@
-# 4. Servlet 본격적으로 살펴보기
+# Servlet
 
-servlet은 **JAVA언어를 사용하여 웹프로그램을 제작**하는 것이다.
+- 동적 웹어플리케이션 컴포넌트
+- 클라이언트의 요청에 동적으로 작동하고, 응답은 html을 이용.
+- **java thread이용**하여 동작(가장 큰 강점)
+  - thread를 이용해 서버에 부하가 적다.
+- MVC패턴에서 **Controller**로 이용됨.
 
 ```java
 /**
@@ -9,10 +13,6 @@ servlet은 **JAVA언어를 사용하여 웹프로그램을 제작**하는 것이
 @WebServlet("/HelloWorld")
 public class HelloWorld extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-       
-    /**
-     * @see HttpServlet#HttpServlet()
-     */
 
 ```
 
@@ -20,9 +20,13 @@ Servlet Class는 HttpServlet 클래스를 상속받는다. 그렇기 때문에 S
 
 ![](./images/12.png)
 
+Servlet의 실행 순서는 개발자가 관리하는 게 아닌 Servlet Container가 관리를 한다. Servlet에 의해 사용자가 정의한 Servlet 객체가 생성되고 호출되고 사라진다. 
+
+이렇게 개발자가 아닌 프로그램에 의해 객체들이 관리되는 것을 IoC(Inversion of Control)라고 한다. *추후 spring 에서 다룰 예정 : 정리 후 link*
+
 ### 요청 / 응답 처리
 
-요청 처리 객체 및 응답 처리 객체를 톰캣에서 받는다.
+요청 처리 객체 및 응답 처리 객체를 Tomcat에서 받는다.
 
 ```java
 protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -136,7 +140,7 @@ WAS(Web Application Server)에서 웹어플리케이션을 구분하기 위한 p
 
 스레드를 이용해 request를 처리해 서버의 부하가 적게 걸린다. 
 
-![](http://www.geeklabs.co.in/images/rt-sol/introserv/Servlet%20Achitecture.jpg)
+![https://gmlwjd9405.github.io/images/web/web-service-architecture.png](./assets/web-service-architecture.png)
 
 Servlet 컨테이너에서 1. 스레드 생성 2. servlet 객체를 생성한다.
 
@@ -351,7 +355,7 @@ protected void doPost(HttpServletRequest request, HttpServletResponse response) 
 
 `web.xml` 에 기술하고 Servlet파일에서는 `ServletConfing` 클래스를 이용해서 접근(사용)한다.
 
-+`web.xml`이 아닌 Servlet파일에 직접 기술하는 방법도 있습니다.
++`web.xml`이 아닌 Servlet파일에 직접 기술하는 방법도 있다.
 
 #### web.xml이용하기
 
@@ -553,3 +557,4 @@ public class ContextListenerEx implements ServletContextListener{
 ```java
 request.setCharacterEncoding("utf-8");
 ```
+
