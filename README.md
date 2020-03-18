@@ -4,8 +4,9 @@
 
 ## [JavaScript](javascript/README.md)
 
-* [OBJECT MODEL](javascript/2019-09-06-objectModel.md)
 * [JABASCRIPT BASIC](javascript/2019-10-04-basic.md)
+* [Shallow Copy vs Deep Copy](javascript/2020-03-18-copy.md)
+* [OBJECT MODEL](javascript/2019-09-06-objectModel.md)	
 * [NODE](javascript/2019-01-24-node.md)
 * [동기 처리 vs 비동기 처리](javascript/2019-01-23-async.md)
 * [AJAX](javascript/2019-01-25-ajax.md)
