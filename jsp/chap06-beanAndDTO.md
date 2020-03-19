@@ -1,14 +1,31 @@
-# Java Bean
+# DTO와 JavaBean
 
-## Bean 이란?
+## DTO(Data Transfer Object)
+
+DTO는 계층 간 데이터 교환을 위해 사용하는 객체다.
+*여기서 계층은 View-Controller-Service-DAO와 같은 계층을 의미*
+
+데이터를 담을 private 속성과 그 속성에 접근할 수 있는 Getter, Setter 메소드로 구성되어있다.
+
+> VO(Value Object)와 혼용되어 쓰이나,
+VO는 내부 속성값을 변경할 수 없는(imuutable) Read-Only의 의미적 특성을 가진 객체이다.
+> 즉, 변경없이 값으로 취급할 객체를 말한다.
+
+
+## JavaBean(=Bean) 이란?
 
 **반복적인 작업을 효율적으로 하기 위해서 사용**한다. 
 
 Bean 이란 JAVA 언어의 데이터(속성)과 기능(메소드)로 이루어진 클래스이다. 
 
-jsp페이지를 만들고, **액션태그를 이용해서 Bean을 사용**한다. 그리고 Bean의 내부 데이터를 처리한다.
+- Default 생성자 : 파라미터가 없는 Default  생성자를 갖고 있어야한다.
+- Property : 자바빈이 노출하는 이름을 가진 속성을 Property라고 하며, Property는 set으로 시작하는 수정자 메소드(setter)와 get으로 시작하는 접근자 메소드(getter)를 이용해 수정 또는 조회할 수 있다.
 
-## Bean 만들기
+*DTO와 Java Beans의 관계에 대해선 DTO의 형식으로 Java Beans를 따르고 있다고 생각하면 된다.*
+
+> Spring에서 지칭하는 Bean이란, Spring의 IoC Container(=DI Container)를 통해 관리(생성, 제어)되는 객체를 말하며, 이는 [Spring IoC Container](https://dahye-jeong.gitbook.io/spring/spring/2020-03-20-IoC)에서 자세히 볼 수 있다.
+
+### Bean 만들기
 
 빈을 만든다는 것은 데이터 객체를 만들기 위한 클래스를 만드는 것이다. ( getter, setter )
 
@@ -55,11 +72,11 @@ public class Student {
 
 
 
-## Bean 사용하기
+### Bean 사용하기
 
 관련 액션 태그(useBean, getProperty, setProperty)로 주로 데이터를 업데이트하고, 얻어오는 역할을 한다.
 
-### useBean
+#### useBean
 
 특정 Bean을 사용한다고 명시할 때 사용한다.
 
@@ -71,7 +88,7 @@ public class Student {
 <jsp:useBean id = "student" class="example.Student" scope="page"/>
 ```
 
-#### Scope 범위
+-  Scope 범위
 
 | scope       | 설명                                         |
 | ----------- | -------------------------------------------- |
@@ -80,7 +97,7 @@ public class Student {
 | session     | 웹 브라우저 생명주기와 동일하게 사용 가능    |
 | application | 웹 어플리케이션 생명주기와 동일하게 사용가능 |
 
-### setProperty
+#### setProperty
 
 데이터 값을 설정할 때 사용한다.(setter)
 
@@ -94,7 +111,7 @@ public class Student {
 
 
 
-### getProperty
+#### getProperty
 
 데이터 값을 가져올 때 사용한다.(getter)
 
@@ -108,9 +125,9 @@ public class Student {
 
 
 
-## 예제
+### 예제
 
-### class파일
+- Java Class
 
 ```java
 package example;
@@ -152,10 +169,7 @@ public class Student {
 	
 }
 ```
-
-
-
-### jsp파일
+- jsp로 구현하기
 
 ```jsp
 <%@ page language="java" contentType="text/html; charset=UTF-8"
