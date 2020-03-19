@@ -450,7 +450,7 @@ public class BDto {
 
 ### 5. DAO(Data Access Object) 만들기
 
-데이터 베이스에 연결하여 필요한 로직을 수행하는 DAO클래스를 만든다.
+DAO는 DB를 사용해 데이터를 조회하거나 조작하는 기능을 전담하도록 만든 Object이다.
 
 ```java
 package dao;
