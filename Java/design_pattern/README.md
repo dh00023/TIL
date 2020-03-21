@@ -6,6 +6,7 @@
 
 * [Template Method Pattern](./2020-03-20-template_method_pattern.md)
 * [Factory Method Pattern](./2020-03-20-factory_method_pattern.md)
-* [Singleton](./singleton_pattern.md)
-* [Delegation](./delegation_pattern.md)
-* [Proxy](./proxy_pattern.md)
+* [Strategy Pattern](./2020-03-21-strategy_pattern.md)
+* [Singleton Pattern](./singleton_pattern.md)
+* [Delegation Pattern](./delegation_pattern.md)
+* [Proxy Pattern](./proxy_pattern.md)

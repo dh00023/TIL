@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 #Summary
 
 * [Git](git/README.md)
@@ -59,9 +58,11 @@
     * [정규표현식](Java/문법/regexp.md)
     * [GUI](Java/문법/GUI.md)
     * [UML](Java/문법/UML.md)
+  * [객체지향 설계 원칙(SOLID)](Java/2020-03-21-SOLID.md)
   * [디자인패턴](Java/design_pattern/README.md)
-    * [Template Method Pattern](Java/design_pattern/20200320-template_method_pattern.md)
-    * [Factory Method Pattern](Java/design_pattern/20200320-factory_method_pattern.md)
+    * [Strategy Pattern](Java/design_pattern/2020-03-21-strategy_pattern.md)
+    * [Template Method Pattern](Java/design_pattern/2020-03-20-template_method_pattern.md)
+    * [Factory Method Pattern](Java/design_pattern/2020-03-20-factory_method_pattern.md)
     * [Singleton](Java/design_pattern/singleton_pattern.md)
     * [Delegation](Java/design_pattern/delegation_pattern.md)
     * [Proxy](Java/design_pattern/proxy_pattern.md)
@@ -72,7 +73,6 @@
     * [GUI 실습 - button](Java/실습/button.md)
     * [GUI 실습 - lotto](Java/실습/lotto.md)
     * [Thread 실습 - 좌석예약, 메세지보내기](Java/실습/lotto.md)
-
 
 * [데이터베이스](database/README.md)
   * [PRIMARY KEY](database/basic/2019-03-18-key.md)
