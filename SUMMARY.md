@@ -12,3 +12,5 @@
 	* Annotation
 	  * [@Cacheable](spring/2019-06-10-cache-annotation.md)
 	* [restTemplate](spring/2020-03-12-restTemplate.md)
+* Spring Boot
+	* [Spring Batch](spring/2020-03-23-batch.md)
