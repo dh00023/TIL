@@ -18,3 +18,6 @@
 	* [CRUD](database/MySQL/post/2019-03-16-crud.md)
 	* [관계형 데이터베이스](database/MySQL/post/chap5.md)
 	* [Server와 Client](database/MySQL/post/chap6.md)
+* [NoSQL](database/nosql/2020-02-02-basic.md)
+  * [Install Cassandra on mac](database/nosql/2020-02-02-startCassandra.md)
+  * [Cassandra란?](database/nosql/2020-02-02-cql.md)
