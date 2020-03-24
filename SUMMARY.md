@@ -39,6 +39,7 @@
   * [MVC](jsp/chap13-mvc.md )
   * [회원가입예제](jsp/example-user.md )
 
+
 * [Java](Java/README.md)
   * [Basic](Java/문법/README.md)
     * [변수와 타입](Java/문법/java-variable.md)
@@ -55,8 +56,10 @@
     * [Thread](Java/문법/java-thread.md)
     * [Generic](Java/문법/java-generic.md)
     * [Lambda](Java/문법/java-lambda.md)
-    * [Collection - List, Set, Map](Java/문법/java15.md)
-    * [LinkedHashMap](Java/문법/2020-03-13-linkedHashMap.md)
+    * [Collection - List, Set](Java/문법/java-collection.md)
+    * [Collection - Map](Java/문법/2020-03-13-map.md)
+    * [Collection - Tree](Java/문법/2020-03-24-tree.md)
+    * [Collection - Stack, Queue](Java/문법/2020-03-24-stackAndQueue.md)
     * [Reflection](Java/문법/2019-01-21-reflection.md)
     * [정규표현식](Java/문법/regexp.md)
     * [GUI](Java/문법/GUI.md)
@@ -76,7 +79,7 @@
     * [GUI 실습 - button](Java/실습/button.md)
     * [GUI 실습 - lotto](Java/실습/lotto.md)
     * [Thread 실습 - 좌석예약, 메세지보내기](Java/실습/lotto.md)
-
+    
 * [데이터베이스](database/README.md)
   * [PRIMARY KEY](database/basic/2019-03-18-key.md)
   * [Transaction](database/basic/transaction.md)
