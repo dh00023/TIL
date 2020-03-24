@@ -123,7 +123,18 @@ List<E> list = new LinkedList<E>();
 | ArrayLIst  | 빠르다               | 느리다           | 빠르다 |
 | LinkedList | 느리다               | 빠르다           | 느리다 |
 
+### sychronizedList
 
+Collection 프레임워크의 대부분의 클래스(ArrayList)는 Single Thread 환경에서 사용할 수 있도록 설계되었다. 그러므로 멀티 스레드 환경에서 안전하지않다.
+Single Thread환경에서 Multi Thread환경으로 전달할 경우에 대비해 비동기화된 메소드를 동기화된 메소드로 Wrapping하는 synchronizedList()메소드를 제공하고 있다.
+
+| 리턴타입      | 메소드                     | 설명                                                         |
+| --------- | -------------------------- | ------------------------------------------------------------ |
+| List<T> | synchronizedList(List<T> list)           | List를 동기화된 List로 리턴 |
+
+```java
+List<T> list = Collections.synchronizedList(new ArrayList<T>());
+```
 
 ## Set Collection
 
@@ -225,4 +236,17 @@ public class HashSetEx{
         set.add(new Member("정다혜",24)); // 인스턴스는 다르지만 내부 데이터가 동일하므로 1개저장
     }
 }
+```
+
+### sychronizedSet
+
+Collection 프레임워크의 대부분의 클래스(HashSet)는 Single Thread 환경에서 사용할 수 있도록 설계되었다. 그러므로 멀티 스레드 환경에서 안전하지않다.
+Single Thread환경에서 Multi Thread환경으로 전달할 경우에 대비해 비동기화된 메소드를 동기화된 메소드로 Wrapping하는 synchronizedSet()메소드를 제공하고 있다.
+
+| 리턴타입      | 메소드                     | 설명                                                         |
+| --------- | -------------------------- | ------------------------------------------------------------ |
+| Set<T> | synchronizedSet(Set<T> s)           | Set를 동기화된 Set로 리턴 |
+
+```java
+Set<T> s = Collections.synchronizedSet(new HashSet<T>());
 ```

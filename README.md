@@ -1,6 +1,6 @@
 # Today I Learned
 
-매일 공부한 내용을 기록하는 Repository 입니다.(Java/1일 1commit)
+매일 공부한 내용을 기록하는 Repository 입니다.
 
 ## [Java](Java)
 * [Basic](Java/문법/README.md)
@@ -18,8 +18,10 @@
 	* [Thread](Java/문법/java-thread.md)
 	* [Generic](Java/문법/java-generic.md)
 	* [Lambda](Java/문법/java-lambda.md)
-	* [Collection - List, Set, Map](Java/문법/java15.md)
-	* [LinkedHashMap](Java/문법/2020-03-13-linkedHashMap.md)
+	* [Collection - List, Set](Java/문법/java-collection.md)
+	* [Collection - Map](Java/문법/2020-03-13-map.md)
+	* [Collection - Tree](Java/문법/2020-03-24-tree.md)
+	* [Collection - Stack, Queue](Java/문법/2020-03-24-stackAndQueue.md)
 	* [Reflection](Java/문법/2019-01-21-reflection.md)
 	* [정규표현식](Java/문법/regexp.md)
 	* [GUI](Java/문법/GUI.md)
