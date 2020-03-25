@@ -1,6 +1,6 @@
 # Today I Learned
 
-매일 공부한 내용을 기록하는 Repository 입니다.(1일 1commit)
+매일 공부한 내용을 기록하는 Repository 입니다.
 
 ## [Git](git)
 
@@ -47,6 +47,7 @@
 
 
 ## [Java](Java)
+
 * [Basic](Java/문법/README.md)
   * [변수와 타입](Java/문법/java-variable.md)
   * [연산자](Java/문법/java-operator.md)
@@ -66,6 +67,7 @@
   * [Collection - Map](Java/문법/2020-03-13-map.md)
   * [Collection - Tree](Java/문법/2020-03-24-tree.md)
   * [Collection - Stack, Queue](Java/문법/2020-03-24-stackAndQueue.md)
+  * [Stream](Java/문법/2020-03-25-stream.md)
   * [Reflection](Java/문법/2019-01-21-reflection.md)
   * [정규표현식](Java/문법/regexp.md)
   * [GUI](Java/문법/GUI.md)
