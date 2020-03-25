@@ -22,6 +22,7 @@
 	* [Collection - Map](Java/문법/2020-03-13-map.md)
 	* [Collection - Tree](Java/문법/2020-03-24-tree.md)
 	* [Collection - Stack, Queue](Java/문법/2020-03-24-stackAndQueue.md)
+	* [Stream](Java/문법/2020-03-25-stream.md)
 	* [Reflection](Java/문법/2019-01-21-reflection.md)
 	* [정규표현식](Java/문법/regexp.md)
 	* [GUI](Java/문법/GUI.md)
