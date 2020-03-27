@@ -21,5 +21,6 @@
 * [NoSQL](database/nosql/2020-02-02-basic.md)
   * [Install Cassandra on mac](database/nosql/2020-02-02-startCassandra.md)
   * [Cassandra란?](database/nosql/2020-02-02-cql.md)
+  * [NiFi란](database/nosql/2020-03-27-nifi.md)
 
   
