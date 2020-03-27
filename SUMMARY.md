@@ -19,6 +19,7 @@
 	* [history.scrollRestoration](javascript/2020-03-15-scrollRestoration.md)
 	* [Intersection Observer](javascript/2020-03-15-intersectionObserver.md)
 	* [JWT - JSON Web Token](javascript/2020-03-26-jwt.md)
+	* [HTML vs JSON](javascript/2020-03-27-contextType.md)
 * [Backbone.js](javascript/backbone/README.md)
 	* [Model](javascript/backbone/2019-01-28-model.md)
 	* [Collection](javascript/backbone/2019-01-17-collection.md)
