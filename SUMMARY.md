@@ -152,6 +152,8 @@
 	* [history.scrollRestoration](javascript/2020-03-15-scrollRestoration.md)
 	* [Intersection Observer](javascript/2020-03-15-intersectionObserver.md)
   * [JWT - JSON Web Token](javascript/2020-03-26-jwt.md)
+  * [HTML vs JSON](javascript/2020-03-27-contextType.md)
+
 
 * [Vue.js](vuejs/README.md)
   * [환경설정](vuejs/2019-10-01-settings.md)
