@@ -111,6 +111,9 @@
 
 ## [Algorithm](algorithm)
 
+=======
+## [Algorithm](algorithm)
+>>>>>>> algorithm
 * [String](algorithm/2018-04-18-algorithm-string.md)
 * [Recursion](algorithm/2018-04-19-algorithm-Recursion.md)
 * [Dynamic Programming](algorithm/2018-04-20-algorithm-dynamic.md)
