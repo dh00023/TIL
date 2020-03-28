@@ -108,6 +108,8 @@
 * [NoSQL](database/nosql/2020-02-02-basic.md)
   * [Install Cassandra on mac](database/nosql/2020-02-02-startCassandra.md)
   * [Cassandra란?](database/nosql/2020-02-02-cql.md)
+  * [NiFi란](database/nosql/2020-03-27-nifi.md)
+
 
 ## [Algorithm](algorithm)
 
@@ -163,6 +165,8 @@
 * [BFCache란?](javascript/2020-03-15-BFCache.md)
 * [history.scrollRestoration](javascript/2020-03-15-scrollRestoration.md)
 * [Intersection Observer](javascript/2020-03-15-intersectionObserver.md)
+* [JWT - JSON Web Token](javascript/2020-03-26-jwt.md)
+* [HTML vs JSON](javascript/2020-03-27-contextType.md)
 
 ## [Vue.js](vuejs)
 
