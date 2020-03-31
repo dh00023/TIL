@@ -18,19 +18,20 @@ public abstract class Super{
 ```
 ```java
 public Sub extends Super{
+  @Override
 	protected void hookMethod(){
 		//...
 	}
+  @Override
 	public void abstractMethod(){
 		//...
 	}
 }
 ```
 
-**전체적으로는 동일하면서 부분적으로는 다른 구문으로 구성된 메서드의 코드 중복을 최소화** 할 때 유용하다.
+**전체적으로는 동일하면서 부분적으로는 다른 구문으로 구성된 메서드의 코드 중복을 최소화** 할 때 유용하다. **즉, 변경될 기능은 Super Class에 만들어두고 자주 변경되며 확장할 기능을 SubClass에 만들때 사용하면 좋다.**
 
-**즉, 변경될 기능은 Super Class에 만들어두고 자주 변경되며 확장할 기능을 SubClass에 만들때 사용하면 좋다.**
-
+예를 들어, 각 회사별로 동일한 EP 데이터를  전달해야 하는 경우에 Template(Super Class)를 생성해두고, 해당 Template을 상속받아 확장할 기능을 Sub Class에서 각각 처리하는 경우에 사용할 수 있다.
 
 
 ## 예시
