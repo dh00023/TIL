@@ -11,6 +11,9 @@
 	* [POJO](Spring/2020-04-10-POJO.md)
 	* [Transaction](spring/2019-01-13-transaction.md)
 	* [Cache](spring/2020-04-09-cache.md)
+	* [JPA란?](spring/2020-04-11-jpa-basic.md)
+	* [JPA Entity](spring/2020-04-11-jpa-entity.md)
+	* [Spring Data JPA](spring/2020-04-11-jpa-repository.md)
 	* [restTemplate](spring/2020-03-12-restTemplate.md)
 	* Spring Boot
 		* [Spring Batch](spring/2020-03-23-batch.md)
