@@ -4,7 +4,8 @@
 
 ## [데이터베이스](database)
 
-* [PRIMARY KEY](database/basic/2019-03-18-key.md)
+* [KEY](database/basic/2019-03-18-key.md)
+* [Index](database/basic/2020-04-12-index.md)
 * [Transaction](database/basic/transaction.md)
 * [데이터베이스 배움터](database/book/README.md)
 	* [데이터베이스 시스템](database/book/chapter1.md)
