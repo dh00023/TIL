@@ -27,6 +27,7 @@
   * [restTemplate](spring/2020-03-12-restTemplate.md)
   * Spring Boot
     * [Spring Batch](spring/2020-03-23-batch.md)
+    * [Spring test](spring/2020-04-12-test.md)
 
   
 * [JSP](jsp/README.md)
