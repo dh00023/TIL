@@ -10,6 +10,10 @@
 * [Rebase&Cherri-Pick](git/2019-01-09-git-rebase.md)
 * [git-flow](git/2019-01-27-git-flow.md)
 
+## DevOps
+
+* [Monolithic vs MSA](./devops/2020-04-24-architecture.md)
+
 ## [Spring](spring)
 
 * [Maven](spring/2020-03-16-maven.md)
