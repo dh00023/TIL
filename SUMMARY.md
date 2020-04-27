@@ -202,6 +202,9 @@
   * [Doit! - 채팅서버 만들기](Nodejs/chapter10.md)
   * [Doit! - JSON-RPC 서버 만들기](Nodejs/chapter11.md)
 
+* python
+  * [Pandas](./python/pandas/README.md)
+
 * [Django](django)
 
   * Basic
