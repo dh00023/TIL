@@ -16,24 +16,72 @@ Mac OS에서 pyenv, virtual-env 가상 환경에 환경설정을 할 것이다.
 $ pyenv virtualenv 3.7.1 pandas
 $ pyenv local panda
 ```
-
-- requirement.txt (공부를 하면서 사용하게 될 라이브러리)
-
-```txt
-pandas==0.23.4
-numpy==1.15.4
-matplotlib==3.0.2
-scipy==1.1.0
-scikit-learn==0.20.1
-xlrd==1.2.0
-beautifulsoup4==4.6.3
-googlemaps==2.5.1
-seaborn==0.9.0
-folium==0.7.0
-```
+- 관련 라이브러리들을 설치하기 이전에 pip를 upgrade해준다.
 
 ```bash
 $ pip install --upgrade pip
-$ pip install -r requirements.txt
+```
+
+- pandas : 데이터 분석용
+
+```bash
+$ pip install pandas
+```
+
+- numpy : Numerical Python의 약자로 파이썬 기반 수치 해석 라이브러리
+
+```bash
+$ pip install numpy
+```
+
+- matplotlib : 그래프나 차트 등 그래픽으로 표현하는데 사용하는 파이썬 기반 2D 시각화 도구
+
+```bash
+$ pip install matplotlib
+```
+
+- scipy : 과학용 연산(미적분, 선형대수, 행렬 연산, 방정식 계산 등)에 필요한 패키지를 모아 놓은 라이브러리
+
+```bash
+$ pip install scipy
+```
+
+- scikit-learn : 머신러닝 학습을 위한 라이브러리이다. numpy와 scipy가 설치된 상태여야한다.
+
+```bash
+$ pip install -U scikit-learn
+```
+
+- seaborn : Dataset을 사용
+
+```bash
+$ pip install seaborn
+```
+
+```bash
+$ pip list
+
+Package         Version
+--------------- ------------
+cycler          0.10.0
+joblib          0.14.1
+kiwisolver      1.2.0
+matplotlib      3.2.1
+numpy           1.18.3
+pandas          1.0.3
+pip             20.0.2
+pyparsing       2.4.7
+python-dateutil 2.8.1
+pytz            2019.3
+scikit-learn    0.22.2.post1
+scipy           1.4.1
+setuptools      39.0.1
+six             1.14.0
+```
+
+설치를 완료하고 후에 requirements.txt로 라이브러리 버전을 관리할 수 있다.
+
+```bash
+$ pip freeze > requirements.txt
 ```
 
