@@ -53,7 +53,7 @@ $ pip install scipy
 $ pip install -U scikit-learn
 ```
 
-- seaborn : Dataset을 사용
+- seaborn : Matplotlib을 기반으로 다양한 색상 테마와 통계용 차트 등의 기능을 추가한 시각화 패키지이다. ([Seaborn Data](https://github.com/mwaskom/seaborn-data))
 
 ```bash
 $ pip install seaborn
@@ -85,4 +85,17 @@ six             1.14.0
 ```bash
 $ pip freeze > requirements.txt
 ```
+
+
+
+### DataSet
+
+데이터 분석과 머신러닝 공부 시에 데이터셋을 제공하는 곳을 알아두면 좋다.
+
+- scikit-learn, seaborn 등 python 라이브러리 제공 데이터셋
+- [kaggle](https://www.kaggle.com/)
+- [UCI 머신러닝 저장소](https://archive.ics.uci.edu/ml/datasets.html)
+- 공공 데이터
+  - 해외 : WorldBank, WTO등 국제기구
+  - 국내 : 공공데이터 포탈, 국가통계포털
 
