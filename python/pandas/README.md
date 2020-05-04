@@ -59,25 +59,52 @@ $ pip install -U scikit-learn
 $ pip install seaborn
 ```
 
+- BeautifulSoup4 : Beautiful Soup은 HTML 및 XML 문서를 구문 분석하기위한 Python 패키지(웹 스크래핑에 사용)
+
+```bash
+$ pip install beautifulsoup4
+```
+
+- requests : Python에서 HTTP 요청을 보내는 모듈
+
+```bash
+$ pip install requests
+```
+
+
+
 ```bash
 $ pip list
 
 Package         Version
 --------------- ------------
+beautifulsoup4  4.9.0
+certifi         2020.4.5.1
+chardet         3.0.4
 cycler          0.10.0
+et-xmlfile      1.0.1
+idna            2.9
+jdcal           1.4.1
 joblib          0.14.1
 kiwisolver      1.2.0
+lxml            4.5.0
 matplotlib      3.2.1
 numpy           1.18.3
+openpyxl        3.0.3
 pandas          1.0.3
 pip             20.0.2
 pyparsing       2.4.7
 python-dateutil 2.8.1
 pytz            2019.3
+requests        2.23.0
 scikit-learn    0.22.2.post1
 scipy           1.4.1
+seaborn         0.10.1
 setuptools      39.0.1
 six             1.14.0
+soupsieve       2.0
+urllib3         1.25.9
+xlrd            1.2.0
 ```
 
 설치를 완료하고 후에 requirements.txt로 라이브러리 버전을 관리할 수 있다.
