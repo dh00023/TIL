@@ -203,9 +203,10 @@
   * [Doit! - JSON-RPC 서버 만들기](Nodejs/chapter11.md)
 
 * python
-  * [Could not import the lzma module](./python/2020-04-28-liblzma-dev.md)
+  * [Warning-Could not import the lzma module](./python/2020-04-28-liblzma-dev.md)
   * [Pandas](./python/pandas/README.md)
     * [Pandas 자료구조](./python/pandas/2020-04-28-pandasDataStruct.md)
+    * [Pandas 데이터 입출력](./python/pandas/2020-04-29-dataIO.md)
 
 * [Django](django)
 
