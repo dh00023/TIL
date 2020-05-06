@@ -5,3 +5,4 @@
 	* [Pandas](./python/pandas/README.md)
 		* [Pandas 자료구조](./python/pandas/2020-04-28-pandasDataStruct.md)
 		* [Pandas 데이터 입출력](./python/pandas/2020-04-29-dataIO.md)
+		* [DataFrame Data 살펴보기](./python/pandas/2020-05-06-statistics.md)
