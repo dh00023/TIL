@@ -207,6 +207,8 @@
   * [Pandas](./python/pandas/README.md)
     * [Pandas 자료구조](./python/pandas/2020-04-28-pandasDataStruct.md)
     * [Pandas 데이터 입출력](./python/pandas/2020-04-29-dataIO.md)
+    * [DataFrame Data 살펴보기](./python/pandas/2020-05-06-statistics.md)
+
 
 * [Django](django)
 
@@ -278,3 +280,4 @@
   * [Doit! -  다재다능한 CSS3 선택자](HTML&CSS/chapter12.md)
   * [Doit! -  CSS와 애니메이션](HTML&CSS/chapter13.md)
   * [Doit! -  반응형 웹이란?](HTML&CSS/chapter14.md)
+
