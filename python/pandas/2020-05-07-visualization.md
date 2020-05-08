@@ -6,11 +6,150 @@
 
 Matplotlib은 파이썬 표준 시각화 도구라고 부를 수 있을 정도로 2D 평면 그래프에 대한 다양한 포맷과 기능을 제공하고 있다.
 
+### 필요 라이브러리 import
+
 ```python
+import matplotlib as mlp
 import matplotlib.pyplot as plt
 ```
 
 데이터 시각화에 사용할 matplotlib.pyplot 모듈을 import해 사용한다.
+
+
+### 한글 출력 오류
+
+numpy를 이용해 임의로 데이터를 생성해서 그래프를 그려볼 것이다.
+
+```python
+import matplotlib as mpl
+import matplotlib.pyplot as plt
+import numpy as np
+
+mpl.rcParams['axes.unicode_minus'] = False # minus 깨짐 설정
+
+data = np.random.randint(-100,100,50).cumsum() # cumsum : 배열 원소들의 누적 합을 계산
+print(data)
+array([ -68,   10,   90,  172,  132,   56,   21,   59,    9,  -60,  -48,
+         23,   68,   -7,  -21,   75,   30,  -58, -102, -141,  -51,   42,
+        108,   63,  -31,  -87, -171, -244, -171, -271, -234, -209, -284,
+       -252, -177, -191, -249, -162, -199, -106, -152, -234, -232, -178,
+       -270, -171, -128, -181, -195, -129])
+
+plt.plot(range(50), data, 'r')
+[<matplotlib.lines.Line2D object at 0x11a3bb358>]
+plt.ylabel('주식 가격')
+Text(0, 0.5, '주식 가격')
+plt.xlabel('시간(분)')
+Text(0.5, 0, '시간(분)')
+plt.show()
+```
+
+![한글 깨짐](./assets/image-20200508095943102.png)
+
+차트 제목과 축 이름을 한글로 설정해 출력하는 경우 다음 오류메시지와 함께 깨지는 경우가 발생할 수 있다.
+
+```python
+...
+.pyenv/versions/pandas/lib/python3.7/site-packages/matplotlib/backends/backend_agg.py:183: RuntimeWarning: Glyph 44221 missing from current font.
+  font.set_text(s, 0, flags=flags)
+```
+
+우선 시스템에 설정된 폰트를 확인할 수 있다.
+```python
+>>> mpl.get_configdir()
+'/Users/jeongdaye/.matplotlib'
+```
+```bash
+$ cd /Users/jeongdaye/.matplotlib
+$ ls -al
+total 232
+drwxr-xr-x   4 jeongdaye  staff     128  4 28 17:25 .
+drwxrwxr-x+ 83 jeongdaye  staff    2656  5  8 10:10 ..
+-rw-r--r--   1 jeongdaye  staff  116875  4 28 17:25 fontlist-v310.json
+drwxr-xr-x   2 jeongdaye  staff      64  4 28 17:25 tex.cache
+```
+
+fontlis-v310.json에 현재 사용할 수 있는 폰트들이 있는 것을 확인할 수 있다.
+
+```python
+>>> font_list = fm.findSystemFonts(fontpaths=None, fontext='ttf')
+>>> font_list = fm.fontManager.ttflist
+```
+fontmanager로 현재 시스템에 설정된 폰트들을 확인할 수 있다. 설정할 폰트명을 다음과 같이 가져올 수 있다.
+
+```python
+>>> [(f.name, f.fname) for f in fm.fontManager.ttflist if 'D2Coding' in f.name]
+[('D2Coding', '/Users/jeongdaye/Library/Fonts/D2Coding-Ver1.3.2-20180524-all.ttc')]
+```
+
+3가지 방법으로 폰트를 설정할 수 있다.
+
+1. FontProperties 사용하기 : 그래프의 폰트가 필요한 항목마다 지정
+
+```python
+path = '/Library/Fonts/NanumSquareRoundR.ttf'
+fontprop = fm.FontProperties(fname=path, size=18)
+plt.plot(range(50), data, 'r')
+plt.title('시간별 가격 추이', fontproperties=fontprop)
+plt.ylabel('주식가격', fontproperties=fontprop)
+plt.xlabel('시간(분)',fontproperties=fontprop)
+```
+
+2. matplotlib.rcParams[]로 전역글꼴 설정 방법 - 그래프에 설정을 해주면 적용
+
+```python
+plt.rc('font', family='D2Coding')
+plt.rcParams['font.family'] = 'D2Coding'
+plt.rcParams['font.size'] = 18
+print(plt.rcParams['font.family'])
+['D2Coding']
+```
+
+3. 2번 방법을 mpl.matplotlib_fname()로 읽어지는 설정 파일에 직접 해주는 방법.
+
+```python
+>>> mpl.matplotlib_fname()
+/Users/jeongdaye/.pyenv/versions/pandas/lib/python3.7/site-packages/matplotlib/mpl-data/matplotlibrc
+```
+
+설정 파일에서 font.famliy를 cumstom 설정해주면 재 실행할 때마다 다시 설정하지 않아도 된다.
+
+```bash
+$ vim /Users/jeongdaye/.pyenv/versions/pandas/lib/python3.7/site-packages/matplotlib/mpl-data/matplotlibrc
+```
+
+```
+##
+## Note that font.size controls default text sizes.  To configure
+## special text sizes tick labels, axes, labels, title, etc, see the rc
+## settings for axes and ticks.  Special text sizes can be defined
+## relative to font.size, using the following values: xx-small, x-small,
+## small, medium, large, x-large, xx-large, larger, or smaller
+
+font.family  : D2Coding
+#font.style   : normal
+#font.variant : normal
+#font.weight  : normal
+#font.stretch : normal
+#font.size    : 10.0
+
+```
+
+
+![image-20200508105230830](./assets/image-20200508105230830.png)
+
+
+
+
+### 마이너스 폰트 출력 설정
+
+그래프에서 마이너스 폰트가 깨지는 문제에 대해 대처할 수 있다.
+
+```python
+mpl.rcParams['axes.unicode_minus'] = False
+```
+
+
 
 KOSIS의 시도별 전출입 인구수 데이터를 시각화해볼 것이다.
 
@@ -117,39 +256,6 @@ Text(0.5, 0, '기간')
 Text(0.5, 1.0, '서울 -> 경기 인구 이동')
 >>> plt.show()
 ```
-
-
-
-### 한글 출력 오류
-
-![image-20200506155933253](./assets/image-20200506155933253.png)
-
-차트 제목과 축 이름을 한글로 설정해 출력하는 경우 다음과 같이 깨지는 경우가 발생할 수 있다.
-
-```python
-...
-.pyenv/versions/pandas/lib/python3.7/site-packages/matplotlib/backends/backend_agg.py:183: RuntimeWarning: Glyph 44221 missing from current font.
-  font.set_text(s, 0, flags=flags)
-```
-
-이때는 한글 설정을 해줘야한다. 2가지 방법으로 해결할 수 있는데(mac os기준), 첫번째는 서체관리자에 저장된 폰트로 설정하는 방법이다.
-
-```python
-plt.rc('font', family='D2Coding')
-print(plt.rcParams['font.family'])
-['D2Coding']
-```
-
-두번째는 폰트 파일을 직접 불러와 해결하는 방법이다.
-
-```python
-from matplotlib import font_manager, rc
-font_path = './malgun.ttf'
-font_name = font_manager.FontProperties(fname=font_path).get_name()
-rc('font',family=font_name)
-```
-
-한글 설정 후에 다시 plot을 그리면 정상적으로 노출되는 것을 확인할 수 있다.
 
 ![](./assets/image-20200506161656428.png)
 
