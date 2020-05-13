@@ -174,4 +174,100 @@ figure.set_size_inches(12, 5)
 sns.countplot(x='TimeSpentStudying', data=full_time, hue='EmploymentStatus', ax=ax1).legend(loc='best', bbox_to_anchor=(1, 0.5))
 sns.countplot(x='TimeSpentStudying', data=looking_for_job, hue='EmploymentStatus', ax=ax2).legend(loc='best', bbox_to_anchor=(1, 0.5))
 
+
+# Q6. 블로그, 팟캐스트, 수업, 기타 등등 추천할만한 것이 있는지
+mcr['BlogsPodcastsNewslettersSelect'] = mcr['BlogsPodcastsNewslettersSelect'].astype('str').apply(lambda x: x.split(','))
+s = mcr.apply(lambda x: pd.Series(x['BlogsPodcastsNewslettersSelect']), axis=1).stack().reset_index(level=1, drop=True)
+s.name = 'platforms'
+
+s = s[s != 'nan'].value_counts().head(20)
+plt.figure(figsize=(6,8))
+plt.title("Most Popular Blogs and Podcasts")
+sns.barplot(y=s.index, x=s)
+
+mcr['CoursePlatformSelect'] = mcr['CoursePlatformSelect'].astype('str').apply(lambda x: x.split(','))
+mcr['CoursePlatformSelect'].head()
+
+t = mcr.apply(lambda x: pd.Series(x['CoursePlatformSelect']), axis=1).stack().reset_index(level=1, drop=True)
+t.name = 'courses'
+t = t[ t != 'nan'].value_counts().head()
+
+sns.barplot(y=t.index,x=t)
+
+# Q7. 데이터 사이언스 직무에서 가장 중요하다고 생각되는 스킬
+job_features = [ x for x in mcr.columns if x.find('JobSkillImportance') != -1 and x.find('JobSkillImportanceOther') == -1]
+
+jdf = {}
+for feature in job_features:
+	a = mcr[feature].value_counts()
+	a = a/a.sum()
+	jdf[feature[len('JobSkillImportance'):]] = a
+
+jdf = pd.DataFrame(jdf).T
+
+plt.figure(figsize=(10,6))
+sns.heatmap(jdf.sort_values("Necessary", ascending=False), annot=True)
+jdf.plot(kind='bar', figsize=(12,6), title='Skill Importance in Data Science Jobs')
+
+# Q8. 데이터 과학자의 평균 급여는 얼마나 될까?
+mcr[mcr['CompensationAmount'].notnull()].shape
+
+mcr['CompensationAmount'] = mcr['CompensationAmount'].str.replace(',', '')
+mcr['CompensationAmount'] = mcr['CompensationAmount'].str.replace('-', '')
+
+rates = pd.read_csv('./kaggle-survey-2017/conversionRates.csv')
+rates.drop('Unnamed: 0', axis=1, inplace=True)
+
+salary = mcr[['CompensationAmount', 'CompensationCurrency', 'GenderSelect', 'Country', 'CurrentJobTitleSelect']].dropna()
+salary = salary.merge(rates, left_on='CompensationCurrency', right_on='originCounry', how='left')
+
+salary['Salary'] = pd.to_numeric(salary['CompensationAmount']) * salary['exchangeRate']
+salary.head()
+
+print('Maximum Salary is USD $',salary['Salary'].dropna().astype(int).max())
+print('Minimum Salary is USD $',salary['Salary'].dropna().astype(int).min())
+print('Median Salary is USD $',salary['Salary'].dropna().astype(int).median())
+
+plt.subplots(figsize=(15, 8))
+salary = salary[salary['Salary'] < 500000]
+sns.distplot(salary['Salary'])
+plt.axvline(salary['Salary'].median(), linestyle='dashed') # 평균 선
+plt.title('Salary Distribution', size=15)
+
+# 국가별 급여
+plt.subplots(figsize=(8,12))
+sal_coun = salary.groupby('Country')['Salary'].median().sort_values(ascending=False)[:30].to_frame()
+
+sns.barplot('Salary', sal_coun.index, data=sal_coun, palette='RdYlGn')
+plt.axvline(salary['Salary'].median(), linestyle='dashed') # 평균 선
+plt.title('Highest Salary Paying Countries')
+
+# 한국 급여
+salary_korea = salary.loc[(salary['Country'] == 'South Korea')]
+plt.subplots(figsize=(8,4))
+sns.boxplot(y='GenderSelect', x='Salary', data=salary_korea)
+
+# Q9. 개인 프로젝트나 학습용 데이터를 어디에서 얻을까?
+mcr['PublicDatasetsSelect'] = mcr['PublicDatasetsSelect'].astype('str').apply(lambda x: x.split(','))
+q = mcr.apply(lambda x: pd.Series(x['PublicDatasetsSelect']),axis=1).stack().reset_index(level=1, drop=True)
+q.name='courses'
+
+q = q[q!='nan'].value_counts()
+pd.DataFrame(q)
+
+# 데이터 사이언티스트가 되기 위해 학위가 중요할까?
+sns.countplot(y='UniversityImportance', data=mcr)
+
+import plotly.offline as py
+import plotly.figure_factory as fig_fact
+
+top_uni = mcr['UniversityImportance'].value_counts().head(5)
+top_uni_dist = []
+for uni in top_uni.index:
+	top_uni_dist.append[mcr(mcr['Age'].notnull())&(mcr['UniversityImportance']==uni)]['Age']
+
+
+group_labels = top_uni.index
+fig = fig_fact.create_distplot(top_uni_dist, group_labels, show_hist=False)
+py.iplot(fig, filename='University Importance by Age')
 plt.show()
