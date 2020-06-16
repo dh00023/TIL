@@ -7,6 +7,7 @@
 * [KEY](database/basic/2019-03-18-key.md)
 * [Index](database/basic/2020-04-12-index.md)
 * [Transaction](database/basic/transaction.md)
+* [Trigger](database/basic/2020-06-16-trigger.md)
 * [데이터베이스 배움터](database/book/README.md)
 	* [데이터베이스 시스템](database/book/chapter1.md)
 	* [관계데이터 모델](database/book/chapter2.md)
