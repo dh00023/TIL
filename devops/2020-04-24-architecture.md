@@ -1,20 +1,16 @@
 # Monolithic vs MSA(Micro Service Architecture)
 
 
-![https://miro.medium.com/max/6996/1*xu1Ge_Cew0DHdSU6ETcpLQ.png](./assets/1*xu1Ge_Cew0DHdSU6ETcpLQ.png)
-
+![https://miro.medium.com/](./assets/compare.png)
 ![](./assets/5645178-microservices-development-lifecycle-1.png)
-
 
 
 ## Monolithic Architecture
 
-![https://miro.medium.com/max/1400/1*OQ6YdrPe2Vb8UvjgxbVI6A.png](./assets/1*OQ6YdrPe2Vb8UvjgxbVI6A.png)
+![https://miro.medium.com/](./assets/monolothic.png)
 
 Monolithic 아키텍처는 **전체 어플리케이션을 하나의 통합된 패키지**로 개발/배포 하는 방식이다.
-
 웹 개발을 예로들면, 웹 프로그램을 개발하기 위해서 모듈별로 개발을 하고, 개발이 완료된 웹 어플리케이션을 하나의 결과물로 패키징 하여 배포되는 형태를 말한다. 웹의 경우 WAR 파일로 빌드되어, WAS에 배포하는 형태이다.
-
 
 
 - 장점
@@ -35,7 +31,7 @@ Monolithic은 다음과 같은 장점이 있어 **단순한 아키텍처 구조�
 
 ## Micro Service Architecture
 
-![](./assets/1*r3qD5OBLgaizuiCImUJxYQ.png)
+![](./assets/msa.png)
 
 MSA는 **독립된 각각의 모듈을 조립하여 만드는 하나의 서비스**를 위한 아키텍처이다. MSA는 단일 책임 원칙(Single Responsibility Principle; SRP)를 중시한다. 즉, 큰 문제를 작은 문제로 분해해 해결하며, 작게 나눠진 서비스가 서로에게 영향을 미치지 않고 독립적으로 역할을 수행하게 만드는 것이다.
 
