@@ -51,6 +51,9 @@
   * [MVC](jsp/chap13-mvc.md )
   * [회원가입예제](jsp/example-user.md )
 
+* [지식..?]()
+  * [SOAP vs REST](./2020-07-15-soap-vs-rest.md)
+
 
 * [Java](Java/README.md)
   * [Basic](Java/문법/README.md)
