@@ -1,3 +1,7 @@
 # Today I Learned
 
-매일 공부한 내용을 기록하는 Repository 입니다.(1일 1commit)
+## OS(운영체제)
+
+### Linux
+- [Linux Daemon](./OS/2020-07-19-linux-daemon.md)
+- [Linux Cron](./OS/2020-07-19-linux-cron.md)
