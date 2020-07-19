@@ -315,3 +315,7 @@
   * [Cassandra란?](database/nosql/2020-02-02-cql.md)
   * [NiFi란](database/nosql/2020-03-27-nifi.md)
 
+* OS(운영체제)
+  * Linux
+    * [Linux Daemon](./OS/2020-07-19-linux-daemon.md)
+    * [Linux Cron](./OS/2020-07-19-linux-cron.md)
