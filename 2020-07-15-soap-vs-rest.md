@@ -6,8 +6,9 @@ API의 구조를 이야기할 때, 대표적으로 SOAP과 REST가 흔히 비교
 
 - WADL을 사용하여 REST 서비스에 대한 인터페이스를 정의 할 수 있다.
 
-
 ## SOAP(Simple Object Access Protocol)
+
+![https://dydals5678.tistory.com/4](https://img1.daumcdn.net/thumb/R1280x0/?scode=mtistory2&fname=http%3A%2F%2Fcfile2.uf.tistory.com%2Fimage%2F99D970435C78584F159CF6)
 
 > **SOAP**(Simple Object Access Protocol)은 일반적으로 널리 알려진 **[HTTP](https://ko.wikipedia.org/wiki/HTTP), [HTTPS](https://ko.wikipedia.org/wiki/HTTPS), [SMTP](https://ko.wikipedia.org/wiki/SMTP)** 등을 통해 **[XML](https://ko.wikipedia.org/wiki/XML)** 기반의 메시지를 컴퓨터 **네트워크 상에서 교환하는 [프로토콜](https://ko.wikipedia.org/wiki/통신_프로토콜)**이다. *-위키피디아-*
 

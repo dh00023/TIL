@@ -55,9 +55,11 @@
   * [MVC](jsp/chap13-mvc.md )
   * [회원가입예제](jsp/example-user.md )
 
-## 지식..?
+## Java+
 
-* [SOAP vs REST](./2020-07-15-soap-vs-rest.md)
+* [SOAP/WSDL vs REST](./2020-07-15-soap-vs-rest.md)
+* [WSDL을 JAVA로 변환하기](./2021-01-09-axis2-wsdl2java.md)
+* [SOAP 통신 OPEN API로 개발해보기](./2021-01-09-java-soapApi.md)
 
 ## [Java](Java)
 
@@ -225,7 +227,7 @@
   * [시각화 도구 - Matplotlib](./python/pandas/2020-05-07-visualization.md)
 
 ## ML
-  
+
 * [추천 시스템](./ml/2020-05-11-recommendationSystem.md)
   * [Collaborative Filtering](./ml/2020-05-11-collaborativeFiltering.md)
   * [Matrix Factorization](./ml/2020-05-11-matrixFactorization.md)
@@ -267,7 +269,7 @@
 * [Vue.js 연동하기](https://dh00023.github.io/web/2019/10/29/web-djangoAndVuejs/)
 
 ## [Ruby](ruby)
-    
+
 * [variable & input/output](./ruby/chapter1.md)
 * [조건문](./ruby/chapter2.md)
 * [반복문](./ruby/chapter3.md)

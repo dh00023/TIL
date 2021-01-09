@@ -6,10 +6,8 @@
   * [Log & Diff](git/2019-01-09-git-log.md)
   * [Rebase&Cherri-Pick](git/2019-01-09-git-rebase.md)
   * [git-flow](git/2019-01-27-git-flow.md)
-
 * DevOps
   * [Monolithic vs MSA](./devops/2020-04-24-architecture.md)
-
 * [Spring](spring/README.md)
 	* [Maven](spring/2020-03-16-maven.md)
 	* [IoC](spring/2020-03-21-IoC.md)
@@ -32,7 +30,6 @@
     * [Spring Batch](spring/2020-03-23-batch.md)
     * [Spring test](spring/2020-04-12-test.md)
 
-  
 * [JSP](jsp/README.md)
   * [Apache & Apach Tomcat](jsp/2020-03-16-webServer.md )
   * [개발환경설정](jsp/chap01-settings.md)
@@ -51,10 +48,13 @@
   * [MVC](jsp/chap13-mvc.md )
   * [회원가입예제](jsp/example-user.md )
 
-* [지식..?]()
-  * [SOAP vs REST](./2020-07-15-soap-vs-rest.md)
 
 
+* Java+
+  
+  * [SOAP/WSDL vs REST](./2020-07-15-soap-vs-rest.md)
+  * [WSDL을 JAVA로 변환하기](./2021-01-09-axis2-wsdl2java.md)
+  * [SOAP 통신 OPEN API로 개발해보기](./2021-01-09-java-soapApi.md)
 * [Java](Java/README.md)
   * [Basic](Java/문법/README.md)
     * [변수와 타입](Java/문법/java-variable.md)
@@ -96,7 +96,6 @@
     * [GUI 실습 - lotto](Java/실습/lotto.md)
     * [Thread 실습 - 좌석예약, 메세지보내기](Java/실습/lotto.md)
 
-    
 * [데이터베이스](database/README.md)
   * [KEY](database/basic/2019-03-18-key.md)
   * [Index](database/basic/2020-04-12-index.md)
