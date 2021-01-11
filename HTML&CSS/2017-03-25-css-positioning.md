@@ -1,6 +1,4 @@
-# HTML5 + CSS3 웹 표준의 정석
-
-## Chapter9. CSS 포지셔닝
+# CSS positioning
 
 ### CSS 포지셔닝과 주요 속성들
 
@@ -171,3 +169,11 @@ text-align: left | right | center
 ```
 verticla-align: top | bottom | middle
 ```
+
+
+
+## 참고
+
+- [Do it! HTML5+CSS3 웹 표준의 정석](https://book.naver.com/bookdb/book_detail.nhn?bid=15975063)
+- [MDN web docs](https://developer.mozilla.org/ko/)
+

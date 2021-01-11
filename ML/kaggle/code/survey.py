@@ -274,4 +274,3 @@ group_labels = top_uni.index
 fig = fig_fact.create_distplot(top_uni_dist, group_labels, show_hist=False)
 py.iplot(fig, filename='University Importance by Age')
 plt.show()
->>>>>>> ml
