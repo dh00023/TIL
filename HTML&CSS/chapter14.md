@@ -166,7 +166,7 @@ video{
 화면 너비에 따라 조건을 추가해서 작성할 수 있다.
 
 ```xml
-<link rel="styleshhe" media="screen and (max-width:768px)" href="css/tablet.css">
+<link rel="stylesheet" media="screen and (max-width:768px)" href="css/tablet.css">
 ```
 
 - `@import`구문 사용하기
