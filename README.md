@@ -27,6 +27,8 @@
 	* [정규표현식](Java/문법/regexp.md)
 	* [GUI](Java/문법/GUI.md)
 	* [UML](Java/문법/UML.md)
+* [Effective Java 3/E](JAVA/effective_java/README.md)
+	* [Static Factory Method(정적 메소드)](JAVA/effective_java/2021-01-12-static-factory-methods.md)
 * [객체지향 설계 원칙(SOLID)](Java/2020-03-21-SOLID.md)
 * [Design Pattern](Java/design_pattern/README.md)
 	* [Strategy Pattern](Java/design_pattern/2020-03-21-strategy_pattern.md)
