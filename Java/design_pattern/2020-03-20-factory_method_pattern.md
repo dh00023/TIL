@@ -120,6 +120,7 @@ public abstract class UserDao {
 	}
 
 	abstract protected Connection getConnection() throws ClassNotFoundException, SQLException ;
+
 }
 ```
 
