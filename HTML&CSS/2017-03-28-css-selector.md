@@ -1,8 +1,6 @@
-# HTML5 + CSS3 웹 표준의 정석
+# 다재다능한 CSS3 선택자
 
-## Chapter12. 다재다능한 CSS3 선택자
-
-### 연결 선택자(combination selector)
+## 연결 선택자(combination selector)
 
 - 하위선택자(descendant selector) : 지정한 모든 하위 요소에 스타일 적용하기
 
@@ -32,7 +30,7 @@ h1 + p { text-decoration: underline; }
 
 모든 형제 요소에 적용된다. `~`로 표시
 
-### 속성 선택자
+## 속성 선택자
 
 - [속성] 선택자 : 지정한 속성에 스타일 적용하기
 
@@ -110,7 +108,7 @@ a[href *="w3"]{
 <a href="http://www.w3c.org/TR/css3-mediaqueries">미디어쿼리</a>
 ```
 
-### 가상 클래스(:)와 가상 요소(::)
+## 가상 클래스(:)와 가상 요소(::)
 
 - 사용자 동작에 반응하는 가상 클래스
 

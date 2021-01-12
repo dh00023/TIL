@@ -1,19 +1,17 @@
-# HTML5 + CSS3 웹 표준의 정석
+# 반응형 웹이란?
 
-## Chapter14. 반응형 웹이란?
-
-### 모바일 기기와 웹 디자인
+## 모바일 기기와 웹 디자인
 
 **반응형 웹 디자인**은 화면 요소들을 화면 크기에 맞게 재배치하고 각 요소의 표시 방법만 바꾸어 사이트를 구현해준다.
 
-#### 장점
+### 장점
 
 1. 사이트 하나만 만들면 데스크톱 PC , 모바일 모두 사용할 수 있다.
 2. 모든 스마트 기기에서 접속 가능하다
 3. 가로 모드에 맞춰 레이아웃 변경 가능하다
 4. 사이트 유지, 관ㄹ리가 용이하다.
 
-#### 뷰포트(viewport)
+### 뷰포트(viewport)
 
 PC와 모바일 화면의 픽셀 표현 방법이 다른데 뷰포트를 지정하면, 기기 화면에 맞춰 확대하거나 축소 할 수 있다. **뷰포트**는 실제 내용이 표시되는 영역이다.
 
@@ -46,7 +44,7 @@ PC와 모바일 화면의 픽셀 표현 방법이 다른데 뷰포트를 지정�
 
 주로 960px의 12칼럼 그리드를 사용한다.
 
-![](http://dtechviews.com/wp-content/uploads/2015/05/Slide3.jpg)
+![https://documents.sessions.edu/eforms/courseware/coursegraphics/dreamweaverii_images/cs6/fg-5.gif](./assets/fg-5.gif)
 
 사이트의 레이아웃을 백분율로 지정하는 것을 **가변 그리드 레이아웃**이라고 한다.
 
@@ -58,47 +56,7 @@ PC와 모바일 화면의 픽셀 표현 방법이 다른데 뷰포트를 지정�
 
 `rem`은 처음부터 기본 크기를 지정하기 때문에 중간에 기본 값이 바뀌지 않는다.
 
-#### 가변 이미지
-
-- CSS 이용하기
-
-```css
-img{
-	max-width: 100%;
-    height: auto;
-}
-```
-
-`max-width`를 100%로 지정하면 된다.
-
-- `<img>`태그와 `srcset`속성
-
-```xml
-<img src="<이미지>" srcset="<이미지1>[, <이미지2>,<이미지3>, ...]">
-```
-```xml
-<img src="imgaes/pencil.jpg" srcset="images/pencil-hd.jpg 2x" alt="색연필 제품 이미지">
-```
-
-- `<picture>`, `<source>` : 상황별 다른 이미지 표시하기
-
-`<picture>` 태그와 `<source>`태그를 함께 사용해 화면 해상도뿐만 아니라 화면 너비에 따라 다른 이미지를 표시할 수 있다.
-
-| 속성 | 설명 |
-|--------|--------|
-|srcset|이미지 파일 경로|
-|media|secset에 지정한 이미지를 표시하기 위한 조건|
-|type|파일 유형|
-|sizes|파일의 크기|
-
-```xml
-<picture>
-	<source srcset="images/shop-large.jpg" media="(min-width:1024px)">
-	<source srcset="images/shop-medium.jpg" media="(min-width:768px)">
-	<source srcset="images/shop-small.jpg" media="(min-width:320px)">
-	<img src="images/shop.jpg" alt="fill with coffee" style="width:100%;">
-</picture>
-```
+#### [가변 이미지](./2017-03-27-html-multimedia.md#responsiveImg)
 
 #### 가변 비디오
 
@@ -302,7 +260,7 @@ justify-content: flex-start | flex-end | center | space-between | space-around
 align-items : stretch | flex-start | flex-end | center | baseline
 ```
 
-![](https://i-msdn.sec.s-msft.com/dynimg/IC681580.png)
+![https://static.bocoup.com/blog/flex-align.svg](./assets/flex-align.svg)
 
 ```
 align-self: auto | stretch | flex-start | flex-end | center | baseline
@@ -324,3 +282,7 @@ align-self: auto | stretch | flex-start | flex-end | center | baseline
 align-content: flex-start | flex-end | center | space-between | space-around
 ```
 ![](http://frontender.info/a-guide-to-flexbox/img/align-content.png)
+
+## 참고
+
+- [Do it! HTML5+CSS3 웹 표준의 정석](https://book.naver.com/bookdb/book_detail.nhn?bid=15975063)

@@ -21,10 +21,6 @@ ex) 상품상세 페이지 개발시 safari, ie, chrome 모두 동작하도록 �
 
 [W3C Validator](https://validator.w3.org/#validate_by_upload)에서 기본적인 표준 여부를 판단할 수 있다.
 
-## 웹에서 사용하는 이미지
-
-- 
-
 ## 참고 
 
 - [HEROPY Tech - 입문자에게 추천하는 HTML, CSS 첫걸음](https://heropy.blog/2019/04/24/html-css-starter/)

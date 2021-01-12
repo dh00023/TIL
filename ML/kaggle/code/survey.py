@@ -174,9 +174,6 @@ figure.set_size_inches(12, 5)
 sns.countplot(x='TimeSpentStudying', data=full_time, hue='EmploymentStatus', ax=ax1).legend(loc='best', bbox_to_anchor=(1, 0.5))
 sns.countplot(x='TimeSpentStudying', data=looking_for_job, hue='EmploymentStatus', ax=ax2).legend(loc='best', bbox_to_anchor=(1, 0.5))
 
-<<<<<<< HEAD
-plt.show()
-=======
 
 # Q6. 블로그, 팟캐스트, 수업, 기타 등등 추천할만한 것이 있는지
 mcr['BlogsPodcastsNewslettersSelect'] = mcr['BlogsPodcastsNewslettersSelect'].astype('str').apply(lambda x: x.split(','))
