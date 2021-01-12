@@ -1,15 +1,13 @@
-# HTML5 + CSS3 웹 표준의 정석
+# CSS3와 애니메이션
 
-## Chapter13. CSS3와 애니메이션
+## 변형(transform)
 
-### 변형(transform)
-
-#### 2차원 변형과 3차원 변형
+### 2차원 변형과 3차원 변형
 
 2차원 변형(2D transform)은 웹 요소를 변형시킬 때 단순히 수평이나 수직으로 이동하고 회전하는 것.
 3차원 변형(3D transform)은 x축과 y축에 원근감을 주는 z축을 추가해 변형시키는 것을 말한다.
 
-#### transform과 변형 함수
+### transform과 변형 함수
 
 ```
 transform:변형함수;
@@ -19,7 +17,7 @@ transform:변형함수;
 .photh{ transform: translate(50px, 100px); }
 ```
 
-##### 2차원 변형 함수
+#### 2차원 변형 함수
 
 최신 브라우저에서는 모두 지원되지만 인터넷 익스플로러 9를 비롯한 이전 브라우저는 브라우저 접두사(`-webkit`-, `-moz-`, `-ms-`, `-o-`)를 붙여야한다.
 
@@ -36,7 +34,7 @@ transform:변형함수;
 |`skewX(ax)`|지정한 각도만큼 x축으로 왜곡|
 |`skewY(ay)`|지정한 각도만큼 y축으로 왜곡|
 
-##### 3차원 변형 함수
+#### 3차원 변형 함수
 
 최신 브라우저에서는 모두 지원되지만 인터넷 익스플로러 9를 비롯한 이전 브라우저는 브라우저 접두사(`-webkit`-, `-moz-`, `-ms-`, `-o-`)를 붙여야한다.
 
@@ -53,7 +51,7 @@ transform:변형함수;
 |`rotateZ(각도)`|지정한 각도만큼 z축으로 회전|
 |`perspective(길이)`|입체적으로 보일 수 있는 깊이 값을 지정|
 
-### 변형과 관련된 속성들
+## 변형과 관련된 속성들
 
 - `transform-origin` : 변형 기준점 설정
 
@@ -98,7 +96,7 @@ transform-style: flat | preserve-3d
 backface-visibility: visible | hidden
 ```
 
-### 트랜지션
+## 트랜지션
 
 **트랜지션**이란 웹 요소의 배경 색이 바뀌거나 도형의 테두리가 바뀌는ㄴ 것처럼 스타일 속성이 바뀌는 것을 말한다.
 
@@ -173,7 +171,7 @@ transform: rotateX(180deg);
 transform: scale(2) perspective(120px) rotateX(180deg);
 ```
 
-### 애니메이션
+## 애니메이션
 
 CSS3의 `animation`속성을 사용하면 자바스크립트나 플래시를 사용하지 않고도 웹 요소에 애니메이션을 추가할 수 있다.
 
