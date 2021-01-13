@@ -64,6 +64,7 @@
 ## [Java](Java)
 
 * [Basic](Java/문법/README.md)
+<<<<<<< HEAD
   * [변수와 타입](Java/문법/java-variable.md)
   * [연산자](Java/문법/java-operator.md)
   * [조건문과 반복문](Java/문법/java-conditionAndLoop.md)
@@ -89,6 +90,7 @@
   * [UML](Java/문법/UML.md)
 * [Effective Java 3/E](Java/effective_java/README.md)
   * [Static Factory Method(정적 메소드)](Java/effective_java/2021-01-12-static-factory-methods.md)
+  * [Builder Pattern](Java/effective_java/2021-01-13-builder-pattern.md)
 * [객체지향 설계 원칙(SOLID)](Java/2020-03-21-SOLID.md)
 * [Design Pattern](Java/design_pattern/README.md)
   * [Strategy Pattern](Java/design_pattern/2020-03-21-strategy_pattern.md)
