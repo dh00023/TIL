@@ -271,14 +271,42 @@
 ## 표를 만드는 태그
 
 * `<table>`, `<tr>`, `<td>`, `<th>` : 기본적인 표 만들기
-	* `<table> </table>` : 표 자리 만들기
-		* `border` 속성은 테두리 굵기
-		* `aria-describedby` 속성은 표에 대한 설명 제공하기
-	* `<tr> </tr>` : 행 만들기
-	* `<td> </td>` : 셀 만들기
-	* `<th> </th>` : 제목 셀
-		* `colspan`, `rowspan` 속성 : 행 또는 열 합치기(`<th>`,`<td>`)
-	* `<caption>`, `<figcaption>` : 표에 제목 붙이기 (주로 `<caption>`사용)
+  * `<table> </table>` : 표 자리 만들기
+  	
+  	* `border` 속성은 테두리 굵기
+  	* `aria-describedby` 속성은 표에 대한 설명 제공하기
+  	
+  * `<tr> </tr>` : **행** 만들기
+
+  * `<th> </th>` : 헤더(머리글 칸)
+
+    | 속성    | 의미                                           | 값                                                           |
+    | ------- | ---------------------------------------------- | ------------------------------------------------------------ |
+    | abbr    | 열에 대한 간단한 설명                          |                                                              |
+    | headers | 관련된 하나 이상의 다른 머리글 칸 `id` 속성 값 |                                                              |
+    | colspan | 확장(병합)하려는 열의 수                       | default : 1                                                  |
+    | rowspan | 확장(병합)하려는 행의 수                       | default : 1                                                  |
+    | scope   | 자신이 누구의 '헤더 칸'인지 명시               | `col` : 자신의 열<br>`colgroup` : 모든 열<br>`row` : 자신의 행<br>`rowgroup` : 모든 행<br>`auto` (defulat) |
+
+  * `<td> </td>` : **셀** 만들기
+    
+      * `headers`, `colspan`, `rowspan`
+
+```css
+/* 표를 만들기 위해 사용하는 것이므로, 아래 display는 별도로 수정해서 쓸 일이 없다.*/
+
+table { display: table; } /* block과 매우 유사 */
+tr { display: table-row; }
+th, td { display: table-cell; }
+```
+
+- `<caption>` :  표에 제목 설정
+  - `<table>` 태그 바로 다음에 작성해야함
+  - `<table>` 태그 당 하나의 `<caption>` 만 사용가능
+
+```css
+table { display: table-caption;}
+```
 
 ```erb
 <p id="summary">표에 대한 설명</p>
@@ -371,10 +399,31 @@
 </figure>
 
 
-* `<thead>`-제목, `<tbody>`-본문, `<tfoot>`-요약 : 표 구조 정의하기
+* `<thead>` - 머리글, `<tbody>`-본문, `<tfoot>`-바닥글: 표 구조 정의하기
+  * 기본적으로 테이블의 레이아웃에 영향을 주지 않는다.
+  ```css
+  thead { display: table-thead-group; }
+  tbody { display: table-tbody-group; }
+  tfoot { display: table-tfoot-group; }
+  ```
+
 * `<col>` : 한 열에 있는 모든 셀에 같은 스타일 적용(닫는 태그 없음)
+
 * `<colgroup>` : 여러 열을 묶어 스타일 적용 할 수 있다. **묶는 열의 개수**만큼 `<col>`태그를 넣으면된다.
-**`<colgroup>` 와 `<col>`는 `<caption>`태그 뒤 `<tr>`, `<td>`태그 이전에 사용해야한다.**
+  **`<colgroup>` 와 `<col>`는 `<caption>`태그 뒤 `<tr>`, `<td>`태그 이전에 사용해야한다.**
+
+  | 속성 | 의미            | 값         |
+  | ---- | --------------- | ---------- |
+  | span | 연결되는 열의수 | defualt(1) |
+
+  
+```css
+colgroup { display: table-column-group; }
+col { display: table-column; }
+```
+
+
+
 ```erb
 <table border="1">
 	<caption>colgroup연습</caption>
