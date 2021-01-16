@@ -84,6 +84,8 @@
 		* [Static Factory Method(정적 메소드)](Java/effective_java/2021-01-12-static-factory-methods.md)
 		* [Builder Pattern](Java/effective_java/2021-01-13-builder-pattern.md)
 		* [Singleton](Java/effective_java/2021-01-14-singleton.md)
+		* [Private Constructor](Java/effective_java/2021-01-16-private-constructor.md)
+		* [Dependency Injection](Java/effective_java/2021-01-16-dependency-injection.md)
 	* [객체지향 설계 원칙(SOLID)](Java/2020-03-21-SOLID.md)
 	* [디자인패턴](Java/design_pattern/README.md)
 		* [Strategy Pattern](Java/design_pattern/2020-03-21-strategy_pattern.md)
