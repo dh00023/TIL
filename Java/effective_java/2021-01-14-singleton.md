@@ -58,7 +58,7 @@ public class Elvis {
 
 ## Singleton Class 직렬화
 
-Singleton class를 직렬화하려면 단순히 `Serializable`을 구현하는 것만으로는 부족하다. 모든 인스턴스 필드를 `transient`(일시적) 약어를 선언하고 `readResolve` 메서드를 제공해야한다. ([item 89]()) 이렇게 하지 않으면, 역직렬화(deserialize)시 새로운 인스턴스가 생성디ㅗㄴ다.
+Singleton class를 직렬화하려면 단순히 `Serializable`을 구현하는 것만으로는 부족하다. 모든 인스턴스 필드를 `transient`(일시적) 약어를 선언하고 `readResolve` 메서드를 제공해야한다. ([item 89]()) 이렇게 하지 않으면, 역직렬화(deserialize)시 새로운 인스턴스가 생성된다.
 
 ```java
 public class Elvis implements Serializable{
