@@ -87,6 +87,7 @@
 	* [정규표현식](Java/문법/regexp.md)
 	* [GUI](Java/문법/GUI.md)
 	* [UML](Java/문법/UML.md)
+	* [Serializable](Java/문법/2021-01-18-Serializable.md)
 * [Effective Java 3/E](Java/effective_java/README.md)
 	* [Static Factory Method(정적 메소드)](Java/effective_java/2021-01-12-static-factory-methods.md)
 	* [Builder Pattern](Java/effective_java/2021-01-13-builder-pattern.md)
