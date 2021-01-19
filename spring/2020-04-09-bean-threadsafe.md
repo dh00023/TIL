@@ -23,9 +23,5 @@ JVM에서 각각의 **쓰레드는 자신의 stack 영역을 가지고 있지만
 - [AlwaysPr](https://alwayspr.tistory.com/11)
 - [https://groups.google.com/forum/#!topic/ksug/Z1bhFNJcw9Q](https://groups.google.com/forum/#!topic/ksug/Z1bhFNJcw9Q)
 
-4/14(화) 연차,
-
-4/13(월), 4/16(목), 4/17(금) 8:30 ~ 17:30 유연근무 신청합니다.
-
 
 
