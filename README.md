@@ -34,6 +34,8 @@
 	* [Singleton](Java/effective_java/2021-01-14-singleton.md)
 	* [Private Constructor](Java/effective_java/2021-01-16-private-constructor.md)
 	* [Dependency Injection](Java/effective_java/2021-01-16-dependency-injection.md)
+  * [Avoid Unnecessary Object](Java/effective_java/2021-01-22-avoid-unnecessary-object.md)
+  * [Eliminate Object Reference](Java/effective_java/2021-01-22-eliminate-object-reference.md)
 * [객체지향 설계 원칙(SOLID)](Java/2020-03-21-SOLID.md)
 * [Design Pattern](Java/design_pattern/README.md)
 	* [Strategy Pattern](Java/design_pattern/2020-03-21-strategy_pattern.md)
