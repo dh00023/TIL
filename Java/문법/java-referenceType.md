@@ -24,6 +24,37 @@
 
 JVM 스택 영역은 각 스레드마다 존재하며, 스레드가 시작될 때 할당된다.JVM 스택은 메소드를 호출할 때마다 Frame을 추가(push)하고, 메소드가 종료되면 해당 프레임을 제거(pop)하는 동작을 수행한다.
 
+## 참조 방식
+
+### 강한 참조(Strong Reference)
+
+가장 일반적인 참조 유형이다.
+
+```java
+Integer prime = 1;
+```
+primte 변수는 값이 1인 `Integer` 객체에 대한 강한 참조를 가진다. 강한 참조가 있는 객체는 GC 대상이 되지 않는다.
+
+### 부드러운 참조(Soft Reference)
+
+```java
+Integer prime = 1;
+SoftReference<Integer> sr = new SoftReference<Integer>(prime);
+```
+`SoftReference` 클래스를 이용하여 생성할 수 있다. 만약 prime객체의 상태가 `null`이 되어 더이상 Strong Reference는 없고 대상을 참조하는 객체가 `SoftReference`만 존재할 경우 GC대상이 된다. 
+`SoftReference`는 메모리가 부족하지 않으면 GC 대상으로 잡히지 않는다. 때문에 조금은 엄격하지 않은 Cache Library들에서 널리 사용되는 것으로 알려져있다.
+
+### 약한 참조(Weak Reference)
+
+```java
+Integer prime = 2;
+WeakReference<Integer> wr = new WeakReference<Integer>(prime);
+```
+
+약한 참조는 `WeakReference` 클래스를 이용해 생성이 가능하다. `SoftReference`와 동일하게 prime 객체의 상태가 `null`이 되어 해당 객체를 참조하는 객체가 `WeakReference` 뿐이라면 GC 대상이 된다.
+
+`WeakReference`가 `SoftReference`와 다른점은 `WeakReference`는 메모리가 부족하지 않더라도 GC대상이 되며, 다음 GC가 발생하는 시점에 무조건 없어진다.
+
 ## 참조 변수의 `==`,`!=`연산
 
 참조 변수에서 `==`,`!=` 연산은 동일한 객체를 참조하는지, 다른 객체를 참조하는지 알아볼 때 사용된다.
@@ -115,3 +146,7 @@ public enum Week {MONDAY, TUESDAY, WEDNESDAY, THURSDAY, ...};
 Week today = Week.SUNDAY;
 Week reservationDay = null;
 ```
+
+## 참고
+
+- [http://blog.breakingthat.com/2018/08/26/java-collection-map-weakhashmap/](http://blog.breakingthat.com/2018/08/26/java-collection-map-weakhashmap/)
