@@ -108,7 +108,7 @@ public static Boolean valueOf(boolean b){
    - `Boolean.TRUE`는 이에 대한 대표적인 예로, 객체를 생성하지 않는다.
    - [Flyweight pattern]() : 데이터를 공유해 메모리를 절약하는 패턴으로 공통으로 사용되는 객체는 한번만 사용되고, pool에 의해서 관리, 사용된다.
    - [Instance-Controlled Class]() : 정적 펙토리 방식의 클래스는 언제 어느 인스턴스를 살아 있게 할지 통제할 수 있다.
-     - [Singleton]() / [noninstattiable]() 로 만들 수 있다.
+     - [Singleton](./2021-01-14-singleton.md) / [noninstattiable](./2021-01-16-private-constructor.md) 로 만들 수 있다.
 
 3. **리턴 타입의 하위 타입 객체를 반환할 수 있다.**
 
