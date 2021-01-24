@@ -1,5 +1,6 @@
 # SUMMARY
 
+<<<<<<< HEAD
 * [Git](git/README.md)
 	* [Basic](git/2019-01-09-git-basic.md)
 	* [Remote Repository](git/2019-01-09-git-remote.md)
@@ -10,8 +11,10 @@
 * DevOps
 	* [Monolithic vs MSA](./devops/2020-04-24-architecture.md)
 
-*  [Spring](spring/README.md)
-	* [Maven](spring/2020-03-16-maven.md)
+
+* [Spring](spring/README.md)
+	* [Build Tools](spring/2021-01-24-build-tools.md)
+		* [Maven](spring/2020-03-16-maven.md)
 	* [IoC](spring/2020-03-21-IoC.md)
 	* [Is Spring Bean Thread-Safe?](spring/2020-04-09-bean-threadsafe.md)
 	* [Spring Singleton](spring/2021-01-19-spring-singleton.md)
@@ -31,7 +34,10 @@
 	* [restTemplate](spring/2020-03-12-restTemplate.md)
 	* Spring Boot
 		* [Spring Batch](spring/2020-03-23-batch.md)
-	  * [Spring test](spring/2020-04-12-test.md)
+			* [Batch 시작해보기](spring/2021-01-24-batch-start.md)
+			* [배치 메타테이블 알아보기](spring/2021-01-24-batch-metatable.md)
+		* [Spring test](spring/2020-04-12-test.md)
+			* [Spring Boot Test DB 분리](spring/2021-01-24-batch-test-db-setting.md)
 
 
 * [JSP](jsp/README.md)
