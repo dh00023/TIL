@@ -36,6 +36,8 @@
 		* [Dependency Injection](Java/effective_java/2021-01-16-dependency-injection.md)
 		* [Avoid Unnecessary Object](Java/effective_java/2021-01-22-avoid-unnecessary-object.md)
   	* [Eliminate Object Reference](Java/effective_java/2021-01-22-eliminate-object-reference.md)
+	  * [Avoid finalizer and cleaner](Java/effective_java/2021-01-25-avoid-finalizer-and-cleaner.md)
+	  * [try-with-resources](Java/effective_java/2021-01-25-try-with-resources.md)
 	* [객체지향 설계 원칙(SOLID)](Java/2020-03-21-SOLID.md)
 	* [디자인패턴](Java/design_pattern/README.md)
 		* [Strategy Pattern](Java/design_pattern/2020-03-21-strategy_pattern.md)
