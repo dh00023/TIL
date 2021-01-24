@@ -136,3 +136,6 @@ spring:
 
 Active profiles에 설정한 값이 `spring-profiles` 값이다. 다음과 같이 설정 후 실행해주면 mysql이 기본 DB로 실행되는 것을 볼 수 있다.
 
+## 참고
+
+- [기억보단 기록을-2.Spring Batch 가이드 - Batch Job 실행해보기](https://jojoldu.tistory.com/325?category=902551)

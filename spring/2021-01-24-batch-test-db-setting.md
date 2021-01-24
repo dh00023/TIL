@@ -46,3 +46,7 @@ public class InactvieUserJobTest {
 
 `@AutoConfigureTestDatabase(connection = EmbeddedDatabaseConnection.H2)` 설정시, 테스트용 클래스에서 사용할 데이터베이스를 적용되게 하는 Annotation이다.
 
+
+## 참고
+
+- [처음 배우는 스프링 부트2](https://www.hanbit.co.kr/store/books/look.php?p_code=B4458049183)
