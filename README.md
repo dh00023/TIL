@@ -26,6 +26,8 @@
 	* [Spring Batch](spring/2020-03-23-batch.md)
 		* [Batch 시작해보기](spring/2021-01-24-batch-start.md)
 		* [배치 메타테이블 알아보기](spring/2021-01-24-batch-metatable.md)
+		* [Batch Job Flow](spring/2021-01-31-batch-flow.md)
+		* [Batch Scope & Job Parameter](spring/2021-01-31-batch-scope.md)
 	* [Spring test](spring/2020-04-12-test.md)
 		* [Spring Boot Test DB 분리](spring/2021-01-24-batch-test-db-setting.md)
 
