@@ -136,6 +136,51 @@ spring:
 
 Active profiles에 설정한 값이 `spring-profiles` 값이다. 다음과 같이 설정 후 실행해주면 mysql이 기본 DB로 실행되는 것을 볼 수 있다.
 
+## 지정한 Batch Job만 실행하기
+
+```yaml
+spring:
+  profiles:
+    active: local
+    
+spring.batch.job.names: ${job.name:NONE}
+---
+
+```
+
+Spring Batch가 수행될 때, arguments로 `job.name`이 넘어오면 해당 값과 일치하는 Job만 수행시킬 수 있다.
+
+`${job.name:NONE}` 의 의미는 `job.name`이 있으면 `job.name`을 할당하고, 없으면 `NONE`을 할당하겠다는 의미이다. 여기서 `NONE`이 `spring.batch.job.names` 에 할당되면 어떠한 배치도 실행하지 않겠다는 의미이며, 혹시라도 값이 없는 경우에 모든 배치가 수행되지 않도록 막는 역할을 한다.
+
+![image-20210131194226674](./assets/image-20210131194226674.png)
+
+```
+--job.name=stepNextJob
+```
+
+위 program arguments를 추가하고 수행하면 해당 name의 Job만 실행 되는 것을 확인할 수 있다.
+
+```
+Job: [SimpleJob: [name=stepNextJob]] launched with the following parameters: [{version=2}]
+2021-01-31 19:43:59.202  INFO 20321 --- [           main] o.s.batch.core.job.SimpleStepHandler     : Executing step: [step1]
+2021-01-31 19:43:59.221  INFO 20321 --- [           main] s.b.p.jobs.StepNextJobConfiguration      : >>> this is step1
+2021-01-31 19:43:59.237  INFO 20321 --- [           main] o.s.batch.core.step.AbstractStep         : Step: [step1] executed in 33ms
+2021-01-31 19:43:59.303  INFO 20321 --- [           main] o.s.batch.core.job.SimpleStepHandler     : Executing step: [step2]
+2021-01-31 19:43:59.315  INFO 20321 --- [           main] s.b.p.jobs.StepNextJobConfiguration      : >>> this is step2
+2021-01-31 19:43:59.323  INFO 20321 --- [           main] o.s.batch.core.step.AbstractStep         : Step: [step2] executed in 19ms
+2021-01-31 19:43:59.353  INFO 20321 --- [           main] o.s.batch.core.job.SimpleStepHandler     : Executing step: [step3]
+2021-01-31 19:43:59.372  INFO 20321 --- [           main] s.b.p.jobs.StepNextJobConfiguration      : >>> this is step3
+2021-01-31 19:43:59.385  INFO 20321 --- [           main] o.s.batch.core.step.AbstractStep         : Step: [step3] executed in 32ms
+2021-01-31 19:43:59.402  INFO 20321 --- [           main] o.s.b.c.l.support.SimpleJobLauncher      : Job: [SimpleJob: [name=stepNextJob]] completed with the following parameters: [{version=2}] and the following status: [COMPLETED] in 258ms
+```
+
+```bash
+$ java -jar batch-application.jar --job.name=simpleJob
+```
+
+실제 운영 환경에서는 위와 같이 수행하면된다.
+
 ## 참고
 
 - [기억보단 기록을-2.Spring Batch 가이드 - Batch Job 실행해보기](https://jojoldu.tistory.com/325?category=902551)
+- [기억보단 기록을 - 4. Spring Batch 가이드 - Spring Batch Job Flow](https://jojoldu.tistory.com/328?category=902551)
