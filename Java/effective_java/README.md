@@ -14,4 +14,6 @@
 * [Dependency Injection](./2021-01-16-dependency-injection.md)
 * [Avoid Unnecessary Object](./2021-01-22-avoid-unnecessary-object.md)
 * [Eliminate Object Reference](./2021-01-22-eliminate-object-reference.md)
-
+* [Avoid finalizer and cleaner](./2021-01-25-avoid-finalizer-and-cleaner.md)
+* [try-with-resources](./2021-01-25-try-with-resources.md)
+* [The gerneral contract when overriding equlas](./2021-02-01-overriding-equals.md)
