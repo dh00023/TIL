@@ -17,3 +17,4 @@
 * [Avoid finalizer and cleaner](./2021-01-25-avoid-finalizer-and-cleaner.md)
 * [try-with-resources](./2021-01-25-try-with-resources.md)
 * [The gerneral contract when overriding equlas](./2021-02-01-overriding-equals.md)
+* [Overriding hashCode](./2021-02-02-overriding-hashCode.md)

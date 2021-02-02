@@ -30,6 +30,7 @@
 	* [Serializable](Java/문법/2021-01-18-Serializable.md)
 * Advanced
 	* [OutOfMemoryError](Java/심화/2021-01-23-outOfMemoryError.md)
+	* [AutoValue](Java/심화/2020-02-02-autoValue.md)
 * [Effective Java 3/E](Java/effective_java/README.md)
 	* [Static Factory Method(정적 메소드)](Java/effective_java/2021-01-12-static-factory-methods.md)
 	* [Builder Pattern](Java/effective_java/2021-01-13-builder-pattern.md)
@@ -41,6 +42,7 @@
   * [Avoid finalizer and cleaner](Java/effective_java/2021-01-25-avoid-finalizer-and-cleaner.md)
   * [try-with-resources](Java/effective_java/2021-01-25-try-with-resources.md)
   * [The gerneral contract when overriding equlas](Java/effective_java/2021-02-01-overriding-equals.md)
+  * [overriding hashCode](Java/effective_java/2021-02-02-overriding-hashCode.md)
 * [객체지향 설계 원칙(SOLID)](Java/2020-03-21-SOLID.md)
 * [Design Pattern](Java/design_pattern/README.md)
 	* [Strategy Pattern](Java/design_pattern/2020-03-21-strategy_pattern.md)
