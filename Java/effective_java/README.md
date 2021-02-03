@@ -18,3 +18,5 @@
 * [try-with-resources](./2021-01-25-try-with-resources.md)
 * [The gerneral contract when overriding equlas](./2021-02-01-overriding-equals.md)
 * [Overriding hashCode](./2021-02-02-overriding-hashCode.md)
+* [overriding toString](./2021-02-02-overriding-toString.md)
+* [overriding clone judiciously](./2021-02-03-overriding-clone-judiciously.md)
