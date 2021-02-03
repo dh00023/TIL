@@ -41,6 +41,8 @@
 	  * [try-with-resources](Java/effective_java/2021-01-25-try-with-resources.md)
   	* [The gerneral contract when overriding equlas](Java/effective_java/2021-02-01-overriding-equals.md)
   	* [overriding hashCode](Java/effective_java/2021-02-02-overriding-hashCode.md)
+	  * [overriding toString](Java/effective_java/2021-02-02-overriding-toString.md)
+	  * [overriding clone judiciously](Java/effective_java/2021-02-03-overriding-clone-judiciously.md)
 	* [객체지향 설계 원칙(SOLID)](Java/2020-03-21-SOLID.md)
 	* [디자인패턴](Java/design_pattern/README.md)
 		* [Strategy Pattern](Java/design_pattern/2020-03-21-strategy_pattern.md)
