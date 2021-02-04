@@ -112,6 +112,7 @@
   * [overriding hashCode](Java/effective_java/2021-02-02-overriding-hashCode.md)
   * [overriding toString](Java/effective_java/2021-02-02-overriding-toString.md)
   * [overriding clone judiciously](Java/effective_java/2021-02-03-overriding-clone-judiciously.md)
+  * [Consider implementing comparable](Java/effective_java//2021-02-04-comparable.md)
 * [객체지향 설계 원칙(SOLID)](Java/2020-03-21-SOLID.md)
 * [Design Pattern](Java/design_pattern/README.md)
   * [Strategy Pattern](Java/design_pattern/2020-03-21-strategy_pattern.md)

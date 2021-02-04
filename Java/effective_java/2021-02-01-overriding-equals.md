@@ -262,6 +262,7 @@ public class Timestamp extends java.util.Date {
 - `Object` 외의 타입을 매겨변수로 받는 equals는 선언하지 말자.
 
 
+
 [AutoValue 프레임워크](https://github.com/google/auto/tree/master/value)를 사용하면 `equals`와 `hashCode`를 작성해준다. ([AutoValue 예제 보기](../심화/2020-02-02-autoValue.md))
 
 ### @AutoValue
