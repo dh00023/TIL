@@ -20,3 +20,4 @@
 * [Overriding hashCode](./2021-02-02-overriding-hashCode.md)
 * [overriding toString](./2021-02-02-overriding-toString.md)
 * [overriding clone judiciously](./2021-02-03-overriding-clone-judiciously.md)
+* [Consider implementing comparable](./2021-02-04-comparable.md)
