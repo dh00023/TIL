@@ -26,5 +26,7 @@
 			* [배치 메타테이블 알아보기](spring/2021-01-24-batch-metatable.md)
 			* [Batch Job Flow](spring/2021-01-31-batch-flow.md)
 			* [Batch Scope & Job Parameter](spring/2021-01-31-batch-scope.md)
+			* [Chunk 지향 프로그래밍](spring/2021-02-09-batch-chunk.md)
+			* [ItemReader](spring/2021-02-09-batch-itemReader.md)
 		* [Spring test](spring/2020-04-12-test.md)
 			* [Spring Boot Test DB 분리](spring/2021-01-24-batch-test-db-setting.md)
