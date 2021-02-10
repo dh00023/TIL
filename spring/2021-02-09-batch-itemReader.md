@@ -47,7 +47,7 @@ public interface ItemStream {
 
 ### CursorItemReader
 
-CursorItemReader는 streaming으로 데이터를 처리한다. 대표적인 CursorItemReader중 하나인 JdbcCursorItemReader를 살펴볼 것이다.
+CursorItemReader는 streaming으로 데이터를 처리한다. 대표적인 CursorItemReader중 하나인 `JdbcCursorItemReader`와 Spring Batch v4.3.0  이후에 도입된 `JpaCursorItemReader`를 살펴볼 것이다.
 
 #### JdbcCursorItemReader
 
@@ -105,6 +105,57 @@ public class JdbcCursorItemReaderJobConfiguration {
 - rowMapper : 쿼리 결과를 인스턴스로 매핑하기 위한 매퍼
 - sql : Reader에서 사용할 쿼리문
 - name : Reader의 이름, ExecutionContext에 저장되어질 이름
+
+```java
+@Slf4j
+@Configuration
+@RequiredArgsConstructor
+public class JpaCursorItemReaderJobConfiguration {
+
+    private final JobBuilderFactory jobBuilderFactory;
+    private final StepBuilderFactory stepBuilderFactory;
+    private final EntityManagerFactory entityManagerFactory;
+
+    private static final int CHUNK_SIZE = 10;
+
+
+    @Bean
+    public Job jpaCursorItemReaderJob() throws Exception {
+        return jobBuilderFactory.get("jpaCursorItemReaderJob")
+                .start(jpaCursorItemReaderStep())
+                .build();
+    }
+
+    @Bean
+    public Step jpaCursorItemReaderStep() throws Exception {
+        return stepBuilderFactory.get("jpaCursorItemReaderStep")
+                .<Pay, Pay>chunk(CHUNK_SIZE)
+                .reader(jpaCursorItemReader())
+                .writer(jpaCursorItemWriter())
+                .build();
+    }
+
+    @Bean
+    public JpaCursorItemReader<Pay> jpaCursorItemReader() throws Exception{
+        return new JpaCursorItemReaderBuilder<Pay>()
+                .name("jpaCursorItemReader")
+                .entityManagerFactory(entityManagerFactory)
+                .queryString("SELECT p FROM Pay p")
+                .build();
+    }
+
+    private ItemWriter<Pay> jpaCursorItemWriter() {
+        return list -> {
+            for (Pay pay: list) {
+                log.info("Current Pay={}", pay);
+            }
+        };
+    }
+
+}
+```
+
+
 
 Cursor는 하나의 Connection으로 Batch가 끝날때가지 사용되기 때문에 Batch가 끝나기전에 DB와 어플리케이션 Connection이 끊어질 수 있으므로, DB와  SocketTimeout을 충분히 큰 값으로 설정해야한다.
 

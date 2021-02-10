@@ -21,6 +21,8 @@
 	* [Cache](spring/2020-04-09-cache.md)
 	* [restTemplate](spring/2020-03-12-restTemplate.md)
 	* Spring Boot
+		* [다중 데이터베이스 설정](spring/2021-02-10-boot-multi-data-source.md)
+		* [Mybatis 연동하기](spring/2021-02-10-boot-mybatis.md)
 		* [Spring Batch](spring/2020-03-23-batch.md)
 			* [Batch 시작해보기](spring/2021-01-24-batch-start.md)
 			* [배치 메타테이블 알아보기](spring/2021-01-24-batch-metatable.md)
@@ -28,5 +30,6 @@
 			* [Batch Scope & Job Parameter](spring/2021-01-31-batch-scope.md)
 			* [Chunk 지향 프로그래밍](spring/2021-02-09-batch-chunk.md)
 			* [ItemReader](spring/2021-02-09-batch-itemReader.md)
+			* [ItemWriter](spring/2021-02-10-batch-itemWriter.md)
 		* [Spring test](spring/2020-04-12-test.md)
 			* [Spring Boot Test DB 분리](spring/2021-01-24-batch-test-db-setting.md)
