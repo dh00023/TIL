@@ -31,5 +31,7 @@
 			* [Chunk 지향 프로그래밍](spring/2021-02-09-batch-chunk.md)
 			* [ItemReader](spring/2021-02-09-batch-itemReader.md)
 			* [ItemWriter](spring/2021-02-10-batch-itemWriter.md)
+			* [ItemProcessor](spring/2021-02-11-batch-itemProcessor.md)
 		* [Spring test](spring/2020-04-12-test.md)
 			* [Spring Boot Test DB 분리](spring/2021-01-24-batch-test-db-setting.md)
+			* [Spring Batch Test](spring/2021-02-11-batch-test.md)
