@@ -21,3 +21,6 @@
 * [overriding toString](./2021-02-02-overriding-toString.md)
 * [overriding clone judiciously](./2021-02-03-overriding-clone-judiciously.md)
 * [Consider implementing comparable](./2021-02-04-comparable.md)
+* [클래스와 멤버의 접근을 최소화해라](./2021-02-11-minimize-class-and-memeber.md)
+* [Use Accessor methods](./2021-02-11-use-accessor-method.md)
+* [변경 가능성을 최소화해라(불변 클래스)](./2021-02-11-minimize-mutability.md)
