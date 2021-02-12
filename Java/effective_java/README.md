@@ -24,3 +24,4 @@
 * [클래스와 멤버의 접근을 최소화해라](./2021-02-11-minimize-class-and-memeber.md)
 * [Use Accessor methods](./2021-02-11-use-accessor-method.md)
 * [변경 가능성을 최소화해라(불변 클래스)](./2021-02-11-minimize-mutability.md)
+* [상속보단 컴포지션을 사용해라](./2021-02-12-use-composition.md
