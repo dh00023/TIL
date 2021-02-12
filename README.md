@@ -123,6 +123,7 @@
   * [클래스와 멤버의 접근을 최소화해라](Java/effective_java/2021-02-11-minimize-class-and-memeber.md)
   * [Use Accessor methods](Java/effective_java/2021-02-11-use-accessor-method.md)
   * [변경 가능성을 최소화해라(불변 클래스)](Java/effective_java/2021-02-11-minimize-mutability.md)
+  * [상속보단 컴포지션을 사용해라](Java/effective_java/2021-02-12-use-composition.md)
 * [객체지향 설계 원칙(SOLID)](Java/2020-03-21-SOLID.md)
 * [Design Pattern](Java/design_pattern/README.md)
   * [Strategy Pattern](Java/design_pattern/2020-03-21-strategy_pattern.md)
