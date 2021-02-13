@@ -52,6 +52,8 @@
   * [상속보단 컴포지션을 사용해라](Java/effective_java/2021-02-12-use-composition.md)
   * [상속을 고려해 설계하고 문서화해라](Java/effective_java/2021-02-13-design-inheirtance.md)
   * [추상 클래스보다 인터페이스를 우선하라](Java/effective_java/2021-02-13-prefer-interface.md)
+  * [인터페이스는 구현하는 쪽을 생각해 설계해라.](Java/effective_java/2021-02-13-design-interface-for-posterity.md)
+	* [인터페이스는 타입을 정의하는 용도로만 사용해라](Java/effective_java/2021-02-13-use-interface-to-define-type.md)
 * [객체지향 설계 원칙(SOLID)](Java/2020-03-21-SOLID.md)
 * [Design Pattern](Java/design_pattern/README.md)
 	* [Strategy Pattern](Java/design_pattern/2020-03-21-strategy_pattern.md)
