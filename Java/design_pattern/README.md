@@ -10,3 +10,4 @@
 * [Singleton Pattern](./singleton_pattern.md)
 * [Delegation Pattern](./delegation_pattern.md)
 * [Proxy Pattern](./proxy_pattern.md)
+* [Adapter Pattern](./2021-02-14-adapter-pattern.md)
