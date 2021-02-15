@@ -31,7 +31,8 @@
 	* [Model Mapping](spring/2020-04-12-modelMapper.md)
 	* [Cache](spring/2020-04-09-cache.md)
 	* [restTemplate](spring/2020-03-12-restTemplate.md)
-	* Spring Boot
+	* [YAML 파일 설정](spring/2021-02-15-yaml.md)
+	* [Spring Boot](spring/2021-02-15-spring-boot.md)
 		* [다중 데이터베이스 설정](spring/2021-02-10-boot-multi-data-source.md)
 		* [Mybatis 연동하기](spring/2021-02-10-boot-mybatis.md)
 		* [Spring Batch](spring/2020-03-23-batch.md)
