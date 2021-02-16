@@ -2,7 +2,6 @@
 
 ## [Git](git)
 
-<<<<<<< HEAD
 * [Basic](git/2019-01-09-git-basic.md)
 * [Remote Repository](git/2019-01-09-git-remote.md)
 * [Log & Diff](git/2019-01-09-git-log.md)
@@ -36,6 +35,7 @@
 * [restTemplate](spring/2020-03-12-restTemplate.md)
 * [YAML 파일 설정](spring/2021-02-15-yaml.md)
 * [Spring Boot](spring/2021-02-15-spring-boot.md)
+	* [H2 DB 설정](spring/2021-02-16-boot-h2.md)
 	* [다중 데이터베이스 설정](spring/2021-02-10-boot-multi-data-source.md)
 	* [Mybatis 연동하기](spring/2021-02-10-boot-mybatis.md)
 	* [Spring Batch](spring/2020-03-23-batch.md)
