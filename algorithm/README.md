@@ -134,6 +134,16 @@ void main(){
 }
 ```
 
+```python
+import time
+start_time = time.time() # 시간측정 시작
+
+# program code
+
+end_time = time.time() #시간측정 종료
+print("time : ", end_time - start_time) # 수행시간 출력
+```
+
 수행시간을 측정하는 전형적인 프로그램이다. 하지만 소프트웨어 환경에 따른 실행속도의 차이와 데이터에 따른 전혀 다른 결과 등등의 문제점도 있다.
 
 
@@ -254,3 +264,9 @@ typedef struct ListNode{
   struct ListNode *link;
 } ListNode;
 ```
+
+## 알고리즘 문제 풀이 사이트
+
+- [https://codeup.kr/](https://codeup.kr/) : 난이도가 낮은 기본문제 풀이
+- [https://programmers.co.kr/](https://programmers.co.kr/)
+
