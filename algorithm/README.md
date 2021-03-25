@@ -22,6 +22,7 @@
   - 핵심적인 것에 집중하기(추상화)
   - 중요정보부터 강조하기(정보은닉)
 
+
 ### 추상 데이터 타입(ADT : Abstract Data Type)
 
 자료와 연산자의 특성을 **논리적으로 추상화**하여 정의한 자료형
@@ -86,6 +87,7 @@ void A(int S, int n){
 
 
 
+
 ### 계산 문제
 
 수학적으로 계산 가능하며, 컴퓨터를 이용해 풀 수 있는 모든 문제들을 의미한다.
@@ -132,6 +134,16 @@ void main(){
     end = clock();
     duration = (double)(start - end) / CLOCKS_PER_SEC;
 }
+```
+
+```python
+import time
+start_time = time.time() # 시간측정 시작
+
+# program code
+
+end_time = time.time() #시간측정 종료
+print("time : ", end_time - start_time) # 수행시간 출력
 ```
 
 수행시간을 측정하는 전형적인 프로그램이다. 하지만 소프트웨어 환경에 따른 실행속도의 차이와 데이터에 따른 전혀 다른 결과 등등의 문제점도 있다.
@@ -254,3 +266,8 @@ typedef struct ListNode{
   struct ListNode *link;
 } ListNode;
 ```
+
+## 알고리즘 문제 풀이 사이트
+
+- [https://codeup.kr/](https://codeup.kr/) : 난이도가 낮은 기본문제 풀이
+- [https://programmers.co.kr/](https://programmers.co.kr/)
