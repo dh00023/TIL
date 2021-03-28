@@ -23,32 +23,15 @@ n, k = map(int, input().split())
 cnt = 0
 
 
-while(True):
+while(n>=k):
     if n==1:
         break
     if n%k > 0:
-        n-=1
-        cnt+=1
+        cnt += n%k
+        n -= n%k
     else:
         n //= k
         cnt += 1
 
-print(cnt)
-
-# n이 100억이상의 큰 수가 되는 경우
-
-n, k = map(int, input().split())
-cnt = 0
-
-
-while(True):
-    if n==1:
-        break
-    if n%k > 0:
-        n-=1
-        cnt+=1
-    else:
-        n //= k
-        cnt += 1
-
+cnt += n-1
 print(cnt)

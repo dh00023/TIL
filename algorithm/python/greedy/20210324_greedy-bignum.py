@@ -29,8 +29,7 @@ data.sort()
 first = data[n-1]
 second = data[n-2]
 
-# 내가 작성한 풀이 방법 
-# 예시로 주어진 경우 외의 딱 떨어지지 않는 경우 고려 못 함
+# 내가 작성한 풀이 방법
 # result = 0
 # result += first * k * (m//k) # int(m/k)와 m//k 동일
 # result += second * (m%k)
@@ -41,6 +40,6 @@ cnt += m % (k+1)
 
 result = 0
 result += first * cnt
-result += second * (m-cnt) 
+result += second * (m-cnt)
 
 print(result)
