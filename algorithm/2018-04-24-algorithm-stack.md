@@ -147,7 +147,16 @@ int main() {
 }
 ```
 
+```python
+# 파이썬에서는 스택을 이용할 때 별도의 라이브러리를 사용할 필요 없음.
+# 기본 리스트에서 append(), pop() 메서드를 이용하면 스택과 동일하게 동작
 
+stack = []
+
+stack.append(1)
+stack.appned(5)
+stack.pop()
+```
 
 ### 연결 리스트
 
