@@ -426,3 +426,15 @@ int main(){
 }
 ```
 
+
+```python
+from collections import deque
+
+# python에서 depue라이브러리 사용해 Queue 구현 가능
+queue = deque()
+
+queue.append(5)
+queue.append(3)
+queue.popleft()
+```
+파이썬으로 큐를 구현할 때는 `collections` 모듈에서 제공하는 deque자료구조를 활용하는 것이 좋다. 데이터를 넣고 빼는 속도가 리스트 자료형에 비해 효율적이며, queue라이브러리를 이용하는 것보다 더 간단하다.
