@@ -7,13 +7,13 @@
 
 ### 선택정렬(selection sort)
 
+**가장 작은 데이터를 선택**해 맨 앞에 있는 데이터와 바꾸고, 그 다음 작은 데이터를 선택해 앞에서 두 번째 데이터와 바꾸는 과정을 반복하는 방법
+
 ![](https://www.safaribooksonline.com/library/view/learning-functional-data/9781785888731/graphics/image_13_007-1.jpg)
 
 1. 주어진 리스트 중에 최솟값을 찾는다.
 2. 그 값을 맨 앞에 위치한 값과 교체한다(패스(pass)).
 3. 맨 처음 위치를 뺀 나머지 리스트를 같은 방법으로 교체한다.
-
-비교하는 것이 상수 시간에 이루어진다는 가정 아래, n개의 주어진 리스트를 이와 같은 방법으로 정렬하는 데에는 O(n^2) 만큼의 시간이 걸린다.
 
 ```c
 void selection_sort(int list[], int n){
@@ -31,13 +31,31 @@ void selection_sort(int list[], int n){
 }
 ```
 
+```python
+array = [7,5,9,0,3,1,6,2,4,8]
+
+
+
+for i in range(0,len(array)-1):
+    min = i;
+    for j in range(i+1,len(array)):
+        if array[j] < array[min]:
+            min = j;
+
+    array[i], array[min] = array[min], array[i];
+    print(array)
+
+```
+
+비교하는 것이 상수 시간에 이루어진다는 가정 아래, n개의 주어진 리스트를 이와 같은 방법으로 정렬하는 데에는 **O(n^2) 만큼의 시간**이 걸린다. 이는 정렬해야하는 데이터 개수가 100배 늘어나면 이론적으로 수행시간은 10,000배 늘어나는 것이다.
+
 ### 삽입정렬(insertion sort)
 
- 자료 배열의 모든 요소를 앞에서부터 차례대로 이미 정렬된 배열 부분과 비교하여, 자신의 위치를 찾아 삽입함으로써 정렬을 완성하는 알고리즘이다.
+ 자료 배열의 **모든 요소를 앞에서부터 차례대로 이미 정렬된 배열 부분과 비교하여, 자신의 위치를 찾아 삽입함으로써 정렬을 완성하는 알고리즘**이다.
 
 ![](http://cfile25.uf.tistory.com/image/2569FD3854508BE8114B33)
 
-
+삽입 정렬은 필요할 때만 위치를 바꾸므로 데이터가 거의 정렬되어 있을 때 훨씬 효율적이다.
 
 ```c
 void insert_sort(int arr[],int n){
@@ -57,11 +75,24 @@ void insert_sort(int arr[],int n){
 }
 ```
 
+```python
+def insert_sort(array):
+    # print(array)
+    for i in range(1,len(array)):
+        for j in range(i,0,-1):
+            if array[j] < array[j-1]:
+                array[j], array[j-1] = array[j-1], array[j]
+            else:
+                break
+    # print(array)
+    return array
+```
+
 - 복잡도 
   - 최선의 경우(이미 정렬) : O(n)
   - 최악의 경우(역순으로 정렬된 경우) : O(n^2)
 
-
+보통 삽입 정렬이 퀵 정렬보다 비효율 적이나, 이미 정렬되어있는 경우에는 퀵정렬보다 더 강력하다. 따라서 거의 정렬되어 있는 상태라면, 삽입 정렬을 이용하는 것이 더 좋다.
 
 ### 버블정렬(bubble sort)
 
@@ -194,10 +225,64 @@ void radix_sort(int a[])
     }
 }
 ```
+```python
+
+def counting_sort(arr, digit):
+    n = len(arr)
+
+    # 배열의 크기에 맞는 output 배열을 생성하고 10개의 0을 가진 count란 배열을 생성한다.
+    output = [0] * n
+    count = [0] * 10
+
+    # 각 자리수에 맞게 count를 증가시켜준다.
+    for i in range(0, n):
+        index = int(arr[i] / digit)
+        count[(index) % 10] += 1
+
+    # count 배열에 앞의 수를 차례대로 더해 각 자릿수를 정해준다.
+    # ex) 123,134,151,121
+    # before : [ 0, 2, 0, 1, 1 ]
+    # after : [ 0, 2, 2, 3, 4 ]
+    for i in range(1, 10):
+        count[i] += count[i - 1]
+
+    # 각 자릿수 별로 output 배열에 차례대로 정렬한다.
+    # ex) 1의 자리 예제
+    # [ 0, 121, 0, 0]
+    # [ 151, 121, 0, 0]
+    # [ 151, 121, 0, 134]
+    # [ 151, 121, 123, 134]
+    i = n - 1
+    while i >= 0:
+        index = int(arr[i] / digit)
+        output[count[(index) % 10] - 1] = arr[i]
+        count[(index) % 10] -= 1
+        i -= 1
+
+    # arr에 output을 할당한다.
+    return output
+
+
+# Method to do Radix Sort
+def radix_sort(arr):
+    # arr 배열중에서 최대값을 가져와 자릿수를 파악한다.
+    # ex) 최대값이 9833 이면 1000까지
+    maximum = max(arr)
+    # 자릿수마다 countingSorting을 시작한다.
+    digit = 1
+    while int(maximum / digit) > 0:
+        arr = counting_sort(arr, digit)
+        digit *= 10
+
+    return arr
+
+```
+
 - 복잡도 : O(dn) d는 자릿수
 
-
 ### 퀵정렬(Quick sort)
+
+
 
 ![](http://cfile7.uf.tistory.com/image/271D2B3354545F7A135A7B)
 
@@ -258,7 +343,31 @@ bool comparep(POINT a, POINT b){
 std::sort(S,S+n,compare);
 ```
 
-- 복잡도 O(nlog(n))
+```python
+def quick_sort(array):
+
+    if len(array) <= 1:
+        return
+
+    pivot = array[0]
+    temp = array[1:]
+
+    left = [i for i in temp if i < pivot]
+    right = [i for i in temp if i > pivot]
+
+    return quick_sort(left) + [pivot] + quick_sort(right)
+```
+
+- 시간 복잡도
+  - 평균적 : O(nlog(n))
+  - 최악의 경우 : O(N^2)
+
+| 데이터 수 | N^2(선택정렬, 삽입 정렬) | NlogN(퀵 정렬) |
+| --------- | ------------------------ | -------------- |
+| 1,000     | 약 1,000,000             | 약 10,000      |
+| 1,000,000 | 약 1,000,000,000,000     | 약 20,000,000  |
+
+다만 퀵정렬은 평균적으로 시간복잡도가 O(NlogN)이지만 최악의 경우(이미 정렬되어 있는 경우) O(N^2)인 것을 주의해야한다.
 
 ### [힙](https://dh00023.github.io/algorithm/ds/2018/06/02/algorithm-heap/) 정렬(heap sort)
 
@@ -291,3 +400,41 @@ void heap_sort(int arr[], int n){
 
 - 복잡도
   - 힙 삭제 시간 O(logn)*n = **O(nlogn)**
+
+
+
+### 계수 정렬(Count Sort)
+
+계수 정렬은 **특정한 조건이 부합할 때만 사용할 수 있지만 매우 빠른 정렬 알고리즘**이다. 
+
+모든 데이터가 양의 정수인 상황을 가정해볼 것이다. 데이터의 개수가 N, 데이터 중 최대값이 K일 때, 계수 정렬은 최악의 경우에도 수행시간 O(N+K)를 보장한다.
+
+계수 정렬은 데이터의 크기 범위가 제한되어 정수 형태로 표현할 수 있을 때만 사용할 수 있다. 만약 데이터의 값이 무한한 범위를 가질 수 있는 실수형 데이터가 주어지는 경우에는 계수 정렬은 사용하기 어렵다. 일반적으로 가장 큰 데이터와 가장 작은 데이터의 차이가 1,000,000을 넘지 않을 때 효과적으로 사용할 수 있다. 
+
+![정렬 (12) - 계수 정렬 (Counting Sort)](https://blog.kakaocdn.net/dn/cxTgc0/btqBXFFlwbq/a9NU4KvqhkpO0VWUv8x1Mk/img.gif)
+
+계수 정렬은 위와 모든 범위를 담을 수 있는 크기의 리스트를 선언해야하기 때문에, 크기에 제한이 있다.
+
+```python
+def count_sort(array):
+    count = [0] * (max(array)+1)
+
+    for i in array:
+        count[i]+=1
+
+    for j in range(len(count)):
+        for x in range(count[j]):
+            print(j, end=' ')
+```
+
+- 시간 복잡도 : O(N+K),  최대값 크기 K, 데이터수 N
+
+### 파이썬 3.7 정렬 알고리즘 비교
+
+| 데이터 수(N) | 선택 정렬 | 퀵 정렬 | 기본 정렬 라이브러리 |
+| ------------ | --------- | ------- | -------------------- |
+| 100          | 0.0123    | 0.00156 | 0.00000753           |
+| 1000         | 0.354     | 0.00343 | 0.0000365            |
+| 10000        | 15.475    | 0.0312  | 0.000248             |
+
+선택 정렬은 기본 정렬 라이브러리를 포함해 다른 알고리즘과 비교했을 때 매우 비효율 적이지만, 특정한 리스트에서 가장 작은 데이터를 찾을때는 유용하게 사용된다.
