@@ -66,7 +66,7 @@
 
 ## Non-Binary Tree
 
-![]({{ "/assets/images/algo/non-binary.png" | absolute_url }})
+![non-binary tree search and insertion - Stack Overflow](https://i.stack.imgur.com/F5aFS.png)
 
 
 non-binary tree의 노드는 element, parent node, children의 리스트를 가지고 있는 연결 리스트 구조이다.
@@ -104,7 +104,7 @@ B				  B
 
 ### Binary Tree 종류
 
-![](https://www.packtpub.com/graphics/9781786463890/graphics/image_06_009.png)
+![](https://2.bp.blogspot.com/-iD61KYN8-CM/Wgz89po2SNI/AAAAAAAAJDI/xRplbDnsPToTNyBSTd1Da16ZoFLkg2UBwCLcBGAs/s1600/%25EC%259D%25B4%25EC%25A7%2584%25ED%258A%25B8%25EB%25A6%25AC_%25EB%25AA%25A8%25EC%259D%258C.PNG)
 
 #### Full Binary Tree (= Proper binary tree)
 
@@ -117,8 +117,6 @@ B				  B
 #### Perfect Binary Tree
 
 모든 내부 노드가 두 개의 자식 노드를 가지며 모든 잎 노드가 동일한 깊이 또는 레벨을 갖는다.
-
-![](https://www.tutorialride.com/images/data-structures/skewed-binary-tree.jpeg)
 
 #### Skewed Binary Tree
 
