@@ -12,7 +12,11 @@ BST는 다음과 같은 속성을 만족시키는 이진 트리이다.
 
 
 
-이진탐색트리를 inorder traversal 방식을 씁니다.  이렇게 하면 이진탐색트리 내에 있는 모든 값들을 정렬된 순서대로 읽을 수 있습니다. 
+이진탐색트리를 **inorder** traversal 방식을 쓰며, 이진탐색트리 내에 있는 모든 값들을 정렬된 순서대로 읽을 수 있다. 데이터가 정렬되어있지 않다면 사용할 수 없지만, 이미 정렬되어있는 경우 매우 빠르게 데이터를 찾을 수 있다.
+
+이진 탐색은 한 번 확인할 때마다 확인해야하는 원소의 개수가 절반씩 줄어든다는 점에서 시간 복잡도가 O(logN)이다.
+
+이진 탐색 문제는 탐색 범위가 큰 상황에서의 탐색을 가정하는 문제가 많으며, 탐색 범위가 2000만을 넘어가는 경우에는 이진 탐색으로 접근하는 것을 권장한다.
 
 ### 검색(search)
 
@@ -23,7 +27,10 @@ BST는 다음과 같은 속성을 만족시키는 이진 트리이다.
   - 불일치하고 검색하고자 하는 값이 루트노드의 값보다 작을 경우 왼쪽 서브트리에서 재귀적 검색
   - 불일치 하고 검색하고자 하는 값이 루트 노드의 값과 같거나 큰 경우 오른쪽 서브트리에서 재귀적 검색
 
+#### C++
+
 ```c
+// cpp 코드
 Node * search(Node * root, int key){
     if(root==NULL||root->key == key) return root;
     if(key<root->key)return search(root->left, key);
@@ -31,13 +38,44 @@ Node * search(Node * root, int key){
 }
 ```
 
+#### Python
+
+```python
+# 반복문으로 구현
+def binary_search_loop(array, tgt, start, end):
+    while start <= end:
+        mid = (start+end)//2
+        if array[mid] == tgt:
+            return mid
+        elif array[mid] < tgt:
+            end = mid - 1
+        else:
+            start = mid + 1
+        
+    return None``
+```
+
+```python
+def binary_search(array, tgt, start, end):
+    if start > end:
+        return None
+
+    mid = (start+end) // 2
+    if array[mid] == tgt:
+        return mid
+    elif array[mid] > tgt:
+        return binary_search(array,tgt,start,mid-1)
+    else:
+        return binary_search(array, tgt, start+1, end)
+```
+
 
 
 ### 삽입(insert)
 
-![](http://csegeek.com/csegeeks/view/tutorials/algorithms/trees/tree5.jpg)
 
 
+![Insertion in Binary Search Tree - javatpoint](https://static.javatpoint.com/ds/images/insertion-in-binary-search-tree.png)
 
 - 삽입을 하기 전에 검색을 수행한다.
 - 트리를 검색한 후 키와 일치하는 노드가 없으면 마지막 노드에서 키와 노드의 크기를 비교하여 왼쪽이나 오른쪽에 새로운 노드를 삽입한다.

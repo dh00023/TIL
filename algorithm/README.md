@@ -214,6 +214,8 @@ O(1) < O(logn) < O(n) < O(nlogn) < O(n^2) < O(n^3) < O(n^k) < O(2^n) < O(n!)
 
 ## 실습
 
+### C++
+
 #### 입력을 모르는 경우
 
 입력이 몇 개인지 주어지지 않은 경우가 있다.
@@ -270,6 +272,44 @@ typedef struct ListNode{
   struct ListNode *link;
 } ListNode;
 ```
+
+### python
+
+#### 입력받기
+
+```python
+input()
+```
+
+파이썬은  `input()` 으로 간단하게 입력 받을 수 있다. 이때 받는 값이 int여야한다면,
+
+```python
+int(input())
+```
+
+받는 값을 리스트로 매핑해야한다면
+
+```python
+list(map(int, input().split()))
+```
+
+다음과 같이 입력값을 다양하게 받아 올 수 있다.
+
+#### 빠르게 입력받기
+
+입력 데이터의 수가 많은 문제에 `input()` 핫무를 사용하면, 동작 속도가 느려 시간 초과로 오답 판정을 받을 수 있다.
+
+```python
+import sys
+
+# 하나의 문자열 데이터 입력받기
+# rstrip()은 줄바꿈 기호로 입력되는 것을 제거
+input_data = sys.stdin.readline().rstrip()
+```
+
+다음과 같이 `sys` 라이브러리의 `readline()` 을 사용하는 것을 권장한다.
+
+
 
 ## 알고리즘 문제 풀이 사이트
 
