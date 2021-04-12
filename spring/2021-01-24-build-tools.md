@@ -38,6 +38,126 @@ Ant의 가장 큰 장점은 개발자가 자유롭게 빌드 단위(target)을 �
 - xml 언어에 대한 단점도 Groovy 언어(JVM 환경언어)를 사용해 해결
   - Gradle은 Groovy DSL로 작성하며, 설정 정보는 변수에 값을 넣는 형태로, 동적인 빌드는 Groovy 스크립트로 Gradle용 플러그인을 호출하거나 직접 코드를 짤 수 있다.
 
+기본적으로 프로젝트 하위에 `build.gradle` 파일로 생성이 되며, 프로젝트에서 사용할 라이브러리와 버전을 관리할 수 있다.
+
+```gradle
+plugins {
+	id 'org.springframework.boot' version '2.4.4'
+	id 'io.spring.dependency-management' version '1.0.11.RELEASE'
+	id 'java'
+}
+
+group = 'dh0023'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = '11' // java version
+
+repositories {
+	mavenCentral() // mavenCentral에서 다운 받음
+}
+
+dependencies {
+	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+}
+
+test {
+	useJUnitPlatform()
+}
+```
+
+- `sourceCompatibility` : Java Version
+- `dependencies` : 라이브러리 의존성 관리
+
+만약 인텔리제이로 프로젝트 실행시에 Build and run이 Gradle로 되어있으면, 실행 속도가 느린 경우가 있으므로 아래와 같이 설정을 intellij로 변경해주는 것이 좋다.
+
+![](./assets/스크린샷 2021-04-11 오후 10.36.27.png)
+
+![image-20210411224538606](./assets/image-20210411224538606.png)
+
+다음과 같이 Gradle 에서 의존성을 확인할 수 있다.
+
+### CLI로 빌드하기
+
+```bash
+$ gradlew build
+Welcome to Gradle 6.8.3!
+
+Here are the highlights of this release:
+ - Faster Kotlin DSL script compilation
+ - Vendor selection for Java toolchains
+ - Convenient execution of tasks in composite builds
+ - Consistent dependency resolution
+
+For more details see https://docs.gradle.org/6.8.3/release-notes.html
+
+Starting a Gradle Daemon, 1 incompatible Daemon could not be reused, use --status for details
+
+> Task :test
+2021-04-12 00:28:06.153  INFO 12948 --- [extShutdownHook] o.s.s.concurrent.ThreadPoolTaskExecutor  : Shutting down ExecutorService 'applicationTaskExecutor'
+
+BUILD SUCCESSFUL in 1m 37s
+6 actionable tasks: 6 executed
+```
+
+다음처럼 build를 수행하면  프로젝트 하위에 build(`{project명}/build/` )가 생성된 것을 볼 수 있다.
+
+```bash
+$ cd ./build/libs
+$ ls -trl
+total 36712
+-rw-r--r--  1 dh0023  staff  18794659  4 12 00:27 spring-mvc-0.0.1-SNAPSHOT.jar
+```
+
+`/builds/libs` 하위에 `jar`파일이 생성된 것을 볼 수 있으며,
+
+```bash
+$ java -jar ./spring-mvc-0.0.1-SNAPSHOT.jar
+
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+ :: Spring Boot ::                (v2.4.4)
+
+2021-04-12 00:29:14.647  INFO 14240 --- [           main] dh0023.springmvc.SpringMvcApplication    : Starting SpringMvcApplication using Java 15.0.2 on dahyeui-MacBook-Pro.local with PID 14240 (/Users/dh0023/Develop/spring/spring-mvc/build/libs/spring-mvc-0.0.1-SNAPSHOT.jar started by dh0023 in /Users/dh0023/Develop/spring/spring-mvc/build/libs)
+2021-04-12 00:29:14.653  INFO 14240 --- [           main] dh0023.springmvc.SpringMvcApplication    : No active profile set, falling back to default profiles: default
+2021-04-12 00:29:15.049  INFO 14240 --- [           main] .e.DevToolsPropertyDefaultsPostProcessor : For additional web related logging consider setting the 'logging.level.web' property to 'DEBUG'
+2021-04-12 00:29:20.242  INFO 14240 --- [           main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port(s): 8080 (http)
+2021-04-12 00:29:20.287  INFO 14240 --- [           main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2021-04-12 00:29:20.288  INFO 14240 --- [           main] org.apache.catalina.core.StandardEngine  : Starting Servlet engine: [Apache Tomcat/9.0.44]
+2021-04-12 00:29:20.673  INFO 14240 --- [           main] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2021-04-12 00:29:20.674  INFO 14240 --- [           main] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 5622 ms
+2021-04-12 00:29:21.827  INFO 14240 --- [           main] o.s.s.concurrent.ThreadPoolTaskExecutor  : Initializing ExecutorService 'applicationTaskExecutor'
+2021-04-12 00:29:23.268  INFO 14240 --- [           main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port(s): 8080 (http) with context path ''
+2021-04-12 00:29:23.294  INFO 14240 --- [           main] dh0023.springmvc.SpringMvcApplication    : Started SpringMvcApplication in 12.135 seconds (JVM running for 14.029)
+```
+
+로 스프링 서비스를 실행할 수 있다.
+
+만약에 생성된 빌드를 지우고 싶으면 `gradlew clean` 을 수행하면된다.
+
+```bash
+$ gradlew clean
+
+BUILD SUCCESSFUL in 2s
+1 actionable task: 1 executed
+ ~/Develop/spring/spring-mvc 
+$ ls -trl                             
+total 56
+drwxr-xr-x@ 4 dh0023  staff   128  4 11 13:21 src
+-rw-r--r--@ 1 dh0023  staff    32  4 11 13:21 settings.gradle
+-rw-r--r--@ 1 dh0023  staff  2763  4 11 13:21 gradlew.bat
+-rwxr-xr-x@ 1 dh0023  staff  5766  4 11 13:21 gradlew
+drwxr-xr-x@ 3 dh0023  staff    96  4 11 13:21 gradle
+-rw-r--r--@ 1 dh0023  staff  1435  4 11 13:21 HELP.md
+-rw-r--r--  1 dh0023  staff   124  4 11 22:24 README.md
+drwxr-xr-x  4 dh0023  staff   128  4 12 00:20 out
+-rw-r--r--@ 1 dh0023  staff   634  4 12 00:21 build.gradle
+```
+
 
 
 ## Gradle vs Maven

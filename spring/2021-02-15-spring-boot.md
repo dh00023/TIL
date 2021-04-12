@@ -14,6 +14,19 @@
 
 - [Spring Boot Reference Guide](https://docs.spring.io/spring-boot/docs/current/reference/htmlsingle/)를 참고해 스타터 내부의 의존성을 확인할 수 있다.
 
+## 라이브러리
+
+- spring-boot-starter-web
+    - spring-boot-starter-tomcat: 톰캣(웹서버)
+    - spring-webmvc: 스프링 웹 MVC
+- spring-boot-starter-thymeleaf: 타임리프 템플릿 엔진(View)
+- spring-boot-starter: 스프링 부트 + 스프링 코어 + 로깅
+    - spring-boot
+        - spring-core
+    - spring-boot-starter-logging
+        - logback, slf4j
+- spring-boot-starter-test: 스프링부트 테스트
+
 ## 장단점
 
 ### 장점
