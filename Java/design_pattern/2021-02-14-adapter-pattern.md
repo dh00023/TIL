@@ -126,15 +126,10 @@ public class SocketObjectAdapterImpl implements SocketAdapter{
 - main
 
 ```java
-<<<<<<< HEAD
-		public static void main(String[] args) {
-       	// object adapter
-				SocketAdapter sockAdapter = new SocketObjectAdapterImpl();
-=======
 public static void main(String[] args) {
        	// object adapter
         SocketAdapter sockAdapter = new SocketObjectAdapterImpl();
->>>>>>> java
+
         Volt v3 = sockAdapter.get3Volt();
         Volt v12 = sockAdapter.get12Volt();
         Volt v120 = sockAdapter.get120Volt();
@@ -144,11 +139,7 @@ public static void main(String[] args) {
         Volt v3 = sockAdapter.get3Volt();
         Volt v12 = sockAdapter.get12Volt();
         Volt v120 = sockAdapter.get120Volt();
-<<<<<<< HEAD
-    }
-=======
 }
->>>>>>> java
 ```
 
 
