@@ -17,6 +17,8 @@
 	* [IoC](spring/2020-03-21-IoC.md)
 	* [Is Spring Bean Thread-Safe?](spring/2020-04-09-bean-threadsafe.md)
 	* [Spring Singleton](spring/2021-01-19-spring-singleton.md)
+	* [Component Scan](spring/2021-05-05-component-scan.md)
+	* [Spring Annotation](spring/2021-04-21-annotation.md)
 	* [AOP(1) - AOP란](spring/2020-04-09-aop.md)
 	* [AOP(2) - Aop Proxy](spring/2020-04-09-aop-proxy.md)
 	* [AOP(3) - Dynamic Proxy](spring/2020-04-10-aop-dynamicProxy.md)

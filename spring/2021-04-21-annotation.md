@@ -9,10 +9,11 @@ Spring Bean을 등록하는데 있어서 2가지 방법이 있다.
 
 | Annotation | 설명 |
 |:------|:------|
-|@Component| `@Component` 어노테이션이 있으면, 스프링 빈으로 자동 등록된다.|
-|@Controller| 컨트롤러 |
-|@Service| 서비스 |
-|@Repository|  |
+|@Component| `@Component` 어노테이션이 있으면, 스프링 빈으로 등록된다.(`@ComponentScan`에 의해서) |
+|@Controller| 스프링  MVC 컨트롤러 |
+|@Service| 특별한 처리를 하지 않는다. <br />대신 개발자들이 핵심 비즈니스 계층을 인식하는데 도움이 된다. |
+|@Repository| 스프링 데이터 접근 계층으로 인식하고, 데이터 계층의 예외를 스프링 예외로 변환해준다. |
+|@Configuration| 스프링 설정 정보로 인식하고, 스프링 빈이 싱글톤을 유지하도록 추가 처리 |
 |@Autowired| 객체 생성 시점에 스프링 컨테이너에서 해당 스프링 빈을 찾아서 주입한다. <br>스프링이 관리하는 객체에서만 동작<br>(서비스 간의 연결 선 역할이라고 생각하면 이해하기 쉽다.) |
 
 위에서 보이는 `@Controller`, `@Repository`, `@Service` 모두 내부에 `@Component` 어노테이션이 포함되어 있는 것을 볼 수 있다.
