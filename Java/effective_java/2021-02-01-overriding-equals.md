@@ -1,9 +1,9 @@
 # ITEM 10: OBEY THE GENERAL CONTRACT WHEN OVERRIDING EQUALS
 
-`equals`   메서드를 재정의는 여러가지 함정이 있다. 그러므로 **다음과 같은 상황에서는 재정의 하지 않는 것이 좋다**.
+`equals` 메서드의 재정의에는 여러가지 함정이 있다. 그러므로 **다음과 같은 상황에서는 재정의 하지 않는 것이 좋다**.
 
 - 각 인스턴스가 본질적으로 고유한 경우( 동작하는 개체를 표현하는 클래스 ex-`Thread` )
-- 인스턴스의 logical equality(논리적 동치성)를 검사할 일이 없는 경우
+- 인스턴스의 논리적 동치성(logical equality)을 검사할 일이 없는 경우
 - 상위 클래스에서 재정의한 `equals`가 하위 클래스에도 적합한 경우(`AbstractSet`, `AbstractList`)
 - 클래스가 private or package-private이고 `equals` 메서드를 호출할 일이 없는 경우
 
@@ -13,7 +13,7 @@
 
 **객체 식별성(두 객체가 물리적으로 같은지)이 아니라 논리적 동치성(logical equality)을 확인해야하지만, 상위 클래스의 `equals`가 재정의되지 않은 경우이다.** 주로, 값 클래스(`Integer`, `String`)가 해당된다. 
 
-값 클래스이더라도 [정적 팩터리 메소드](./2021-01-12-static-factory-methods.md)라면 `equals`를 재정의하지 않아도 된다. (`Enum` 포함)
+값 클래스이더라도 [정적 팩터리 메소드 - item1](https://github.com/dh00023/TIL/blob/master/Java/effective_java/2021-01-12-static-factory-methods.md)라면 `equals`를 재정의하지 않아도 된다. (`Enum` 포함)
 
 ## equals 메서드 규약
 
@@ -46,7 +46,7 @@ public final class CaseInsensitiveString {
         this.s = Objects.requireNonNull(s);
     }
 
-  	// 대칭성 위반
+    // 대칭성 위반
     @Override
     public boolean equals(Object o){
         if(o instanceof CaseInsensitiveString)
@@ -68,12 +68,12 @@ System.out.println(cis.equals(s)); // true
 
 여기서 문제는 String의 equals는 `CaseInsensitiveString`의 존재를 모르기때문에 false를 반환하며, 이는 대칭성을 위반한다.
 
-**equals 규약을 어기면, 그 객체를 사용하는 다른 객체들이 어떻게 반응할지 알 수 없다. ** 이러한 문제를 해결하려면 아래와 같이 String과의 연동을 하겠다는 목표를 버려야한다.
+**equals 규약을 어기면, 그 객체를 사용하는 다른 객체들이 어떻게 반응할지 알 수 없다.** 이러한 문제를 해결하려면 아래와 같이 String과의 연동을 하겠다는 목표를 버려야한다.
 
 ```java
 @Override
 public boolean equals(Object o){
-		return o instanceof CaseInsensitiveString && ((CaseInsensitiveString) o).s.equalsIgnoreCase(s);
+    return o instanceof CaseInsensitiveString && ((CaseInsensitiveString) o).s.equalsIgnoreCase(s);
 }
 ```
 
@@ -126,9 +126,9 @@ public class ColorPoint extends Point{
 ```java
 @Override
 public boolean equals(Object o){
-		if(!(o instanceof ColorPoint))
-    		return false;
-		return super.equals(o) && ((ColorPoint) o).color == color;
+    if(!(o instanceof ColorPoint))
+        return false;
+    return super.equals(o) && ((ColorPoint) o).color == color;
 }
 ```
 
@@ -145,7 +145,7 @@ System.out.println(cp.equals(p)); // false
 우선 `p.equals(cp)` 는 색상 정보에 대한 비교는 무시하고, `cp.equals(p)`는 매개변수의 클래스 종류가 다르다며 매번 false만 반환할 것이다.
 
 ```java
-		@Override
+    @Override
     public boolean equals(Object o){
         if(!(o instanceof Point))
             return false;
@@ -169,7 +169,7 @@ System.out.println(cp2.equals(cp)); // false
 
 `equals` 안의 instance 검사를 `getClass` 검사로 바꾸면 규약도 지키면서 상속이 가능하다고 생각할 수 있지만, 이는 리스코프 치환 원칙에 위반된다. 리스코프 치환 원칙에 따르면, 어떤 타입에 있어 중요한 속성이라면, 그 하위 타입에서도 마찬가지로 중요하다. 따라서 그 타입의 모든 메서드가 하위 타입에서도 똑같이 잘 동작해야한다. 
 
-구체 클래스의 하위 클래스에서 값을 추가할 방법은 없지만 우회할 수 있는 방법이 하나있다. [상속대신 컴포지션을 사용해라 - [Item 18]()]
+구체 클래스의 하위 클래스에서 값을 추가할 방법은 없지만 우회할 수 있는 방법이 하나있다. [[상속대신 컴포지션을 사용해라 - Item18](https://github.com/dh00023/TIL/blob/master/Java/effective_java/2021-02-12-use-composition.md)]
 
 ```java
 public class ColorPoint {
@@ -181,7 +181,7 @@ public class ColorPoint {
         this.color = Objects.requireNonNull(color);
     }
 
-		public Point asPoint(){
+    public Point asPoint(){
         return point;
     }
   
@@ -235,7 +235,7 @@ public class Timestamp extends java.util.Date {
 모든 객체가 `null`과 같지 않아야한다. 실수로 `NullPointException`을 던지는 코드는 흔할 것이지만, 이 규약은 이러한 경우도 허용하지 않는다. 동치성 검사를 하려면 equals는 객체를 적절히 형변환한 후 필수 필드들의 값을 알아야하는데, 이때 형변환에 앞서 `instanceof` 연산자로 입력 매개변수가 올바른 타입인지 검사해야한다. `instanceof`의 첫번째 피연산자가 null이면 false를 반환하므로 묵시적인 null검사를 할 수 있다.
 
 ```java
-		@Override
+    @Override
     public boolean equals(Object o){
         if(!(o instanseof MyType))
             return false;
@@ -257,8 +257,7 @@ public class Timestamp extends java.util.Date {
 
 또한, 어떤 필드를 먼저 비교하느냐가 equals의 성능을 좌우하기도 하는데, **최상의 성능을 위해서는 다를 가능성이 크거나 비교하는 비용이 싼 필드를 먼저 비교**하는 것이 좋다. 논리적 상태와 관련 없는 필드는 비교해서는 안되며, 핵심 필드로 계산할 수 있는 파생 필드도 굳이 비교할 필요는 없다. 하지만, 파생 필드가 객체 전체의 상태를 대표하는경우 파생필드를 비교하는 것이 더 빠를 수 있다.
 
--  **equals를 재정의할 때는 hashCode도 반드시 재정의 해야한다.([item 11]())**
-
+-  **equals를 재정의할 때는 hashCode도 반드시 재정의 해야한다.([item 11](https://github.com/dh00023/TIL/blob/master/Java/effective_java/2021-02-02-overriding-hashCode.md))**
 - `Object` 외의 타입을 매겨변수로 받는 equals는 선언하지 말자.
 
 
@@ -282,20 +281,20 @@ import com.google.auto.value.AutoValue;
  
 @AutoValue
 public abstract class Product {
- 
-      public abstract String name();
-      public abstract String price();
- 
-      @AutoValue.Builder
-      public abstract static class Builder {
+    
+    public abstract String name();
+    public abstract String price();
+
+    @AutoValue.Builder
+    public abstract static class Builder {
         public abstract Builder name(String name);
         public abstract Builder price(String price);
         public abstract Product build();
-      }
- 
-      public static Product.Builder builder() {
+    }
+
+    public static Product.Builder builder() {
         return new AutoValue_Product.Builder();
-      }
+    }
 }
 ```
 

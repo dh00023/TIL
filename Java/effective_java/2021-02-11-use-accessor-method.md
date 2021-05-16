@@ -2,8 +2,13 @@
 
 ```java
 class Point {
+<<<<<<< HEAD
   	public double x;
   	public double y;
+=======
+    public double x;
+    public double y;
+>>>>>>> java
 }
 ```
 
@@ -20,6 +25,7 @@ class Point {
 
 ```java
 class Point{
+<<<<<<< HEAD
   	private double x;
   	private double y;
   	
@@ -39,6 +45,27 @@ class Point{
     }
   	public void setY(double y){
       	return this.y = y;
+=======
+    private double x;
+    private double y;
+    
+    public Point(double x, double y){
+        this.x = x;
+        this.y = y;
+    }
+    
+    public double getX(){
+        return x;
+    }
+    public double getY(){
+        return y;
+    }
+    public void setX(double x){
+        return this.x = x;
+    }
+    public void setY(double y){
+        return this.y = y;
+>>>>>>> java
     }
 }
 ```

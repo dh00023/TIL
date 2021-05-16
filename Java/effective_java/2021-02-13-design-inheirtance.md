@@ -64,12 +64,12 @@
 ```java
 public class Super{
   
-  	// 잘못된 예 : 생성자가 재정의 가능한 메서드 호출
-  	public Super(){
+    // 잘못된 예 : 생성자가 재정의 가능한 메서드 호출
+    public Super(){
        overrideMe();
     }
   
-  	public void overrideMe(){
+    public void overrideMe(){
       
     }
 }
@@ -77,13 +77,13 @@ public class Super{
 
 ```java
 public final class Sub extends Super {
-  	private final Instant instant;
-  	Sub() {
+    private final Instant instant;
+    Sub() {
        instant = Instant.now();
     }
   
-  	@Override public void overrideMe(){
-      	System.out.println(instant);
+    @Override public void overrideMe(){
+        System.out.println(instant);
     }
 }
 ```
@@ -94,5 +94,5 @@ public final class Sub extends Super {
 
 **상속용 클래스에서 `Cloneable`, `Serializable`을 구현할지 정해야한다면, `clone`과 `readObject` 모두 직간접적으로 재정의 가능한 메서드를 호출해서는 안된다.** `readObject`는 하위 클래스의 상태가 역직렬화되기 전에 재정의한 메서드 부터 호출하게 되며, `clone`의 경우 하위 클래스의 `clone` 메서드가 복제본의 상태를 수정하기 전에 재정의한 메서드를 호출한다. 특히, `clone`이 잘못되면 복제본 뿐만아니라 원본 객체에도 피해를 줄 수 있다. `Serializable` 을 구현한 상속용 클래스가 `readResolve`나 `writeReplace`를 갖는다면 이 메서드들은 `private`가 아닌 `protected`로 선언해야한다. `private`로 선언하면 하위 클래스에서 무시되기 때문이다.
 
- **상속용으로 설계되지 않은 클래스는 상속을 금지해야한다.** 상속을 금지하는 방법 중 첫번째는 final 클래스를 선언하는 방법이다. 두번째는 모든 생성자를 `private`나 `package-private`로 선언하고 public 정적 팩터리를 만들어주는 방법이다. ([item 17](./2021-02-11-minimize-mutability.md)에서 구현방법 설명)
+**상속용으로 설계되지 않은 클래스는 상속을 금지해야한다.** 상속을 금지하는 방법 중 첫번째는 final 클래스를 선언하는 방법이다. 두번째는 모든 생성자를 `private`나 `package-private`로 선언하고 public 정적 팩터리를 만들어주는 방법이다. ([item 17](https://github.com/dh00023/TIL/blob/master/Java/effective_java/2021-02-11-minimize-mutability.md)에서 구현방법 설명)
 

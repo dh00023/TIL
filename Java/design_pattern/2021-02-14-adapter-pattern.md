@@ -129,7 +129,6 @@ public class SocketObjectAdapterImpl implements SocketAdapter{
 public static void main(String[] args) {
        	// object adapter
         SocketAdapter sockAdapter = new SocketObjectAdapterImpl();
-
         Volt v3 = sockAdapter.get3Volt();
         Volt v12 = sockAdapter.get12Volt();
         Volt v120 = sockAdapter.get120Volt();

@@ -1,6 +1,17 @@
 # ITEM 3: ENFORCE THE SINGLETON PROPERTY WITH A PRIVATE CONSTRUCTOR OR AN ENUM TYPE
 
- [**singleton**](../design_pattern/singleton_pattern.md) 이란 인스턴스를 오직 하나만 생성할 수 있는 클래스이다.  인터페이스를 구현한 Singleton 객체가 아니라면 **mock**  객체를 만들 수 없어 이를 사용하는 클라이언트를 테스트하기 어려워 질 수 있다.
+[**singleton**](../design_pattern/singleton_pattern.md) 이란 인스턴스를 오직 하나만 생성할 수 있는 클래스이다.  인터페이스를 구현한 Singleton 객체가 아니라면 **mock**  객체를 만들 수 없어 이를 사용하는 클라이언트를 테스트하기 어려워 질 수 있다.
+
+> **Mock 객체란?**
+>
+> 실제 객체를 다양한 조건으로 인해 제대로 구현하기 어려울 경우 **가짜 객체를 만들어 사용**하는데, 이를 Mock 객체라 한다.
+>
+> **Mock 객체가 필요한 경우.**
+>
+> - 테스트 작성을 위한 **환경 구축이 어려운 경우.**
+> - 테스트가 특정 경우나 **순간에 의존적인 경우.**
+> - **시간이 걸리는 경우**
+
 
 ## public static final 필드 방식
 
@@ -24,9 +35,8 @@ public class Elvis {
 public class Elvis {
     private static final Elvis INSTANCE = new Elvis();
     private Elvis() { ... }
-  
-  	/**/
-  	public static Elvis getInstance() { return INSTANCE; }
+
+    public static Elvis getInstance() { return INSTANCE; }
 }
 ```
 
@@ -35,14 +45,14 @@ public class Elvis {
 ### 장점
 
 1. 현재는 singleton 객체를 리턴하는 정적 메서드이지만, 향후에 필요에 따라 변경할 수 있는 확장성이 있다. 유일한 메서드를 반환하는 팩터리 메서드가 호출하는 스레드별로 다른 인스턴스를 넘겨주도록 리턴하는 방법과 같이 확장성이 열려있다.
-2. 정적 팩터리를 [제네릭 싱클턴 팩터리]()로 만들 수 있다.
+2. 정적 팩터리를 [제네릭 싱클턴 팩터리-item30]()로 만들 수 있다.
 3. 정적 팩터리의 메서드 참조를 공급자(supplier)로 사용할 수 있다.([item43](), [item44]())
 
-다음과 같은 장점이 필요하지 않다면, public static private 방식이 더 좋다.
+다음과 같은 장점이 필요하지 않다면, `public static final` 필드 방식이 더 좋다.
 
 ## Reflection 방어
 
-이때, public static final 방식과 static factory 방식은 권한이 있는 클라이언트가 [Reflection API]() 인 `AccessibleObject.setAccessible`을 사용해 private 생성자를 호출할 수 있는 문제점이 있다. 이러한 공격을 방어하려면 두번 째 객체가 생성되려할 때 다음과 같이 예외처리를 해 막을 수 있다.
+이때, public static final 방식과 static factory 방식은 권한이 있는 클라이언트가 [Reflection API - item65]() 인 `AccessibleObject.setAccessible`을 사용해 private 생성자를 호출할 수 있는 문제점이 있다. 이러한 공격을 방어하려면 두번 째 객체가 생성되려할 때 다음과 같이 예외처리를 해 막을 수 있다.
 
 ```java
 public class Elvis {
@@ -99,3 +109,4 @@ public enum Elvis {
 ## 참고
 
 - [Carrey's 기술블로그 - Item3](https://jaehun2841.github.io/2019/01/07/effective-java-item3/#%EC%97%B4%EA%B1%B0-%ED%83%80%EC%9E%85enum%EC%9D%84-%EC%9D%B4%EC%9A%A9%ED%95%9C-%EC%8B%B1%EA%B8%80%ED%84%B4-%EA%B0%9D%EC%B2%B4-%EC%83%9D%EC%84%B1)
+- [Heeg's Log - [Mockito] Mock 객체 란?](https://heegs.tistory.com/16)

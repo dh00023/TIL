@@ -4,49 +4,50 @@
 
 ```java
 public class Stack {
-  	private Object[] elements;
-  	private int size = 0;
-  	private static final int DEFAULT_CAPACITY = 16;
-  
-  	public Stack() {
-      	elements = new Object[DEFAULT_CAPACITY];
+
+    private Object[] elements;
+    private int size = 0;
+    private static final int DEFAULT_CAPACITY = 16;
+
+    public Stack() {
+        elements = new Object[DEFAULT_CAPACITY];
     }
-  
-  	public void push(Object e){
-      	ensureCapacity();
-      	elements[size++] = 0;
+
+    public void push(Object e) {
+        ensureCapacity();
+        elements[size++] = 0;
     }
-  	
-  	public Object pop(){
-      	if(size == 0){
-          	throw new EmptyStackException();
+
+    public Object pop() {
+        if (size == 0) {
+            throw new EmptyStackException();
         }
-      	return elements[--size];
+        return elements[--size];
     }
-  
-  	// 원소를 위한 공간을 적어도 하나 이상 여유를 두며, 늘려야하는 경우 두배 이상 늘린다.
-  	private void ensureCapacity(){
-      	if(elements.length == size){
-          	elements = Arrays.copyOf(elements, 2*size+1);
+
+    // 원소를 위한 공간을 적어도 하나 이상 여유를 두며, 늘려야하는 경우 두배 이상 늘린다.
+    private void ensureCapacity() {
+        if (elements.length == size) {
+            elements = Arrays.copyOf(elements, 2 * size + 1);
         }
     }
 }
 ```
 
-위 스택 코드에는 **메모리 누수** 문제점이 있다.  위의 스택을 사용하는 프로그램을 오래 실행하면, 점차 GC 활동과 메모리 사용량이 늘어나 결국 성능이 저하될 것이다. 상대적으로 드문 경우이지만 심할 때는 디스크 페이징이나 **`OutOfMemoryError`**를 일으켜 예기치 않게 종료되기도 한다.
+위 스택 코드에는 **메모리 누수** 문제점이 있다. 위의 스택을 사용하는 프로그램을 오래 실행하면, 점차 GC 활동과 메모리 사용량이 늘어나 결국 성능이 저하될 것이다. 상대적으로 드문 경우이지만 심할 때는 디스크 페이징이나 `OutOfMemoryError`를 일으켜 예기치 않게 종료되기도 한다.
 
 위 스택은 스택이 늘었다가 주는 경우에 스택에서 꺼내진 객체들을 가비지 컬렉터가 회수 하지 않는다. 이 스택이 그 객체들의 다 쓴 참조(obsolete reference: 앞으로 다시 쓰지 않을 참조)를 여전히 가지고 있기 때문이다.
 
 객체 참조 하나를 살려두면 GC는 그 객체뿐만 아니라 그 객체가 참조하는 모든 객체를 회수해가지 못한다. 그래서 단 몇 개의 객체가 매우 많은 객체를 회수되지 못하게 할 수 있고, 잠재적으로 성능에 악영향을 줄 수 있다.
 
 ```java
-		public Object pop(){
-      	if(size == 0){
-          	throw new EmptyStackException();
+    public Object pop() {
+        if (size == 0) {
+            throw new EmptyStackException();
         }
-      	Object result = elements[--size];
-      	elements[size] = null;
-      	return result;
+        Object result = elements[--size];
+        elements[size] = null;
+        return result;
     }
 ```
 
@@ -62,16 +63,16 @@ public class Stack {
 
 2. 백그라운드 스레드(`ScheduledThreadPoolExecutor`)를 활용하거나, 캐시에 새 엔트리 추가시 부수 작업으로 쓰지 않는 엔트리를 청소하는 방법
 
-   ```java
-   // LinkedHashMap은 뒤의 방법으로 사용하지 않는 엔트리를 처리
-   	void afterNodeInsertion(boolean evict) { // possibly remove eldest
-           LinkedHashMap.Entry<K,V> first;
-           if (evict && (first = head) != null && removeEldestEntry(first)) {
-               K key = first.key;
-               removeNode(hash(key), key, null, false, true);
-           }
-       }
-   ```
+  ```java
+  // LinkedHashMap은 뒤의 방법으로 사용하지 않는 엔트리를 처리
+  void afterNodeInsertion(boolean evict) { // possibly remove eldest
+    LinkedHashMap.Entry<K,V> first;
+    if (evict && (first = head) != null && removeEldestEntry(first)) {
+      K key = first.key;
+      removeNode(hash(key), key, null, false, true);
+    }
+  }
+  ```
 
 **리스너 혹은 콜백** 또한 메모리 누수의 요소이다. 클라이언트가 콜백만 등록하고 명확히 해지하지 않는 경우 콜백은 계속 쌓여만 갈 것이다. 이럴 때 콜백을 약한 참조로 저장하면, GC가 즉시 수거해간다.(ex) `WeakHashMap` 의 키로 저장하는 방법
 
@@ -179,7 +180,7 @@ WeakHashMap GC 수행 이후
 2000=test b
 ```
 
-`WeakHashMap`의 Value는 강한 참조에 의해 보관 유지된다. Value 객체가 직간접적으로 자신의 Key를 강한참조하지 않도록 주의해야한다. 이러한 경우에는 Key가 삭제되지 않기 때문이다. 만약 Key를 참조한느 Value를 사용해 `WeakHashMap` 또한 올바르게 동작하길 바란다면 `WeakReference`로 래핑해주는 방식을 사용하면 된다.
+`WeakHashMap`의 Value는 강한 참조에 의해 보관 유지된다. Value 객체가 직간접적으로 자신의 Key를 강한참조하지 않도록 주의해야한다. 이러한 경우에는 Key가 삭제되지 않기 때문이다. 만약 Key를 참조하는 Value를 사용해 `WeakHashMap` 또한 올바르게 동작하길 바란다면 `WeakReference`로 래핑해주는 방식을 사용하면 된다.
 
 ```java
 weakHashMap.put(key, new WeakReference(value));
@@ -195,15 +196,16 @@ Intellj의 `Edit Configurations -> VM options`에 `-verbose:gc -XX:+PrintCommand
 
 ```java
 public static void main(String[] args) throws InterruptedException {
-        List<Integer> li = IntStream.range(1, 100).boxed().collect(Collectors.toList());
-        for (int i=1; true; i++) {
-            if (i % 100 == 0) {
-                li = new ArrayList<>();
-                Thread.sleep(100);
-            }
-            IntStream.range(0, 100).forEach(li::add);
-        }
+  List<Integer> li = IntStream.range(1, 100).boxed().collect(Collectors.toList());
+
+  for (int i=1; true; i++) {
+    if (i % 100 == 0) {
+      li = new ArrayList<>();
+      Thread.sleep(100);
     }
+    IntStream.range(0, 100).forEach(li::add);
+  }
+}
 ```
 
 ```

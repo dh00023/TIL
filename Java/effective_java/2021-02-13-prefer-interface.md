@@ -10,20 +10,33 @@
 
 ```java
 public interface Singer{
+<<<<<<< HEAD
   	AudioClip sing(Song s);
+=======
+    AudioClip sing(Song s);
+>>>>>>> java
 }
 ```
 
 ```java
 public interface SongWriter{
+<<<<<<< HEAD
   	Song compose(int chartPosition);
+=======
+    Song compose(int chartPosition);
+>>>>>>> java
 }
 ```
 
 ```java
 public interface SingerSongWriter extends Singer, SongWriter{
+<<<<<<< HEAD
   	AudioClip strum();
   	void actSensitive();
+=======
+    AudioClip strum();
+    void actSensitive();
+>>>>>>> java
 }
 ```
 
@@ -75,6 +88,7 @@ public interface SingerSongWriter extends Singer, SongWriter{
 
 ```java
 static List<Integer> intArrayAsList(int[] a){
+<<<<<<< HEAD
   	Objects.requireNonNull(a);
   
   	// Java9부터 다이아몬드 연산자를 아래와 같이 사용 가능. 더 낮은 버전에서는 AbstractList<Integer>로 변경
@@ -95,12 +109,38 @@ static List<Integer> intArrayAsList(int[] a){
       	// AbstractCollection의 abstract 메서드로 반드시 구현해야함
       	@Override public int size(){
          		return a.length; 
+=======
+    Objects.requireNonNull(a);
+  
+    // Java9부터 다이아몬드 연산자를 아래와 같이 사용 가능. 더 낮은 버전에서는 AbstractList<Integer>로 변경
+    return new AbstractList<>(){
+      
+        // AbstractList의 abstract 메서드로 반드시 구현해야함
+        @Override public Integer get(int i){
+            return a[i]; 
+        }
+      
+        // 선택적으로 구현
+        @Override public Integer set(int i,Integer val){
+            int oldVal = a[i];
+            a[i] = val;
+            return oldVal;
+        }
+        
+        // AbstractCollection의 abstract 메서드로 반드시 구현해야함
+        @Override public int size(){
+            return a.length; 
+>>>>>>> java
         }
     }
 }
 ```
 
+<<<<<<< HEAD
 이 예시는 int 배열을 받아 Integer 인스턴스의 리스트 형태로 보여주는 [Adapter](https://github.com/dh00023/TIL/blob/master/Java/design_pattern/2021-02-14-adapter-pattern.md)이기도 하다. 이 구현에서는 [익명 클래스 - item 24]()형태를 사용했다.
+=======
+이 예시는 int 배열을 받아 Integer 인스턴스의 리스트 형태로 보여주는 [Adapter](https://github.com/dh00023/TIL/blob/master/Java/design_pattern/2021-02-14-adapter-pattern.md)이기도 하다. 이 구현에서는 [익명 클래스 - item 24](https://github.com/dh00023/TIL/blob/master/Java/effective_java/2021-02-14-favor-static-memeber.md)형태를 사용했다.
+>>>>>>> java
 
 **골격 구현 클래스는 추상 클래스처럼 구현을 도와주는 동시에 추상 클래스로 타입을 정의할 때 따라오는 제약에서 자유롭다**. 반드시 이렇게 구현해야하는 것은 아니며, 구조상 골격 구현을 확장하지 못한다면 인터페이스를 직접 구현하면 된다. 이러한 경우에도 인터페이스가 직접 제공하는 디폴트 메서드를 여전히 누릴 수 있으며, 골격 구현 클래스를 우회적으로 이용할 수 있다. 인터페이스를 구현한 클래스에서 해당 골격 구현을 확장한 private 내부 클래스를 정의하고, 각 메서드 호출을 내부 클래스의 인스턴스에 전달하는 것이다. 이 방식을 simulated muliple inheritance라 하며, 다중 상속의 많은 장점을 제공하면서 동시에 단점은 피하게 해준다.
 
@@ -150,7 +190,11 @@ public abstract class AbstractMapEntry<K,V> implements Map.Entry<K,V>{
 `AbstractMap.SimpleEntry`가 대표적인 예이다.
 
 ```java
+<<<<<<< HEAD
 		public static class SimpleEntry<K,V>
+=======
+    public static class SimpleEntry<K,V>
+>>>>>>> java
         implements Entry<K,V>, java.io.Serializable
     {
         private static final long serialVersionUID = -8499721149061103585L;

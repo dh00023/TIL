@@ -4,6 +4,7 @@
 
 ```java
 class Figure {
+<<<<<<< HEAD
   	enum Shape { RECTANGLE, CIRCLE };
   
   	// 태그 필드 
@@ -37,6 +38,41 @@ class Figure {
             	return Math.PI * (radius * radius);
           default:
             	throw new AssertionError(shape);
+=======
+    enum Shape { RECTANGLE, CIRCLE };
+  
+    // 태그 필드 
+    final Shape shape;
+  
+    // shape가 RECTANGLE일때만 사용
+    double length;
+    double width;
+  
+    // shape이 CIRCLE 일때만 사용
+    double radius;
+  
+    // 원용 생성자
+    Figure(double radius){
+        shape = Shape.CIRCLE;
+        this.radius = radius;
+    }
+    
+    // 사각형용 생성자
+    Figure(double length, double width){
+        shape = Shape.RECTANGLE;
+        this.length = length;
+        this.width = width;
+    }
+  
+    double area() {
+        switch(shape){
+          case RECTANGLE:
+              return length * width;
+          case CIRCLE:
+              return Math.PI * (radius * radius);
+          default:
+              throw new AssertionError(shape);
+>>>>>>> java
         }
     }
 }
@@ -63,12 +99,17 @@ class Figure {
 
 ```java
 abstract class Figure {
+<<<<<<< HEAD
   	abstract double area();
+=======
+    abstract double area();
+>>>>>>> java
 }
 ```
 
 ```java
 class Circle extends Figure {
+<<<<<<< HEAD
   	final double radius;
   	
   	Circle(double radius){
@@ -77,12 +118,23 @@ class Circle extends Figure {
   
   	@Override double area(){
       	return Math.PI * (radius * radius);
+=======
+    final double radius;
+    
+    Circle(double radius){
+        this.radius = radius;
+    }
+  
+    @Override double area(){
+        return Math.PI * (radius * radius);
+>>>>>>> java
     }
 }
 ```
 
 ```java
 class Ractangle extends Figure {
+<<<<<<< HEAD
   	final double length;
   	final double width;
   	
@@ -93,6 +145,18 @@ class Ractangle extends Figure {
   
   	@Override double area(){
       	return length * width;
+=======
+    final double length;
+    final double width;
+    
+    Ractangle(double length, double width){
+        this.length = length;
+        this.width = width;
+    }
+  
+    @Override double area(){
+        return length * width;
+>>>>>>> java
     }
 }
 ```

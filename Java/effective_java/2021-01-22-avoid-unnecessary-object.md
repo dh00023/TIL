@@ -1,6 +1,6 @@
 # ITEM 6: AVOID CREATING UNNECESSARY OBJECT
 
-똑같은 기능의 객체를 매번 생성하는 것보다 객체 하나를 생성하여 **재사용**하는 편이 좋을 때가 많다. 특히 [불변 객체(item 17)]()는 언제든지 재사용할 수 있다.
+똑같은 기능의 객체를 매번 생성하는 것보다 객체 하나를 생성하여 **재사용**하는 편이 좋을 때가 많다. 특히 [불변 객체(item 17)](https://github.com/dh00023/TIL/blob/master/Java/effective_java/2021-02-11-minimize-mutability.md)는 언제든지 재사용할 수 있다.
 
 ```java
 // 안좋은 예 - 호출될 때마다 인스턴스 새로 생성
@@ -16,25 +16,24 @@ String s = "good example";
 
 위의 경우 새로운 인스턴스를 매번 만드는 대신 **하나의 인스턴스**를 사용하며, **같은 가상 머신 안에서 똑같은 문자열 릴터럴을 사용하는 경우 모든 코드가 같은 객체를 재사용함이 보장**된다.
 
-[정적 팩터리 메서드(item 1)](./2021-01-12-static-factory-methods.md)를 제공하는 불변 클래스에서는 불필요한 객체 생성을 피할 수 있다.
+[정적 팩터리 메서드-item1](https://github.com/dh00023/TIL/blob/master/Java/effective_java/2021-01-12-static-factory-methods.md)를 제공하는 불변 클래스에서는 불필요한 객체 생성을 피할 수 있다.
 
 ```java
-	  // 생성자 - Java9에서 deprecated
-    public Boolean(String s) {
-        this(parseBoolean(s));
-    }
-
-  	// 팩터리 메서드
-  	public static Boolean valueOf(String s) {
-        return parseBoolean(s) ? TRUE : FALSE;
-    }
+// 생성자 - Java9에서 deprecated
+public Boolean(String s) {
+  this(parseBoolean(s));
+}
+// 팩터리 메서드
+public static Boolean valueOf(String s) {
+  return parseBoolean(s) ? TRUE : FALSE;
+}
 ```
 
 생성자는 매번 새로운 객체를 생성하지만, 팩터리 메서드는 그렇지 않으므로, `Boolean(String)` 생성자 대신 `Boolean.valuesOf(String)` 팩터리 메서드를 사용하는 것이 좋다. 
 
 ```java
 static boolean isRomanNumeral(String s){
-  	return s.matcheds("^(?=.)M*(C[MD]|D?C{0,3})" + "(X[CL]|L?X{0,3})(I[XV]|V?I{0,3})$");
+  return s.matches("^(?=.)M*(C[MD]|D?C{0,3})" + "(X[CL]|L?X{0,3})(I[XV]|V?I{0,3})$");
 }
 ```
 
@@ -86,12 +85,12 @@ static boolean isRomanNumeral(String s){
 
 ```java
 public class RomanNumerals{
-  
-  	private static final Pattern ROMAN = Pattern.compile("^(?=.)M*(C[MD]|D?C{0,3})" + "(X[CL]|L?X{0,3})(I[XV]|V?I{0,3})$");
-  	
-  	static boolean isRomanNumeral(String s){
-      	return ROMAN.matcher(s).matches();
-    }
+
+  private static final Pattern ROMAN = Pattern.compile("^(?=.)M*(C[MD]|D?C{0,3})" + "(X[CL]|L?X{0,3})(I[XV]|V?I{0,3})$");
+
+  static boolean isRomanNumeral(String s) {
+    return ROMAN.matcher(s).matches();
+  }
 }
 ```
 
@@ -99,18 +98,19 @@ public class RomanNumerals{
 
 하지만, 클래스가 초기화된 후 이 메서드를 한 번도 호출하지 않는다면, `ROMAN` 필드는 필요없이 초기화 된 것이다. [lazy initialization(item 83)]() 으로 `isRomanNumeral` 메서드가 처음으로 호출될 때 필드를 초기화하도록 하여 불필요한 초기화를 없앨 수 있지만, 지연 초기화는 코드를 복잡하게 만드는데, 성능은 크게 개선되지 않을 때가 많으므로 권하지 않는다.([item 67]())
 
-`Map` 인터페이스의 `KeySet` 메서드는 `Map` 객체 안의 모든 키 값을 담은 `Set` 뷰를 반환한다. `KeySet` 호출시 새로운 `Set` 인스턴스가 만들어진다고 생각할 수 있지만, 사실은 매번 동일한 `Set` 인스턴스를 반환할 수도 있다. 반환된 `Set`  인스턴스가 일반적으로 가변이더라도 반환된 인스턴스들은 기능적으로 모두 동일하며, 반환된 객체 중 하나를 수정하면 모든 객체가 동일한 `Map` 을 대변하기 떄문에 모든 객체가 따라서 바뀐다. `KeySet` 뷰 객체를 여러 개 생성해도 되지만, 그럴 필요는 없다.
+`Map` 인터페이스의 `KeySet` 메서드는 `Map` 객체 안의 모든 키 값을 담은 `Set` 뷰를 반환한다. `KeySet` 호출시 새로운 `Set` 인스턴스가 만들어진다고 생각할 수 있지만, 사실은 매번 동일한 `Set` 인스턴스를 반환할 수도 있다. 반환된 `Set`  인스턴스가 일반적으로 가변이더라도 반환된 인스턴스들은 기능적으로 모두 동일하며, 반환된 객체 중 하나를 수정하면 모든 객체가 동일한 `Map` 을 대변하기 때문에 모든 객체가 따라서 바뀐다. `KeySet` 뷰 객체를 여러 개 생성해도 되지만, 그럴 필요는 없다.
 
 또 다른 예로 auto boxing을 들 수 있다. auto boxing은 기본 타입과 박싱된 기본 타입을 섞어 쓸 때 자동으로 상호 변환해주는 기술이다. 오통 박싱은 기본 타입과 그에 대응하는 박싱된 기본 타입의 구분을 흐려주지만, 완전히 없애주는 것은 아니다.
 
 ```java
 private static long sum(){
-  	Long sum = 0L;
-  	for (long i = 0; i< Integer.MAX_VALUE; i++){
-      	sum += i;
-    }
-  
-  	return sum;
+  Long sum = 0L;
+
+  for (long i = 0; i< Integer.MAX_VALUE; i++) {
+    sum += i;
+  }
+
+  return sum;
 }
 ```
 

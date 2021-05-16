@@ -7,25 +7,25 @@ Super Class에서 추상 메소드 또는 오버라이드 가능한 메소드를
 
 ```java
 public abstract class Super{
-	public void templateMethod() {
+  public void templateMethod() {
     // 기본 알고리즘 코드
-		hookMethod();
-		abstractMethod();
-	}
-	protected void hookMethod(){ } // 선택적으로 오버라이드 가능한 훅메소드
-	public abstract void abstractMethod(); // 반드시 SubClass에서 구현해야하는 추상 메소드
+    hookMethod();
+    abstractMethod();
+  }
+  protected void hookMethod(){ } // 선택적으로 오버라이드 가능한 훅메소드
+  public abstract void abstractMethod(); // 반드시 SubClass에서 구현해야하는 추상 메소드
 }
 ```
 ```java
 public Sub extends Super{
   @Override
-	protected void hookMethod(){
-		//...
-	}
+  protected void hookMethod(){
+    //...
+  }
   @Override
-	public void abstractMethod(){
-		//...
-	}
+  public void abstractMethod(){
+    //...
+  }
 }
 ```
 
@@ -83,7 +83,7 @@ public RedBeanBoongABbang extends BoongABangTemplate{
 
   @Override
   protected void buyOven(){
-  	 System.out.println("최신 붕어빵틀을 산다."); 
+     System.out.println("최신 붕어빵틀을 산다."); 
   }
   
   @Override
