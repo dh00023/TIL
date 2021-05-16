@@ -8,16 +8,14 @@
 
 ```java
 public class SpellChecker {
-  	private final Lexicon dictionayr;
-  
-  	public SpellChecker(Lexicon dictionary){
-      // null이면 NPE 아닌경우 objects 반환
-      this.dictionary = Objects.requireNonNull(dictionary);
+    private final Lexicon dictionayr;
+
+    public SpellChecker(Lexicon dictionary){
+        // null이면 NPE 아닌경우 objects 반환
+        this.dictionary = Objects.requireNonNull(dictionary);
     }
-  
-  	public boolean isValid(String word){}
-      
-    
+
+    public boolean isValid(String word){}
 }
 ```
 

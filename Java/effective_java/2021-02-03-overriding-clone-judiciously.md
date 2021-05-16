@@ -15,11 +15,11 @@ public interface Cloneable {
 public final class PhoneNumber implements Cloneable{
     private final short areaCode, prefix, lineNum;
     private int hashCode;
-  	
-  	@Override
+    
+    @Override
     public PhoneNumber clone(){
         try{
-          	// 형변환
+            // 형변환
             return (PhoneNumber) super.clone();
         }catch (CloneNotSupportedException e){
             throw new AssertionError();
@@ -31,7 +31,7 @@ public final class PhoneNumber implements Cloneable{
 ```java
 public class Object {
 
-		@HotSpotIntrinsicCandidate
+    @HotSpotIntrinsicCandidate
     protected native Object clone() throws CloneNotSupportedException;
 ```
 
@@ -43,30 +43,30 @@ Object 메서드는 `CloneNotSupportedException`을 던진다고 선언했지만
 
 ```java
 public class Stack {
-  	private Object[] elements;
-  	private int size = 0;
-  	private static final int DEFAULT_CAPACITY = 16;
+    private Object[] elements;
+    private int size = 0;
+    private static final int DEFAULT_CAPACITY = 16;
   
-  	public Stack() {
-      	elements = new Object[DEFAULT_CAPACITY];
+    public Stack() {
+        elements = new Object[DEFAULT_CAPACITY];
     }
   
-  	public void push(Object e){
-      	ensureCapacity();
-      	elements[size++] = 0;
+    public void push(Object e){
+        ensureCapacity();
+        elements[size++] = 0;
     }
-  	
-  	public Object pop(){
-      	if(size == 0){
-          	throw new EmptyStackException();
+    
+    public Object pop(){
+        if(size == 0){
+            throw new EmptyStackException();
         }
-      	return elements[--size];
+        return elements[--size];
     }
   
-  	// 원소를 위한 공간을 적어도 하나 이상 여유를 두며, 늘려야하는 경우 두배 이상 늘린다.
-  	private void ensureCapacity(){
-      	if(elements.length == size){
-          	elements = Arrays.copyOf(elements, 2*size+1);
+    // 원소를 위한 공간을 적어도 하나 이상 여유를 두며, 늘려야하는 경우 두배 이상 늘린다.
+    private void ensureCapacity(){
+        if(elements.length == size){
+            elements = Arrays.copyOf(elements, 2*size+1);
         }
     }
     
@@ -76,7 +76,7 @@ public class Stack {
 위 stack 클래스는 가변객체를 참조하고 있다.
 
 ```java
-		@Override
+    @Override
     public Stack clone() {
         try{
             Stack result = (Stack) super.clone();
@@ -92,7 +92,7 @@ public class Stack {
 
 한편 위 Stack 클래스의 elements 필드가 final이었다면 final 필드는 새로운 값을 할당할 수 없기때문에 위 clone() 메서드 방식은 작동하지 않는다.
 
-**Cloneable 아케텍처는 가변 객체를 참조하는 필드는 final로 선언하라는 일반 용법과 충돌한다.** 원본과 복제된 객체가 가변 객체를 공유해도 된다면 상관없지만, 복제할 수 있는 클래스를 만들기 위해 일부 필드에서 `final` 한정자를 제거해야할 수도 있다.
+**Cloneable 아키텍처는 가변 객체를 참조하는 필드는 final로 선언하라는 일반 용법과 충돌한다.** 원본과 복제된 객체가 가변 객체를 공유해도 된다면 상관없지만, 복제할 수 있는 클래스를 만들기 위해 일부 필드에서 `final` 한정자를 제거해야할 수도 있다.
 
 ```java
 public class HashTable implements Cloneable{

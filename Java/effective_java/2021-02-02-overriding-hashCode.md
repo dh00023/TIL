@@ -48,17 +48,18 @@ System.out.println(map.get(new PhoneNumber((short) 707,(short) 867,(short) 5309)
 여기서 `PhoneNumber` 클래스는 hashCode를 재정의하지 않아, 논리적 동치인 두 객체가 서로 다른 해시코드를 반환하여 두 번째 규약을 지키지 못하게된다. 
 
 ```java
-		@Override
+
+    @Override
     public int hashCode(){
         // int 변수 result 초기화 후 해당 필드의 해시코드 계산
         // 기본타입 필드라면 Type.hashCode() 여기서는 Short.hashCode();
         int result = Short.hashCode(areaCode);
-      	// 앞에서 계산한 해시코드로 result 갱신
-      	// 여기서 31은 홀수이면서 소수이기 때문에 사용
-      	// 짝수는 2를 곱하면 시프트 연산과 같은 결과를 발생시켜 오버플로가 발생하면 정보를 잃게 됨.
+        // 앞에서 계산한 해시코드로 result 갱신
+        // 여기서 31은 홀수이면서 소수이기 때문에 사용
+        // 짝수는 2를 곱하면 시프트 연산과 같은 결과를 발생시켜 오버플로가 발생하면 정보를 잃게 됨.
         result = 31 * result + Short.hashCode(prefix);
         result = 31 * result + Short.hashCode(lineNum);
-      	// result 반환
+        // result 반환
         return result;
     }
 ```
@@ -80,19 +81,20 @@ System.out.println(map.get(new PhoneNumber((short) 707,(short) 867,(short) 5309)
 클래스가 불변이고 해시코드를 계산하는 비용이 크다면, 매번 새로 계산하기 보다는 캐싱하는 방식을 고려하는 것이 좋다. 
 
 ```java
-		private int hashCode;
+private int hashCode;
 
-		@Override
-    public int hashCode(){
-        int result = hashCode;
-        if(result == 0){
-            result = Short.hashCode(areaCode);
-            result = 31 * result + Short.hashCode(prefix);
-            result = 31 * result + Short.hashCode(lineNum);
-            hashCode = result;
-        }
-        return result;
+@Override
+public int hashCode() {
+    int result = hashCode;
+
+    if(result == 0) {
+        result = Short.hashCode(areaCode);
+        result = 31 * result + Short.hashCode(prefix);
+        result = 31 * result + Short.hashCode(lineNum);
+        hashCode = result;
     }
+    return result;
+}
 ```
 
 해시의 키로 사용되지 않는 경우라면 다음과 같이 hashCode가 처음 호출될때 계산하는 지연 초기화 전략도 있다. 이때 스레드 안정성까지 고려해야하며, 성능을 높이고자 해시코드 계산시 핵심 필드를 생략해서는 안된다. 

@@ -43,7 +43,7 @@
   * [try-with-resources](Java/effective_java/2021-01-25-try-with-resources.md)
   * [The gerneral contract when overriding equlas](Java/effective_java/2021-02-01-overriding-equals.md)
   * [overriding hashCode](Java/effective_java/2021-02-02-overriding-hashCode.md)
-  * [overriding toString](Java/effective_java/2021-02-02-overriding-toString.md)
+  * [overriding toString](Java/effective_java/2021-02-03-overriding-toString.md)
   * [overriding clone judiciously](Java/effective_java/2021-02-03-overriding-clone-judiciously.md)
   * [Consider implementing comparable](Java/effective_java/2021-02-04-comparable.md)
   * [클래스와 멤버의 접근을 최소화해라](Java/effective_java/2021-02-11-minimize-class-and-memeber.md)

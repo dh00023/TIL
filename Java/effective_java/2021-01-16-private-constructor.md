@@ -3,10 +3,10 @@
 ```java
 // Util이지만 생성자가 없음
 public class ImageUtility {
-  	private static String IMAGE_DATE_FORMAT = "yyyyMMddHHmm";
-  
-  	public static String makeImageFileNm(String imgFileNm) {
-        return imgFileNm + "_" +new SimpleDateFormat(IMAGE_DATE_FORMAT).format(new Date());
+    private static String IMAGE_DATE_FORMAT = "yyyyMMddHHmm";
+
+    public static String makeImageFileNm(String imgFileNm) {
+        return imgFileNm + "_" + new SimpleDateFormat(IMAGE_DATE_FORMAT).format(new Date());
     }
 }
 ```
@@ -27,10 +27,10 @@ String imageFileNm = imageUtility.makeImageFileNm("test", ".png");
 ```java
 // Util이지만 생성자가 없음
 abstract class ImageUtility {
-  	private static String IMAGE_DATE_FORMAT = "yyyyMMddHHmm";
-  
-  	public static String makeImageFileNm(String imgFileNm) {
-        return imgFileNm + "_" +new SimpleDateFormat(IMAGE_DATE_FORMAT).format(new Date());
+    private static String IMAGE_DATE_FORMAT = "yyyyMMddHHmm";
+
+    public static String makeImageFileNm(String imgFileNm) {
+        return imgFileNm + "_" + new SimpleDateFormat(IMAGE_DATE_FORMAT).format(new Date());
     }
 }
 ```
@@ -53,10 +53,9 @@ ItemImageUtility itemImageUtility = new ItemImageUtility();
 
 ```java
 public class ImageUtility {
-  
-  	// 기본 생성자가 만들어지는 것을 방어(인스턴스화 방지용)
-  	private ImageUtility(){
-      throw new AssertionError();
+    // 기본 생성자가 만들어지는 것을 방어(인스턴스화 방지용)
+    private ImageUtility(){
+        throw new AssertionError();
     }
 }
 ```

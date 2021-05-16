@@ -37,7 +37,7 @@ public class Item {
 
 ## 생성자 패턴 2. JavaBeans Pattern
 
-자바빈즈 패턴은 매개변수가 없는 생성자로 객체를 만든 후 setter 메서들르 호출해 원하는 매개변수의 값을 설정하는 방식이다.
+자바빈즈 패턴은 매개변수가 없는 생성자로 객체를 만든 후 setter 메서드를 호출해 원하는 매개변수의 값을 설정하는 방식이다.
 
 ```java
 public class Item {
@@ -47,14 +47,13 @@ public class Item {
     private BigDecimal price; // 선택
     private String sellTypeCd; // 선택
 
-    public Item(){
-    }
-  
-		public void setItemCd(String itemCd){ this.itemCd = itemCd; }
-  	public void setItemNm(String itemNm){ this.itemNm = itemNm; }
-  	public void setCtgId(String ctgId){ this.ctgId = ctgId; }
-  	public void setPrice(BigDecimal price){ this.price = price; }
-  	public void setSellTypeCd(String sellTypeCd){ this.sellTypeCd = sellTypeCd; }
+    public Item() {}
+
+    public void setItemCd(String itemCd){ this.itemCd = itemCd; }
+    public void setItemNm(String itemNm){ this.itemNm = itemNm; }
+    public void setCtgId(String ctgId){ this.ctgId = ctgId; }
+    public void setPrice(BigDecimal price){ this.price = price; }
+    public void setSellTypeCd(String sellTypeCd){ this.sellTypeCd = sellTypeCd; } 
   
 }
 ```
@@ -85,40 +84,41 @@ public class Item {
     private final String sellTypeCd; // 선택
 
     public static class Builder {
-      private final String itemCd; // 필수
-    	private final String itemNm; // 필수
-      private final String ctgId;  // 필수
-      
-      // 선택적 매개변수는 default 값으로 초기화
-      private BigDecimal price = BigDecimal.ZERO; 
-      private String sellTypeCd = "00";
-      
-      public Builder(String itemCd, String itemNm, String ctgId){
-        this.itemCd = itemCd;
-        this.itemNm = itemNm;
-        this.ctgId = ctgId;
-      }
-      public Builder price(BigDecimal price){
-        this.price = price;
-        return this;
-      }
-      
-      public Builder sellTypeCd(String sellTypeCd){
-        this.sellTypeCd = sellTypeCd;
-        return this;
-      }
-      
-      public Item build(){
-        return new Item(this);
-      }
+        private final String itemCd; // 필수
+        private final String itemNm; // 필수
+        private final String ctgId;  // 필수
+
+        // 선택적 매개변수는 default 값으로 초기화
+        private BigDecimal price = BigDecimal.ZERO; 
+        private String sellTypeCd = "00";
+
+        public Builder(String itemCd, String itemNm, String ctgId) {
+            this.itemCd = itemCd;
+            this.itemNm = itemNm;
+            this.ctgId = ctgId;
+        }
+
+        public Builder price(BigDecimal price) {
+            this.price = price;
+            return this;
+        }
+
+        public Builder sellTypeCd(String sellTypeCd) {
+            this.sellTypeCd = sellTypeCd;
+            return this;
+        }
+
+        public Item build() {
+            return new Item(this);
+        }
     }
   
-  	private Item(Builder builder){
-      itemCd = builder.itemCd;
-      itemNm = builder.itemNm;
-      ctgId = builder.ctgId;
-      price = builder.price;
-      sellTypeCd = builder.sellTypeCd;
+    private Item(Builder builder) {
+        itemCd = builder.itemCd;
+        itemNm = builder.itemNm;
+        ctgId = builder.ctgId;
+        price = builder.price;
+        sellTypeCd = builder.sellTypeCd;
     }
   
 }
@@ -135,6 +135,7 @@ Item item = new Item.Builder("12345678", "Effective Java 3/E", "9999").price(360
 > 불변식 : 프로그램이 실행되는 동안(혹은 정해진 기간) 반드시 만족해야하는 조건을 말한다. 변경을 허용할 수 는 잇으나, 주어진 조건 내에서만 허용한다는 뜻이다.
 
 불변식을 보장하기 위해서는 빌더로 부터 매개변수를 복사한 후 해당 객체 필드도 검사해야한다.([item50]()) 검사시 잘못된 점을 발견하면 어떤 매개변수가 잘못되었는지에 대한 메세지를 담아 `IllegalArgumentException` ([item75]()) 오류 발생을 해주면된다.
+
 
 ### 계층적으로 설계된 클래스
 
@@ -237,11 +238,10 @@ Naver naver = new Naver.Builder().addApiType(Naver.ApiType.ADD_ITEM).connectToHa
 각각의 하위 클래스의 빌더가 정의한 `build` 메서드는 해당 하위 클래스(`Naver`, `Gmarket`)을 반환하도록 되어있다. 이렇게 하위 클래스의 메서드가 상위 클래스가 정의한 리턴 타입이 아닌, 그 하위 타입을 리턴하는 것을 **Convariant return typing**(공변 반환 타이핑)이라 한다. 이 기능으로 클라이언트가 형변환에 신경 쓰지 않고 빌더를 사용할 수 있다.
 
 
-
 ### 결론
 
 빌더 패턴은 빌더 하나로 여러 객체를 만들 수 있고, 빌더에 넘기는 매개변수에 따라 다른 객체를 만들 수 있으므로 **매우 유연**하다.
 
 하지만 객체를 만들려면, 그에 앞서 빌더부터 만들어야한다. 또한, 성능에 민감한 상황에서는 빌더 생성 비용이 문제가 될 수 있다. 또한 매개변수가 4개 이상이 되어야 값어치를 한다.
 
-즉**, 인자가 많은 생성자**나 **정적 팩터리가 필요한 클래스를 설계**할 때, **대부분의 인자가 선택적 인자**인 상황에 유용하다.  빌더는 점층적 생성자보다 간결하고, 자바빈즈보다 훨씬 안전하다.
+즉, **인자가 많은 생성자**나 **정적 팩터리가 필요한 클래스를 설계**할 때, **대부분의 인자가 선택적 인자**인 상황에 유용하다. 빌더는 점층적 생성자보다 간결하고, 자바빈즈보다 훨씬 안전하다.

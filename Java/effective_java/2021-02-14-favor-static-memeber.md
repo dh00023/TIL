@@ -12,17 +12,17 @@ Nested Class(중첩 클래스)란 다른 클래스 안에 정의된 클래스를
 
 ```java
 public class Caculator {
-  	// 열거 타입도 정적 멤버 클래스 
-  	public enum Operation {
-      	PLUS, MINUS
+    // 열거 타입도 정적 멤버 클래스 
+    public enum Operation {
+        PLUS, MINUS
     }
 }
 ```
 
 ```java
 public class Caculator {
-  	// 보통 다음과 같이 선언
-  	public static class Operation{
+    // 보통 다음과 같이 선언
+    public static class Operation{
       
     }
 }
@@ -35,7 +35,7 @@ private 정적 멤버 클래스는 흔히 바깥 클래스가 표현하는 객�
 정적 멤버 클래스와 차이점
 
 - 구문상 : `static` 여부
-- 의미상 : 비정적 멤버 클래스의 인스턴스는 바깥 클래스의 인스턴스와 연결되며, 비정적 멤버 클래스의 인스턴스 메서드에서 정규화된 this를 사용해 바깥 인스턴스의 메서드를 호출하거나 참졸르 가져올 수 있다. 
+- 의미상 : 비정적 멤버 클래스의 인스턴스는 바깥 클래스의 인스턴스와 연결되며, 비정적 멤버 클래스의 인스턴스 메서드에서 정규화된 this를 사용해 바깥 인스턴스의 메서드를 호출하거나 참조를 가져올 수 있다. 
 
 비정적 멤버 클래스는 바깥 인스턴스 없이는 생성할 수 없다.
 
@@ -80,13 +80,13 @@ public class NestedNonStaticExample {
 
   ```java
   public class MySet<E> extends AbstractSet<E>{
-    	...
+      ...
       @Override public Iterator<E> iterator() {
-        	return new MyIterator();
+          return new MyIterator();
       }
     
-    	private class MyIterator implements Iterator<E> {
-        	...
+      private class MyIterator implements Iterator<E> {
+          ...
       }
   }
   ```
@@ -138,7 +138,7 @@ interface Operator {
 1. 선언한 지점에만 인스턴스를 만들 수 있다.
 2. `instanceof` 검사나 클래스 이름이 필요한 작업은 수행 불가능
 3. 여러 인터페이스 구현 불가능
-4. 인터페이슬르 구현하는 동시에 다른 클래스 상속 불가능
+4. 인터페이스를 구현하는 동시에 다른 클래스 상속 불가능
 5. 클라이언트는 익명 클래스가 상위 타입에서 상속한 멤버 외에는 호출 불가능
 6. 표현식 중간에 있어, 코드가 긴 경우 가독성이 떨어진다.
 
@@ -148,26 +148,26 @@ interface Operator {
 
 ```java
 static List<Integer> intArrayAsList(int[] a){
-  	Objects.requireNonNull(a);
+    Objects.requireNonNull(a);
   
-  	// Java9부터 다이아몬드 연산자를 아래와 같이 사용 가능. 더 낮은 버전에서는 AbstractList<Integer>로 변경
-  	return new AbstractList<>(){
+    // Java9부터 다이아몬드 연산자를 아래와 같이 사용 가능. 더 낮은 버전에서는 AbstractList<Integer>로 변경
+    return new AbstractList<>(){
       
-      	// AbstractList의 abstract 메서드로 반드시 구현해야함
-      	@Override public Integer get(int i){
-         		return a[i]; 
+        // AbstractList의 abstract 메서드로 반드시 구현해야함
+        @Override public Integer get(int i){
+            return a[i]; 
         }
       
-      	// 선택적으로 구현
-      	@Override public Integer set(int i,Integer val){
-						int oldVal = a[i];
-          	a[i] = val;
-          	return oldVal;
+        // 선택적으로 구현
+        @Override public Integer set(int i,Integer val){
+            int oldVal = a[i];
+            a[i] = val;
+            return oldVal;
         }
-      	
-      	// AbstractCollection의 abstract 메서드로 반드시 구현해야함
-      	@Override public int size(){
-         		return a.length; 
+        
+        // AbstractCollection의 abstract 메서드로 반드시 구현해야함
+        @Override public int size(){
+            return a.length; 
         }
     }
 }
@@ -211,8 +211,7 @@ public class LocalExample {
 
 ## 결론
 
-메서드 밖에서도 사용해야 하거나 메서드 안에 정의하기엔 너무 길다면 멤버 클래스로 만든다. 멤버 클래스의 인스턴스 각각이 바깥 인스턴스를 참조한는 경우에는 비정적으로, 그렇지 않다면 정적으로 구현해라.
-
+메서드 밖에서도 사용해야 하거나 메서드 안에 정의하기엔 너무 길다면 멤버 클래스로 만든다. 멤버 클래스의 인스턴스 각각이 바깥 인스턴스를 참조하는 경우에는 비정적으로, 그렇지 않다면 정적으로 구현해라.
 중첩 클래스가 한 메서드 안에서만 쓰이면서 그 인스턴스를 생성하는 지점이 단 한 곳이고, 해당 타입으로 쓰기에 적합한 클래스나 인터페이스가 이미 있는 경우 익명 클래스로, 그렇지 않다면 지역 클래스로 구현해라.
 
 ## 참고

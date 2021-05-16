@@ -2,13 +2,13 @@
 
 ```java
 public interface Comparable<T> {
-  	/**
-  	 * 이객체와 주어진 객체의 순서를 비교
-  	 * 객체가 주어진 객체보다 작으면 음의 정수
-  	 * 같으면 0
-  	 * 크면 양의 정수를 반환
-  	 * 비교할 수 없는 타입의 객체가 주어지면 ClassCastException
-  	 */
+    /**
+     * 이객체와 주어진 객체의 순서를 비교
+     * 객체가 주어진 객체보다 작으면 음의 정수
+     * 같으면 0
+     * 크면 양의 정수를 반환
+     * 비교할 수 없는 타입의 객체가 주어지면 ClassCastException
+     */
     public int compareTo(T o);
 }
 ```
@@ -63,7 +63,7 @@ public final class String
     }
 ```
 
-`HashSet`은 `equals` 메소드로 비교를 하기때문에 `HashSet`의 원소는 2개이고, `TreeSet`은 `compareTo` 메서드로 비교하기 떄문에 원소의 개수는 1개이다.
+`HashSet`은 `equals` 메소드로 비교를 하기때문에 `HashSet`의 원소는 2개이고, `TreeSet`은 `compareTo` 메서드로 비교하기 때문에 원소의 개수는 1개이다.
 
 `Comparable`은 타입을 인수로 받는 제네릭 인터페이스로, `compareTo` 메서드의 인수 타입은 컴파일타임에 정해진다. 인수 타입 자체가 잘못됐다면, 컴파일 자체가 되지 않으며, null을 인수로 넣어 호출한다면 `NullPointerExeption`이 발생할 것이다. `compareTo`는 각 필드가 동치인지 비교하는 것이 아닌 **순서를 비교**한다.
 
@@ -72,7 +72,7 @@ public final class String
 클래스의 핵심 필드가 여러 개라면 가장 핵심적인 필드부터 비교해야한다. 비교 결과가 0이 아니라면(순서가 정해진다면) 반환하면 된다.
 
 ```java
-	public int compareTo(PhoneNumber pn){
+  public int compareTo(PhoneNumber pn){
         int result = Short.compare(areaCode, pn.areaCode);
         if(result == 0){
             result = Short.compare(prefix, pn.prefix);
@@ -114,8 +114,8 @@ static Comparator<Object> hashCodeOrder = new Comparator<>() {
 
 ```java
 static Comparator<Object> hashCodeOrder = new Comparator<>() {
-  	public int compare(Object o1, Object o2){
-      	return Integer.compare(o1.hashCode(), o2.hashCode());
+    public int compare(Object o1, Object o2){
+        return Integer.compare(o1.hashCode(), o2.hashCode());
     }
 }
 ```

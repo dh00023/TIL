@@ -1,14 +1,14 @@
 # ITEM 9: PREFER TRY-WITH-RESOURCES TO TRY-FINALLY
 
-자바 라이브러리에는 `close` 메서드를 호출해 직접 닫아줘야하는 자원들이 많다.(`InputStream`, `OutputStream`, `java.sql.Connection` 등) 자원 닫기는 클라이언트가 놓치기 쉬워 예측할 수 없는 성능 문제로도 이어진다. 이러한 경우 상당수가 안전망으로 `finalizer`를 활용하고 있지만, `finalizer`는 믿을만 하지 못하다.([item 8](2021-01-25-avoid-finalizer-and-cleaner.md))
+자바 라이브러리에는 `close` 메서드를 호출해 직접 닫아줘야하는 자원들이 많다.(`InputStream`, `OutputStream`, `java.sql.Connection` 등) 자원 닫기는 클라이언트가 놓치기 쉬워 예측할 수 없는 성능 문제로도 이어진다. 이러한 경우 상당수가 안전망으로 `finalizer`를 활용하고 있지만, `finalizer`는 믿을만 하지 못하다.([item 8](https://github.com/dh00023/TIL/blob/master/Java/effective_java/2021-01-25-avoid-finalizer-and-cleaner.md))
 
 전통적으로 자원이 제대로 닫힘을 보장하는 수단으로 `try-finally` 가 사용되었다. 
 
 ```java
-		static String firstLineOfFile(String path) throws IOException{
-      	BufferedReader br = new BufferedReader(new FileReader(path));
+    static String firstLineOfFile(String path) throws IOException{
+        BufferedReader br = new BufferedReader(new FileReader(path));
         try{
-          	return br.readLine();
+            return br.readLine();
         }finally {
             br.close();
         }
@@ -20,25 +20,25 @@
 이러한 문제들은 java 7의 `try-with-resources` 덕에 모두 해결되었다. `try-with-resources` 구조를 사용하려면 해당 자원이 `AutoCloseable` 인터페이스를 구현해야하는데, 수 많은 인터페이스가 이미 `AutoCloseable`을 구현하거나 확장해두었다.
 
 ```java
-		static String firstLineOfFile(String path) throws IOException{
-      	// try - with - resources
-      	try(BufferedReader br = new BufferedReader(new FileReader(path)){
-          	return br.readLine();
+    static String firstLineOfFile(String path) throws IOException{
+        // try - with - resources
+        try(BufferedReader br = new BufferedReader(new FileReader(path)){
+            return br.readLine();
         }
     }
 ```
 
-`readLine()`과 `close()` 호출 양쪽에서 예외가 발생하면, `close`에서 발생한 예외는 숨겨지고, `readLine`에서 발생한 예외만 기록이 된다. 또한, 숨겾니 예외들도 스택추적 내역에 **suppressed**라는 꼬리표를 달고 출력되며, `Throwable`에 추가된 `getSuppressed` 메서드를 이용해 프로그램 코드에서도 가져올 수 있다.
+`readLine()`과 `close()` 호출 양쪽에서 예외가 발생하면, `close`에서 발생한 예외는 숨겨지고, `readLine`에서 발생한 예외만 기록이 된다. 또한, 숨겨진 예외들도 스택추적 내역에 **suppressed**라는 꼬리표를 달고 출력되며, `Throwable`에 추가된 `getSuppressed` 메서드를 이용해 프로그램 코드에서도 가져올 수 있다.
 
 ```java
-		static void copy(String src, String dst) throws IOException{
-      	try(InputStream in = new FileInputStream(src);
+    static void copy(String src, String dst) throws IOException{
+        try(InputStream in = new FileInputStream(src);
             OutputStream out = new FileOutputStream(dst))
-      	{
-        		byte[] buf = new byte[BUFFER_SIZE];
+        {
+            byte[] buf = new byte[BUFFER_SIZE];
             int n;
             while((n = in.read(buf))>= 0)
-            		out.write(buf, 0, n);
+                out.write(buf, 0, n);
         }
     }
 ```
@@ -80,18 +80,16 @@ try(Something1 s1 = new Something1();
 
 ```java
 static void copy(String src, String dst) throws IOException{
-		try(InputStream in = new FileInputStream(src);
-    		OutputStream out = new FileOutputStream(dst))
+    try(InputStream in = new FileInputStream(src);
+        OutputStream out = new FileOutputStream(dst))
     {
-    		byte[] buf = new byte[BUFFER_SIZE];
+        byte[] buf = new byte[BUFFER_SIZE];
         int n;
         while((n = in.read(buf))>= 0)
-        		out.write(buf, 0, n);
+            out.write(buf, 0, n);
     }
 }
 ```
-
-
 
 즉, 꼭 회수해야 하는 자원을 다룰 때는 `try-finally`말고 `try-with-resources`를 사용해라. **코드는 더 짧고 분명해지며, 만들어지는 예외정보도 훨씬 유용**하다. 정확하고 쉽게 자원을 회수할 수 있다.
 

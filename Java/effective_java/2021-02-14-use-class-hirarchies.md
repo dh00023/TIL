@@ -4,39 +4,39 @@
 
 ```java
 class Figure {
-  	enum Shape { RECTANGLE, CIRCLE };
+    enum Shape { RECTANGLE, CIRCLE };
   
-  	// 태그 필드 
-  	final Shape shape;
+    // 태그 필드 
+    final Shape shape;
   
-  	// shape가 RECTANGLE일때만 사용
-  	double length;
-  	double width;
+    // shape가 RECTANGLE일때만 사용
+    double length;
+    double width;
   
-  	// shape이 CIRCLE 일때만 사용
-  	double radius;
+    // shape이 CIRCLE 일때만 사용
+    double radius;
   
-  	// 원용 생성자
-  	Figure(double radius){
-      	shape = Shape.CIRCLE;
-      	this.radius = radius;
+    // 원용 생성자
+    Figure(double radius){
+        shape = Shape.CIRCLE;
+        this.radius = radius;
     }
-  	
-  	// 사각형용 생성자
-  	Figure(double length, double width){
-				shape = Shape.RECTANGLE;
-      	this.length = length;
-      	this.width = width;
+    
+    // 사각형용 생성자
+    Figure(double length, double width){
+        shape = Shape.RECTANGLE;
+        this.length = length;
+        this.width = width;
     }
   
-  	double area() {
-      	switch(shape){
+    double area() {
+        switch(shape){
           case RECTANGLE:
-            	return length * width;
+              return length * width;
           case CIRCLE:
-            	return Math.PI * (radius * radius);
+              return Math.PI * (radius * radius);
           default:
-            	throw new AssertionError(shape);
+              throw new AssertionError(shape);
         }
     }
 }
@@ -63,36 +63,36 @@ class Figure {
 
 ```java
 abstract class Figure {
-  	abstract double area();
+    abstract double area();
 }
 ```
 
 ```java
 class Circle extends Figure {
-  	final double radius;
-  	
-  	Circle(double radius){
-      	this.radius = radius;
+    final double radius;
+    
+    Circle(double radius){
+        this.radius = radius;
     }
   
-  	@Override double area(){
-      	return Math.PI * (radius * radius);
+    @Override double area(){
+        return Math.PI * (radius * radius);
     }
 }
 ```
 
 ```java
 class Ractangle extends Figure {
-  	final double length;
-  	final double width;
-  	
-  	Ractangle(double length, double width){
-      	this.length = length;
-      	this.width = width;
+    final double length;
+    final double width;
+    
+    Ractangle(double length, double width){
+        this.length = length;
+        this.width = width;
     }
   
-  	@Override double area(){
-      	return length * width;
+    @Override double area(){
+        return length * width;
     }
 }
 ```
