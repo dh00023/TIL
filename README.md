@@ -13,6 +13,7 @@
 * [의존 관계 주입(DI)](spring/2021-05-06-di.md)
 * [Lombok 활용하기](spring/2021-05-16-lombok.md)
 * [Bean 생명주기와 콜백](spring/2021-05-17-bean-lifecycle.md)
+* [Bean Scope](spring/2021-05-18-bean-scope.md)
 * [AOP(1) - AOP란](spring/2020-04-09-aop.md)
 * [AOP(2) - Aop Proxy](spring/2020-04-09-aop-proxy.md)
 * [AOP(3) - Dynamic Proxy](spring/2020-04-10-aop-dynamicProxy.md)
