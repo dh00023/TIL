@@ -80,15 +80,9 @@ public final class Complex {
 
   다음과 같이 자주 쓰이는 값들을 상수로 제공하면 쉽게 재활용할 수 있다.
 
-<<<<<<< HEAD
-  불변 클래스는 자주 사용되는 인스턴스를 캐싱하여 같은 인스턴스를 중복 생성하지 않도록 [정적 팩터리](./2021-01-12-static-factory-methods.md)를 제공할 수 있으며, 박싱된 기본 타입 클래스 전부와 `BigInteger`가 여기에 속한다. 정적 팩터리를 사용하면 여러 클라이언트가 인스턴스를 공유해 메모리 사용량과 가비지 컬렉션 비용이 줄어든다.
-
-  불변 객체는 복사 자체가 의미 없어, [방어적 복사(item 50)]()도 필요 없으며,  `clone()`이나 [복사 생성자(item13)](./2021-02-03-overriding-clone-judiciously.md)를 제공하지 않는것이 좋다.
-=======
   불변 클래스는 자주 사용되는 인스턴스를 캐싱하여 같은 인스턴스를 중복 생성하지 않도록 [정적 팩터리](https://github.com/dh00023/TIL/blob/master/Java/effective_java/2021-01-12-static-factory-methods.md)를 제공할 수 있으며, 박싱된 기본 타입 클래스 전부와 `BigInteger`가 여기에 속한다. 정적 팩터리를 사용하면 여러 클라이언트가 인스턴스를 공유해 메모리 사용량과 가비지 컬렉션 비용이 줄어든다.
 
   불변 객체는 복사 자체가 의미 없어, [방어적 복사(item 50)]()도 필요 없으며,  `clone()`이나 [복사 생성자(item13)](https://github.com/dh00023/TIL/blob/master/Java/effective_java/2021-02-03-overriding-clone-judiciously.md)를 제공하지 않는것이 좋다.
->>>>>>> java
 
 - **불변 객체는 자유롭게 공유할 수 있으며, 불변 객체끼리는 내부 데이터를 공유할 수 있다.**
 
@@ -133,11 +127,7 @@ public final class Complex {
 
 ```java
 public static BigInteger safeInsatance(BigInteger val){
-<<<<<<< HEAD
-  	return val.getClass() == BigInteger.class ? val : new BigInteger(val.toByteArray());
-=======
     return val.getClass() == BigInteger.class ? val : new BigInteger(val.toByteArray());
->>>>>>> java
 }
 ```
 

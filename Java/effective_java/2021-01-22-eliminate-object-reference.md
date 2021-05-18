@@ -4,7 +4,6 @@
 
 ```java
 public class Stack {
-
     private Object[] elements;
     private int size = 0;
     private static final int DEFAULT_CAPACITY = 16;

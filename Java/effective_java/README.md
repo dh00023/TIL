@@ -32,3 +32,4 @@
 * [태그 달린 클래스보다 클래스 계층구조를 활용해라](./2021-02-14-use-class-hirarchies.md)
 * [멤버 클래스는 되도록 static으로 구현해라](./2021-02-14-favor-static-memeber.md)
 * [톱레벨 클래스는 한 파일에 하나만 생성해라.](./2021-02-14-limit-single-top-level-class.md)
+* [Raw type은 사용하지 마라](./2021-05-19-generic-dont-use-raw-type.md)
