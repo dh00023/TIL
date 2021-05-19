@@ -4,10 +4,11 @@
 
 #### 목차
 
+* 생성 패턴
+	* [Singleton Pattern](./singleton_pattern.md)
+	* [Factory Method Pattern](./2020-03-20-factory_method_pattern.md)
 * [Template Method Pattern](./2020-03-20-template_method_pattern.md)
-* [Factory Method Pattern](./2020-03-20-factory_method_pattern.md)
 * [Strategy Pattern](./2020-03-21-strategy_pattern.md)
-* [Singleton Pattern](./singleton_pattern.md)
 * [Delegation Pattern](./delegation_pattern.md)
 * [Proxy Pattern](./proxy_pattern.md)
 * [Adapter Pattern](./2021-02-14-adapter-pattern.md)
