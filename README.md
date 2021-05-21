@@ -141,10 +141,8 @@
 	* [톱레벨 클래스는 한 파일에 하나만 생성해라.](Java/effective_java/2021-02-14-limit-single-top-level-class.md)
 	* [Raw type은 사용하지 마라](Java/effective_java/2021-05-19-generic-dont-use-raw-type.md)
   * [비검사 경고를 제거해라](Java/effective_java/2021-05-20-remove-unchecked-warning.md)
-<<<<<<< HEAD
-=======
   * [배열보다는 리스트를 사용해라](Java/effective_java/2021-05-21-use-list-rather-than-array.md)
->>>>>>> java
+  * [이왕이면 제네릭 타입으로 만들어라](Java/effective_java/2021-05-22-make-generic-type.md)
 * [객체지향 설계 원칙(SOLID)](Java/2020-03-21-SOLID.md)
 * [Design Pattern](Java/design_pattern/README.md)
   * [Strategy Pattern](Java/design_pattern/2020-03-21-strategy_pattern.md)

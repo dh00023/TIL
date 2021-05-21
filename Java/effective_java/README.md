@@ -35,3 +35,4 @@
 * [Raw type은 사용하지 마라](./2021-05-19-generic-dont-use-raw-type.md)
 * [비검사 경고를 제거해라](./2021-05-20-remove-unchecked-warning.md)
 * [배열보다는 리스트를 사용해라](./2021-05-21-use-list-rather-than-array.md)
+* [이왕이면 제네릭 타입으로 만들어라](./2021-05-22-make-generic-type.md)
