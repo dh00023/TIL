@@ -12,8 +12,6 @@
 
 * [Monolithic vs MSA](./devops/2020-04-24-architecture.md)
 
-매일 공부한 내용을 기록하는 Repository 입니다.
-
 ## [Spring](spring)
 
 * [Build Tools](spring/2021-01-24-build-tools.md)
@@ -78,6 +76,7 @@
   * [회원가입예제](web/example-user.md )
   * 참고
     * [개발환경설정](web/chap01-settings.md)
+<<<<<<< HEAD
 
 ## Java+
 
