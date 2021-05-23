@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # SUMMARY
 
 * [Git](git/README.md)
@@ -55,9 +54,6 @@
 		* [Spring test](spring/2020-04-12-test.md)
 			* [Spring Boot Test DB 분리](spring/2021-01-24-batch-test-db-setting.md)
 			* [Spring Batch Test](spring/2021-02-11-batch-test.md)
-=======
-# Summary
->>>>>>> jsp
 
 * [JSP](jsp/README.md)
   * [Apache & Apach Tomcat](jsp/2020-03-16-webServer.md )
@@ -76,7 +72,6 @@
   * [Forwarding](jsp/chap12-forwarding.md )
   * [MVC](jsp/chap13-mvc.md )
   * [회원가입예제](jsp/example-user.md )
-<<<<<<< HEAD
 
 * Java+
 	* [SOAP/WSDL vs REST](./2020-07-15-soap-vs-rest.md)
@@ -158,7 +153,7 @@
 	   * [GUI 실습 - button](Java/실습/button.md)
 	   * [GUI 실습 - lotto](Java/실습/lotto.md)
 	   * [Thread 실습 - 좌석예약, 메세지보내기](Java/실습/lotto.md)
-
+	* [Jar vs War](Java/2021-05-23-jar-vs-war.md)
 
 * [데이터베이스](database/README.md)
 	* [KEY](database/basic/2019-03-18-key.md)
@@ -361,5 +356,3 @@
 
 * IT 기타지식
 	* [NAS란](./2021-01-19-nas.md)
-=======
->>>>>>> jsp
