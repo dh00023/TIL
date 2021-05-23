@@ -1,6 +1,7 @@
 #  웹 프로그래밍
 
 - [신입 프로그래머를 위한 실전 JSP 강좌](https://www.inflearn.com/course/%EC%8B%A4%EC%A0%84-jsp-%EA%B0%95%EC%A2%8C/)
+- [스프링 MVC 1편 - 백엔드 웹 개발 핵심 기술](https://inf.run/pYeB)
 - 각종 참조 링크
 
 를 보고 공부한 내용을 정리한 책입니다.
@@ -63,3 +64,4 @@ JAVA 플랫폼(J2SE, J2EE)중에서 **J2EE** 를 이용한 웹프로그래밍이
   - 이때, HTTP 프로토콜을 사용한다.
 
 ![](images/2.png)
+
