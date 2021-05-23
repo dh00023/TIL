@@ -12,6 +12,8 @@ Servlet은 위 초록색 상자의 비즈니스 로직 실행 부분을 제외�
   - thread를 이용해 서버에 부하가 적다.
 - MVC패턴에서 **Controller**로 이용됨.
 
+## Servlet 기본 구현
+
 ```java
 /**
  * Servlet implementation class HelloWorld
@@ -30,27 +32,565 @@ Servlet의 실행 순서는 개발자가 관리하는 게 아닌 Servlet Contain
 
 이렇게 개발자가 아닌 프로그램에 의해 객체들이 관리되는 것을 [IoC(Inversion of Control)](https://github.com/dh00023/TIL/blob/master/spring/2020-03-21-IoC.md)라고 한다. 
 
-## 요청 / 응답 처리
+- `@WebServlet` : 서블릿 어노테이션
+  - name: 서블릿 이름
+  - urlPatterns: url 매핑
+
+HTTP 요청을 통해 매핑된 url이 호출되면 서블릿 컨테이너는 다음 메서드(`protected void service(HttpServletRequest request, HttpServletResponse response)`)를 실행한다.
+
+### 요청 / 응답 처리
 
 요청 처리 객체 및 응답 처리 객체를 Tomcat에서 받는다.
 
 ```java
+protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+}
+
 protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 	...
 }
-/**
-* @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
-*/
+
 protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 	}
 }
 
 ```
 
-- `HttpServletRequest` : 클라이언트의 요청 처리 객체
-- `HttpServletResponse` : 클라이언트에게 응답 처리 객체
+#### HttpServletRequest
 
-### doGet()
+클라이언트의 요청 처리 객체
+
+HTTP 요청 메시지를 직접 파싱해서 사용해도 되지만, 매우 불편할 것이다. 서블릿은 개발자가 HTTP 요청 메시지를 편리하게 사용할 수 있도록 개발자 대신에  HTTP 요청 메시지를 파싱하여, 그 결과를 `HttpServletRequest` 객체에 담아서 제공해준다.
+
+- HTTP 요청 메세지
+
+  ```
+  POST /save HTTP/1.1
+  Host: localhost:8080
+  Content-Type: application/x-www-form-urlencoded
+  username=dahye&age=20
+  ```
+
+  - START LINE
+    - HTTP 메소드
+    - URL
+    - 쿼리 스트링
+    - 스키마, 프로토콜
+  - 헤더
+  - 바디
+    - form 파라미터 형식 조회
+    - message body 데이터 직접 조회
+
+- **임시 저장소 기능**
+
+  - 해당 HTTP 요청이 시작부터 끝날때까지 유지되는 임시 저장소 기능
+  - 저장 : `request.setAttribute(name, value)`
+  - 조회:  `request.getAttribute(name)`
+
+- **세션 관리 기능**
+
+  - `request.getSession(create: true)`
+
+
+
+`HttpServletRequest` 로 조회할 수 있는 정보들을 조회해보는 예제이다.
+
+```java
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.util.Enumeration;
+
+@WebServlet(name = "requestHeaderServlet", urlPatterns = "/request-header")
+public class RequestHeaderServlet extends HttpServlet {
+
+    @Override
+    protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        printStartLine(request);
+        printHeaders(request);
+        printHeaderUtils(request);
+				printEtc(request);
+    }
+
+    private void printStartLine(HttpServletRequest request) {
+        System.out.println("--- REQUEST-LINE - start ---");
+        System.out.println("request.getMethod() = " + request.getMethod()); //GET
+        System.out.println("request.getProtocal() = " + request.getProtocol()); //
+        // HTTP/1.1
+        System.out.println("request.getScheme() = " + request.getScheme()); //http
+        // http://localhost:8080/request-header
+        System.out.println("request.getRequestURL() = " + request.getRequestURL());
+        // /request-test
+        System.out.println("request.getRequestURI() = " + request.getRequestURI());
+        //username=hi
+        System.out.println("request.getQueryString() = " +
+                request.getQueryString());
+        System.out.println("request.isSecure() = " + request.isSecure()); //https
+        // 사용 유무
+        System.out.println("--- REQUEST-LINE - end ---");
+        System.out.println();
+    }
+
+    private void printHeaders(HttpServletRequest request) {
+        System.out.println("--- Headers start ---");
+
+        request.getHeaderNames().asIterator().forEachRemaining(headerName -> System.out.println(headerName + " : " + request.getHeader(headerName)));
+
+        System.out.println("--- Headers end ---");
+        System.out.println();
+
+    }
+
+    // Header 편리한 조회
+    private void printHeaderUtils(HttpServletRequest request) {
+        System.out.println("--- Header 편의 조회 start ---");
+        System.out.println("[Host 편의 조회]");
+        System.out.println("request.getServerName() = " +
+                request.getServerName()); //Host 헤더
+        System.out.println("request.getServerPort() = " + request.getServerPort()); //Host 헤더
+
+
+        System.out.println();
+        System.out.println("[Accept-Language 편의 조회]");
+        request.getLocales().asIterator()
+                .forEachRemaining(locale -> System.out.println("locale = " + locale));
+        System.out.println("request.getLocale() = " + request.getLocale());
+
+        System.out.println();
+        System.out.println("[cookie 편의 조회]");
+        if (request.getCookies() != null) {
+            for (Cookie cookie : request.getCookies()) {
+                System.out.println(cookie.getName() + ": " + cookie.getValue());
+            }
+        }
+        System.out.println();
+        System.out.println("[Content 편의 조회]");
+        System.out.println("request.getContentType() = " +
+                request.getContentType());
+        System.out.println("request.getContentLength() = " + request.getContentLength());
+        System.out.println("request.getCharacterEncoding() = " +
+                request.getCharacterEncoding());
+        System.out.println("--- Header 편의 조회 end ---");
+        System.out.println();
+    }
+
+    private void printEtc(HttpServletRequest request) {
+        System.out.println("--- 기타 조회 start ---");
+        System.out.println("[Remote 정보]");
+        System.out.println("request.getRemoteHost() = " + request.getRemoteHost());
+        System.out.println("request.getRemoteAddr() = " + request.getRemoteAddr());
+        System.out.println("request.getRemotePort() = " + request.getRemotePort());
+
+        System.out.println();
+
+        System.out.println("[Local 정보]");
+        System.out.println("request.getLocalName() = " + request.getLocalName());
+        System.out.println("request.getLocalAddr() = " + request.getLocalAddr());
+        System.out.println("request.getLocalPort() = " + request.getLocalPort());
+        System.out.println("--- 기타 조회 end ---");
+        System.out.println();
+    }
+
+}
+
+```
+
+```
+--- REQUEST-LINE - start ---
+request.getMethod() = GET
+request.getProtocal() = HTTP/1.1
+request.getScheme() = http
+request.getRequestURL() = http://localhost:8080/request-header
+request.getRequestURI() = /request-header
+request.getQueryString() = null
+request.isSecure() = false
+--- REQUEST-LINE - end ---
+
+--- Headers start ---
+host : localhost:8080
+connection : keep-alive
+cache-control : max-age=0
+sec-ch-ua : " Not A;Brand";v="99", "Chromium";v="90", "Google Chrome";v="90"
+sec-ch-ua-mobile : ?0
+upgrade-insecure-requests : 1
+user-agent : Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.212 Safari/537.36
+accept : text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9
+sec-fetch-site : same-origin
+sec-fetch-mode : navigate
+sec-fetch-user : ?1
+sec-fetch-dest : document
+referer : http://localhost:8080/basic.html
+accept-encoding : gzip, deflate, br
+accept-language : ko-KR,ko;q=0.9,en-US;q=0.8,en;q=0.7
+--- Headers end ---
+
+--- Header 편의 조회 start ---
+[Host 편의 조회]
+request.getServerName() = localhost
+request.getServerPort() = 8080
+
+[Accept-Language 편의 조회]
+locale = ko_KR
+locale = ko
+locale = en_US
+locale = en
+request.getLocale() = ko_KR
+
+[cookie 편의 조회]
+
+[Content 편의 조회]
+request.getContentType() = null
+request.getContentLength() = -1
+request.getCharacterEncoding() = UTF-8
+--- Header 편의 조회 end ---
+
+--- 기타 조회 start ---
+[Remote 정보]
+request.getRemoteHost() = 0:0:0:0:0:0:0:1
+request.getRemoteAddr() = 0:0:0:0:0:0:0:1
+request.getRemotePort() = 64206
+
+[Local 정보]
+request.getLocalName() = localhost
+request.getLocalAddr() = 0:0:0:0:0:0:0:1
+request.getLocalPort() = 8080
+--- 기타 조회 end ---
+```
+
+
+
+**요청 데이터** 
+
+- GET : 쿼리 파라미터
+  - url**?username=hello&age=30**
+  - 메세지 바디 없이 url의 쿼리 파라미터에 데이터를 포함해서 전달
+  - 검색, 필터, 페이징등에서 많이 사용
+
+  ```java
+  /**
+   * 1. 파라미터 전송 기능
+   * http://localhost:8080/request-param?username=hello&age=20&username=hello2
+   */
+  @WebServlet(name = "requestParamServlet", urlPatterns = "/request-param")
+  public class RequestParamServlet extends HttpServlet {
+  
+      @Override
+      protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+          System.out.println("==> 전체 파라미터 조회 start");
+          request.getParameterNames().asIterator().forEachRemaining(paramName -> System.out.println(paramName + " = " + request.getParameter(paramName)));
+          System.out.println("==> 전체 파라미터 조회 end");
+          System.out.println();
+  
+          System.out.println("==> 단일 파라미터 조회 start");
+          String username = request.getParameter("username");
+          System.out.println("username = " + username);
+          String age = request.getParameter("age");
+          System.out.println("age = " + age);
+          System.out.println("==> 단일 파라미터 조회 end");
+        	System.out.println();
+  
+          System.out.println("==> 이름이 같은 복수 파라미터 조회 start");
+          String[] usernames = request.getParameterValues("username");
+          for (String name : usernames) {
+              System.out.println("username = " + name);
+          }
+          System.out.println("==> 이름이 같은 복수 파라미터 조회 end");
+      }
+  }
+  
+  ```
+  파라미터 이름이 한개인데, 값이 여러개가 넘어오는 경우에는 `request.getParameterValues` 를 사용해서 중복값을 가져올 수 있으며, `request.getParameter` 는 여러개의 값중 첫번째 값을 반환한다.
+  
+  ```
+  ==> 전체 파라미터 조회 start
+  username = hello
+  age = 20
+  ==> 전체 파라미터 조회 end
+  
+  ==> 단일 파라미터 조회 start
+  username = hello
+  age = 20
+  ==> 단일 파라미터 조회 end
+  
+  ==> 이름이 같은 복수 파라미터 조회 start
+  username = hello
+  username = hello2
+  ==> 이름이 같은 복수 파라미터 조회 end
+  ```
+  
+  여기서는 클라이언트에서 서버로 데이터를 전달할 때, HTTP 메세지 바디를 사용하지 않기 때문에, content-type이 없다.
+  
+- POST : HTML-form 방식
+  - `content-type: application/x-www-form-urlencoded`
+  - 메세지 바디에 쿼리 파라미터 형식으로 전달(username=hello&age=30)
+  - 회원가입, 상품 주문, HTML form 사용
+
+  ```html
+  <!DOCTYPE html>
+  <html>
+  <head>
+      <meta charset="UTF-8">
+      <title>Title</title>
+  </head>
+  <body>
+  <form action="/request-param" method="post">
+      username: <input type="text" name="username" /> age: <input type="text" name="age" /> <button type="submit">전송</button>
+  </form>
+  </body>
+  </html>
+  ```
+  
+  form 전송으로 하게 되는 경우에 input에 넘어오는 데이터가 전달되는 것을 확인할 수 있다.
+  
+  ```
+  username=test&age=30]
+  ==> 전체 파라미터 조회 start
+  username = test
+  age = 30
+  ==> 전체 파라미터 조회 end
+  
+  ==> 단일 파라미터 조회 start
+  username = test
+  age = 30
+  ==> 단일 파라미터 조회 end
+  
+  ==> 이름이 같은 복수 파라미터 조회 start
+  username = test
+  ==> 이름이 같은 복수 파라미터 조회 end
+  ```
+  
+  `request.getParameter()` 는 GET과 POST 형식 두개 다 지원하는 것을 볼 수 있다. POST HTML form 형식은 HTTP 메세지 바디에 해당 데이터를 포함해서 보내기때문에 바디에 포함된 데이터가 어떤 형식인지 `content-type`을 반드시 지정해서 보내야한다. Form 형식은 `application/x-www-form-urlencoded` 형식이다.
+  
+- HTTP message body 
+  - HTTP API에서 주로 사용
+  - **JSON**, XML, TEXT(주로 JSON 사용)
+  - `POST`, `PUT`, `PATCH`
+  
+  ```java
+  // 이때 테스트는 postman으로 진행
+  @WebServlet(name = "RequestBodyStringServlet", urlPatterns = "/request-body-string")
+  public class RequestBodyStringServlet extends HttpServlet {
+  
+      @Override
+      protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+          ServletInputStream inputStream = request.getInputStream();
+          String messageBody = StreamUtils.copyToString(inputStream, StandardCharsets.UTF_8);
+  
+          System.out.println("messageBody = " + messageBody);
+  
+          response.getWriter().write("OK");
+      }
+  }
+  ```
+  
+  ```
+  messageBody = test
+  ```
+  
+  
+
+#### HttpServletResponse
+
+클라이언트 응답 처리 객체
+
+- HTTP 응답코드 지정
+- 헤더 생성
+- 바디 생성
+
+**편의 기능 제공**
+
+- `Content-Type`, Cookie, Redirect
+
+```java
+@WebServlet(name = "ResponseHeaderServlet", urlPatterns = "/response-header")
+public class ResponseHeaderServlet extends HttpServlet {
+    @Override
+    protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+
+        // status-line
+        response.setStatus(HttpServletResponse.SC_OK);
+
+        // response-header
+        response.setHeader("Content-Type", "text/plain");
+        response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
+        response.setHeader("Pragma", "no-cache");
+        response.setHeader("my-header", "hello");
+
+        PrintWriter writer = response.getWriter();
+        writer.println("OK");
+    }
+}
+```
+
+![image-20210524003117157](./assets/image-20210524003117157.png)
+
+위에서 설정한 값이 Response Header에 설정된 것을 확인할 수 있다.
+
+**쿠키, redirect 설정**
+
+```java
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.io.PrintWriter;
+
+@WebServlet(name = "ResponseHeaderServlet", urlPatterns = "/response-header")
+public class ResponseHeaderServlet extends HttpServlet {
+    @Override
+    protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+
+        // status-line
+        response.setStatus(HttpServletResponse.SC_OK);
+
+        // response-header
+//        response.setHeader("Content-Type", "text/plain");
+        response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
+        response.setHeader("Pragma", "no-cache");
+        response.setHeader("my-header", "hello");
+
+        // header 편의 메서드
+        content(response);
+
+        // cookie 편의 메서드
+        cookie(response);
+
+        // redirect
+        redirect(response);
+
+
+        PrintWriter writer = response.getWriter();
+        writer.println("OK");
+    }
+
+    private void content(HttpServletResponse response) {
+//        response.setHeader("Content-Type", "text/plain;charset=utf-8");
+        response.setContentType("text/plain");
+        response.setCharacterEncoding("utf-8");
+        response.setContentLength(2); //(생략시 자동 생성)
+    }
+
+    private void cookie(HttpServletResponse response) {
+        response.setHeader("Set-Cookie", "myCookie=good; Max-Age=600");
+        Cookie cookie = new Cookie("myCookie", "good");
+        cookie.setMaxAge(600); //600초
+        response.addCookie(cookie);
+    }
+
+    private void redirect(HttpServletResponse response) throws IOException {
+        //Status Code 302
+        //Location: /basic/hello-form.html
+        //response.setStatus(HttpServletResponse.SC_FOUND); //302
+        //response.setHeader("Location", "/basic/hello-form.html");
+        response.sendRedirect("/basic/hello-form.html");
+    }
+}
+```
+
+![image-20210524003813726](./assets/image-20210524003813726.png)
+
+**응답 데이터**
+
+- 단순 텍스트 응답
+
+  ```java
+  PrintWriter writer = response.getWriter();
+  writer.println("OK");
+  ```
+
+- HTML 응답 : `text/html` 지정 필요
+
+  ```java
+  @WebServlet(name = "responseHtmlServlet", urlPatterns = "/response-html")
+  public class ResponseHtmlServlet extends HttpServlet {
+  
+      @Override
+      protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+  
+          response.setContentType("text/html");
+          response.setCharacterEncoding("utf-8");
+  
+          PrintWriter writer = response.getWriter();
+          writer.write("<html>");
+          writer.write("<body>");
+          writer.write("  <h1>hello</h1>");
+          writer.write("</body>");
+          writer.write("</html>");
+  
+      }
+  }
+  ```
+
+  ```html
+  <html>
+  <body>
+    <h1>hello</h1>
+  </body>
+  </html>
+  ```
+
+- HTTP API - MessageBody JSON 응답 
+
+  ```java
+  @WebServlet(name = "responseJsonServlet", urlPatterns = "/response-json")
+  public class ResponseJsonServlet extends HttpServlet {
+  
+      private ObjectMapper objectMapper = new ObjectMapper();
+  
+      @Override
+      protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+  
+          response.setContentType("application/json");
+          response.setCharacterEncoding("utf-8");
+  
+          HelloData helloData = new HelloData();
+          helloData.setAge(30);
+          helloData.setUsername("test");
+  
+          String result = objectMapper.writeValueAsString(helloData);
+  
+          response.getWriter().write(result);
+      }
+  }
+  ```
+
+  ```json
+  {"username":"test","age":30}
+  ```
+
+  `application/json` 은 스펙상  utf-8 형식을 사용하도록 정의되어 있으며, `charset=utf-8` 과 같은 추가 바라미터는 지원하지 않는다. 즉, `application/json;charset=utf-8` 은 의미 없는 파라미터가 추가된 것이고, `response.getWriter()` 를 사용하면 자동으로 추가 파라미터를 추가한다. 이 문제는  `response.getOutputStream()` 으로 해결할 수 있다.
+
+#### service()
+
+GET, POST 방식을 구분하지 않는다. HTTP 요청에서 GET방식으로 오면, `doGet()` 메서드를 호출하고 POST방식으로 요청이 오면, `doPost()` 를 호출한다.
+
+```java
+    @Override
+    protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        System.out.println("HelloServlet.service");
+        System.out.println("request = " + request);
+        System.out.println("response = " + response);
+
+        String username = request.getParameter("username");
+        System.out.println("username = " + username);
+
+        response.setContentType("text/plain");
+        response.setCharacterEncoding("utf-8");
+        response.getWriter().write("hello " + username);
+
+    }
+```
+
+
+
+#### doGet()
 
 **GET 방식 : URL 값으로 정보가 전송되어 보안에 약함** 
 
@@ -91,7 +631,7 @@ protected void doGet(HttpServletRequest request, HttpServletResponse response) t
 	}
 ```
 
-### doPost()
+#### doPost()
 
 **POST 방식 : header를 이용해 정보가 전송되어 보안에 강하다.** 
 
@@ -128,7 +668,7 @@ protected void doPost(HttpServletRequest request, HttpServletResponse response) 
   
 ```
 
-## Context Path
+### Context Path
 
 WAS(Web Application Server)에서 웹어플리케이션을 구분하기 위한 path 입니다. 이클립스에서 프로젝트를 생성하면, 자동으로 server.xml에 추가 됩니다.
 
@@ -137,6 +677,41 @@ WAS(Web Application Server)에서 웹어플리케이션을 구분하기 위한 p
 
       <Context docBase="ch05" path="/ch05" reloadable="true" source="org.eclipse.jst.jee.server:ch05"/></Host>
 ```
+
+### 로그 출력
+
+- application.properties
+
+  ```
+  logging.level.org.apache.coyote.http11=debug
+  ```
+
+개발 서버에서 위 설정을 추가해 HTTP 요청관련해서 로그를 출력할 수 있다.
+
+요청 URL : http://localhost:8080/hello?username=%EB%8B%A4%ED%98%9C
+
+```
+2021-05-23 22:19:31.486 DEBUG 84310 --- [nio-8080-exec-1] o.a.coyote.http11.Http11InputBuffer      : Before fill(): parsingHeader: [true], parsingRequestLine: [true], parsingRequestLinePhase: [0], parsingRequestLineStart: [0], byteBuffer.position(): [0], byteBuffer.limit(): [0], end: [0]
+2021-05-23 22:19:31.489 DEBUG 84310 --- [nio-8080-exec-1] o.a.coyote.http11.Http11InputBuffer      : Received [GET /hello?username=%EB%8B%A4%ED%98%9C HTTP/1.1
+Host: localhost:8080
+Connection: keep-alive
+Cache-Control: max-age=0
+sec-ch-ua: " Not A;Brand";v="99", "Chromium";v="90", "Google Chrome";v="90"
+sec-ch-ua-mobile: ?0
+Upgrade-Insecure-Requests: 1
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.212 Safari/537.36
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9
+Sec-Fetch-Site: none
+Sec-Fetch-Mode: navigate
+Sec-Fetch-User: ?1
+Sec-Fetch-Dest: document
+Accept-Encoding: gzip, deflate, br
+Accept-Language: ko-KR,ko;q=0.9,en-US;q=0.8,en;q=0.7
+
+]
+```
+
+
 
 
 

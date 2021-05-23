@@ -61,14 +61,37 @@ servers를 열어 새로운 server를 추가해준다.
 
 ## intellij + spring web을 이용한 환경설정
 
-spring을 사용할 일은 없지만, 기본적으로 내장 tomcat이 있는 spring web으로 환경설정을 하면 더욱 간편하게 설정할 수 있다.
+위의 방법과 같이 기본적으로 서블릿은 톰캣 같은 웹 어플리케이션 서버를 직접 설치하고 그 위에 서블릿 코드를 클래스 파일로 빌드해서 올린 다음, 톰캣 서버를 실행하여 사용할 수 있다. 하지만 이 과정은 매우 번거롭다.
 
-[https://start.spring.io/](https://start.spring.io/) 에서 다음과 같이 프로젝트를 생성한다.
+spring을 사용할 일은 없지만, 기본적으로 내장 tomcat이 있는 spring boot를 사용하면 별도 톰캣 서버 설치 없이 더욱 간편하게 설정할 수 있다.
+
+1. [https://start.spring.io/](https://start.spring.io/) 에서 다음과 같이 프로젝트를 생성한다.
 
 ![스크린샷 2021-05-23 오후 9.18.35](./assets/스크린샷 2021-05-23 오후 9.18.35.png)
 
-여기서 jsp를 사용하기 위해 Packaging은 `War` 를 선택했으며, `Spring Web`은 내장 톰켓을 사용하기 위해서 추가했다.
+여기서 jsp를 사용하기 위해 Packaging은 `War` 를 선택했으며, `Spring Web`은 내장 톰켓을 사용하기 위해서 추가했다. ([jar vs war](https://github.com/dh00023/TIL/blob/master/Java/2021-05-23-jar-vs-war.md))
 
-추가로 Build Tools에서 Gradle - Build and run설정을  `Gradle`에서  `IntelliJ IDEA` 로 변경해 준다. (현재 기준 더 빠름)
+2. 추가로 Build Tools에서 Gradle - Build and run설정을  `Gradle`에서  `IntelliJ IDEA` 로 변경해 준다. (현재 기준 더 빠름)
 
 ![스크린샷 2021-04-11 오후 10.36.27](./assets/스크린샷 2021-04-11 오후 10.36.27.png)
+
+3. `@ServletComponentScan` ( 서블릿을 직접 등록해서 사용할 수 있도록 지원 ) 추가
+
+   ```java
+   import org.springframework.boot.SpringApplication;
+   import org.springframework.boot.autoconfigure.SpringBootApplication;
+   import org.springframework.boot.web.servlet.ServletComponentScan;
+   
+   @ServletComponentScan
+   @SpringBootApplication
+   public class WebServletApplication {
+   
+   	public static void main(String[] args) {
+   		SpringApplication.run(WebServletApplication.class, args);
+   	}
+   
+   }
+   ```
+
+   
+
