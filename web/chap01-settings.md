@@ -56,3 +56,19 @@ servers를 열어 새로운 server를 추가해준다.
 ![](images/8.png)
 
 이후에 http://localhost:8181로 접속해 성공이미지가 뜬다면 성공한 것이다.
+
+
+
+## intellij + spring web을 이용한 환경설정
+
+spring을 사용할 일은 없지만, 기본적으로 내장 tomcat이 있는 spring web으로 환경설정을 하면 더욱 간편하게 설정할 수 있다.
+
+[https://start.spring.io/](https://start.spring.io/) 에서 다음과 같이 프로젝트를 생성한다.
+
+![스크린샷 2021-05-23 오후 9.18.35](./assets/스크린샷 2021-05-23 오후 9.18.35.png)
+
+여기서 jsp를 사용하기 위해 Packaging은 `War` 를 선택했으며, `Spring Web`은 내장 톰켓을 사용하기 위해서 추가했다.
+
+추가로 Build Tools에서 Gradle - Build and run설정을  `Gradle`에서  `IntelliJ IDEA` 로 변경해 준다. (현재 기준 더 빠름)
+
+![스크린샷 2021-04-11 오후 10.36.27](./assets/스크린샷 2021-04-11 오후 10.36.27.png)
