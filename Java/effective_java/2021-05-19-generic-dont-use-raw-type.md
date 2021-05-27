@@ -219,7 +219,7 @@ collection.add(123);
 Raw type 컬렉션에는 아무 원소나 넣을 수 있어 타입 불변식을 훼손하기 쉽다. 비한정적 와일드카드 타입을 사용하면 `Collection<?>` 에는 null을 제외한 어떠한 원소도 넣을 수 없다. 
 
 ```java
-Collection<T> collection = new ArrayList<>();
+Collection<?> collection = new ArrayList<>();
 collection.add(null); // 가능
 collection.add("test"); // 컴파일 오류 
 ```

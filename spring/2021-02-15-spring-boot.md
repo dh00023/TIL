@@ -14,8 +14,7 @@
 
 - [Spring Boot Reference Guide](https://docs.spring.io/spring-boot/docs/current/reference/htmlsingle/)를 참고해 스타터 내부의 의존성을 확인할 수 있다.
 
-<<<<<<< HEAD
-=======
+
 ## 라이브러리
 
 - spring-boot-starter-web
@@ -29,7 +28,6 @@
         - logback, slf4j
 - spring-boot-starter-test: 스프링부트 테스트
 
->>>>>>> spring
 ## 장단점
 
 ### 장점

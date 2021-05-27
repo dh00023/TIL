@@ -12,11 +12,8 @@ Servlet은 위 초록색 상자의 비즈니스 로직 실행 부분을 제외�
   - thread를 이용해 서버에 부하가 적다.
 - MVC패턴에서 **Controller**로 이용됨.
 
-<<<<<<< HEAD
-=======
 ## Servlet 기본 구현
 
->>>>>>> jsp
 ```java
 /**
  * Servlet implementation class HelloWorld
@@ -35,9 +32,6 @@ Servlet의 실행 순서는 개발자가 관리하는 게 아닌 Servlet Contain
 
 이렇게 개발자가 아닌 프로그램에 의해 객체들이 관리되는 것을 [IoC(Inversion of Control)](https://github.com/dh00023/TIL/blob/master/spring/2020-03-21-IoC.md)라고 한다. 
 
-<<<<<<< HEAD
-## 요청 / 응답 처리
-=======
 - `@WebServlet` : 서블릿 어노테이션
   - name: 서블릿 이름
   - urlPatterns: url 매핑
@@ -45,19 +39,10 @@ Servlet의 실행 순서는 개발자가 관리하는 게 아닌 Servlet Contain
 HTTP 요청을 통해 매핑된 url이 호출되면 서블릿 컨테이너는 다음 메서드(`protected void service(HttpServletRequest request, HttpServletResponse response)`)를 실행한다.
 
 ### 요청 / 응답 처리
->>>>>>> jsp
 
 요청 처리 객체 및 응답 처리 객체를 Tomcat에서 받는다.
 
 ```java
-<<<<<<< HEAD
-protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-	...
-}
-/**
-* @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
-*/
-=======
 protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 }
 
@@ -65,19 +50,12 @@ protected void doGet(HttpServletRequest request, HttpServletResponse response) t
 	...
 }
 
->>>>>>> jsp
 protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 	}
 }
 
 ```
 
-<<<<<<< HEAD
-- `HttpServletRequest` : 클라이언트의 요청 처리 객체
-- `HttpServletResponse` : 클라이언트에게 응답 처리 객체
-
-### doGet()
-=======
 #### HttpServletRequest
 
 클라이언트의 요청 처리 객체
@@ -613,7 +591,6 @@ GET, POST 방식을 구분하지 않는다. HTTP 요청에서 GET방식으로 �
 
 
 #### doGet()
->>>>>>> jsp
 
 **GET 방식 : URL 값으로 정보가 전송되어 보안에 약함** 
 
@@ -654,11 +631,7 @@ protected void doGet(HttpServletRequest request, HttpServletResponse response) t
 	}
 ```
 
-<<<<<<< HEAD
-### doPost()
-=======
 #### doPost()
->>>>>>> jsp
 
 **POST 방식 : header를 이용해 정보가 전송되어 보안에 강하다.** 
 
@@ -695,11 +668,7 @@ protected void doPost(HttpServletRequest request, HttpServletResponse response) 
   
 ```
 
-<<<<<<< HEAD
-## Context Path
-=======
 ### Context Path
->>>>>>> jsp
 
 WAS(Web Application Server)에서 웹어플리케이션을 구분하기 위한 path 입니다. 이클립스에서 프로젝트를 생성하면, 자동으로 server.xml에 추가 됩니다.
 
@@ -709,8 +678,6 @@ WAS(Web Application Server)에서 웹어플리케이션을 구분하기 위한 p
       <Context docBase="ch05" path="/ch05" reloadable="true" source="org.eclipse.jst.jee.server:ch05"/></Host>
 ```
 
-<<<<<<< HEAD
-=======
 ### 로그 출력
 
 - application.properties
@@ -746,7 +713,6 @@ Accept-Language: ko-KR,ko;q=0.9,en-US;q=0.8,en;q=0.7
 
 
 
->>>>>>> jsp
 
 
 ## Servlet 작동 순서

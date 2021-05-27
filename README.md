@@ -76,7 +76,6 @@
   * [회원가입예제](web/example-user.md )
   * 참고
     * [개발환경설정](web/chap01-settings.md)
-<<<<<<< HEAD
 
 ## Java+
 
@@ -136,11 +135,11 @@
   * [상속을 고려해 설계하고 문서화해라](Java/effective_java/2021-02-13-design-inheirtance.md)
   * [추상 클래스보다 인터페이스를 우선하라](Java/effective_java/2021-02-13-prefer-interface.md)
   * [인터페이스는 구현하는 쪽을 생각해 설계해라.](Java/effective_java/2021-02-13-design-interface-for-posterity.md)
-	* [인터페이스는 타입을 정의하는 용도로만 사용해라](Java/effective_java/2021-02-13-use-interface-to-define-type.md)
-	* [태그 달린 클래스보다 클래스 계층구조를 활용해라](Java/effective_java/2021-02-14-use-class-hirarchies.md)
-	* [멤버 클래스는 되도록 static으로 구현해라](Java/effective_java/2021-02-14-favor-static-memeber.md)
-	* [톱레벨 클래스는 한 파일에 하나만 생성해라.](Java/effective_java/2021-02-14-limit-single-top-level-class.md)
-	* [Raw type은 사용하지 마라](Java/effective_java/2021-05-19-generic-dont-use-raw-type.md)
+  * [인터페이스는 타입을 정의하는 용도로만 사용해라](Java/effective_java/2021-02-13-use-interface-to-define-type.md)
+  * [태그 달린 클래스보다 클래스 계층구조를 활용해라](Java/effective_java/2021-02-14-use-class-hirarchies.md)
+  * [멤버 클래스는 되도록 static으로 구현해라](Java/effective_java/2021-02-14-favor-static-memeber.md)
+  * [톱레벨 클래스는 한 파일에 하나만 생성해라.](Java/effective_java/2021-02-14-limit-single-top-level-class.md)
+  * [Raw type은 사용하지 마라](Java/effective_java/2021-05-19-generic-dont-use-raw-type.md)
   * [비검사 경고를 제거해라](Java/effective_java/2021-05-20-remove-unchecked-warning.md)
   * [배열보다는 리스트를 사용해라](Java/effective_java/2021-05-21-use-list-rather-than-array.md)
   * [이왕이면 제네릭 타입으로 만들어라](Java/effective_java/2021-05-22-make-generic-type.md)
@@ -379,4 +378,3 @@
 ## IT 기타지식
 
 - [NAS란](./2021-01-19-nas.md)
-  

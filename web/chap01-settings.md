@@ -55,9 +55,6 @@ servers를 열어 새로운 server를 추가해준다.
 
 ![](images/8.png)
 
-<<<<<<< HEAD
-이후에 http://localhost:8181로 접속해 성공이미지가 뜬다면 성공한 것이다.
-=======
 이후에 http://localhost:8181로 접속해 성공이미지가 뜬다면 성공한 것이다.
 
 
@@ -98,4 +95,3 @@ spring을 사용할 일은 없지만, 기본적으로 내장 tomcat이 있는 sp
 
    
 
->>>>>>> jsp
