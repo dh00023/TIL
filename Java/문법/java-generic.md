@@ -16,6 +16,12 @@
 | 제네릭 메서드            | generic method          | `static <E> List<E> asList(E[] a)` |
 | 타입 토큰                | type token              | `String.class`                     |
 
+------
+
+Generic이란 무엇일까?
+
+JDK 1.5에 처음 도입되었으며, 제네릭은 **클래스 내부에서 사용할 데이터 타입을 외부에서 지정하는 기법**을 의미한다.(*생활코딩* )
+
 Generic 타입을 이용함으로써 잘못된 타입이 사용될 수 있는 문제를 컴파일 과정에서 제거할 수 있게되었다. 제네릭은 클래스와 인터페이스, 메소드를 정의할 때 타입(type)을 파라미터(parameter)로 사용할 수 있도록한다. 타입 파라미터는 코드 작성 시 구체적인 타입으로 대체되어 다양한 코드를 생성하도록 해준다.
 
 #### 장점
@@ -23,6 +29,7 @@ Generic 타입을 이용함으로써 잘못된 타입이 사용될 수 있는 �
 1. 컴파일 시 강한 타입 체크를 할 수 있다.
 
 2. 타입 변환(casting)을 제거한다.
+
    ```java
    // generic이 아닌경우
    List list = new ArrayList();
@@ -34,6 +41,38 @@ Generic 타입을 이용함으로써 잘못된 타입이 사용될 수 있는 �
    list.add("hello");
    String str = list.get(0); // 타입 변환을 하지 않음
    ```
+
+## Generic Class
+
+클래스 선언에 타입 매개변수가 쓰이면, 이를 Generic Class라고 한다.
+
+```java
+class FruitBox<T> {
+  	List<T> fruits = new ArrayList<>();
+  	
+  	public void add(T fruit) {
+      	fruits.add(fruit);
+    }
+}
+```
+
+`FruitBox` 제네릭 클래스가 있다. 이떄 다음과 같이 타입 매개변수를 외부에서 `Apple`로 넘길 수 있다.
+
+```java
+FruitBox<Apple> appleBox = new FruitBox<>();
+```
+
+```java
+class FruitBox<Apple> {
+  	List<Apple> fruits = new ArrayList<>();
+  	
+  	public void add(Apple fruit) {
+      	fruits.add(fruit);
+    }
+}
+```
+
+하지만 **실제로 타입이 변경되는 것은 아니다.** 
 
 
 
@@ -60,8 +99,8 @@ public class Box{
 
 ```java
 Box box = new Box();
-box.set("안녕");						// String 타입을 Object타입으로 자동타입 변환
-String str = (String) box.get();	// Object 타입을 String타입으로 강제 타입 변환
+box.set("안녕");                      // String 타입을 Object타입으로 자동타입 변환
+String str = (String) box.get();    // Object 타입을 String타입으로 강제 타입 변환
 ```
 
 다음과 같이 get으로 가져오기위해서는 강제 타입 변환이 필요하다.
@@ -100,7 +139,7 @@ public class Product<T, M>{
     private M model;
     
     public T getKind(){ return this.kind; }
-	public M getModel(){ return this.model; }
+    public M getModel(){ return this.model; }
     
     public void setKind(T kind){ this.kind = kind; }
     public void setMode(M model){ this.model = model; }
@@ -181,8 +220,8 @@ public <T extends Number> int compare(T t1, T t2){
 public class Util{
     public static <T extends Number> int compare(T t1, T t2){
         double v1 = t1.doubleValue();
-	    double v2 = t2.doubleValue();
-	    return Double.compare(v1,v2);
+        double v2 = t2.doubleValue();
+        return Double.compare(v1,v2);
     }
 }
 ```
@@ -224,7 +263,7 @@ public class Couse<T>{
         for(int i=0;i<students.length;i++){
             if(students[i] == null){
                 students[i]=t;
-				break;
+                break;
             }
         }
     }
@@ -290,4 +329,9 @@ public class StorageImpl<T> implements Storage<T>{
 ```
 
 
+## 참고
 
+- [[10분 테코톡] 🌱 시드의 제네릭](https://www.youtube.com/watch?v=Vv0PGUxOzq0)
+- [https://docs.oracle.com/javase/tutorial/java/generics/capture.html](https://docs.oracle.com/javase/tutorial/java/generics/capture.html)
+- [https://johnie.site/language/java/Generics/7/](https://johnie.site/language/java/Generics/7/)
+- [https://jinbroing.tistory.com/228](https://jinbroing.tistory.com/228)
