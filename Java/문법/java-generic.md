@@ -685,6 +685,47 @@ List<String> list = Collections.emptyList();
 | `<? extends 상위타입>` | Upper Bounded Wildcards<br />상한 경계 와일드카드 | 상위 클래스 제한<br />(타입 파라미터를 대치하는 구체적 타입으로 상위 타입이나 하위 타입만 올 수 있다.) |
 | `<? super 하위타입>`   | Lower Bounded Wildcards<br />하한 경계 와일드카드 | 하위 클래스 제한<br />(타입 파라미터를 대치하는 구체적 타입으로 하위 타입이나 상위타입이 올 수 있다.) |
 
+
+
+```java
+public class Couse<T>{
+    private String name;
+    private T[] students;
+    
+    public Course(String name, int capacity){
+        this.name = name;
+        // 타입 파라미터로 배열을 생성하려면 new T[n]형태가 아닌 (T[])(new T[n])의 형태로 생성해야한다.
+        students = (T[])(new Object[capacity]);
+    }
+    
+    public String getName(){ return name; }
+    public T[] getStudents(){ return students; }
+    public void add(T t){
+        for(int i=0;i<students.length;i++){
+            if(students[i] == null){
+                students[i]=t;
+                break;
+            }
+        }
+    }
+}
+```
+
+수강생이 될 수 있는 타입이 아래와 같다.
+
+- Person
+  - Worker
+  - Student
+    - HighStudent
+
+
+
+- `Course<?>` : 수강생은 모든 타입(Person, Worker, Student, HightStudent)
+- `Course<? extends Students>` :  수강생는 Student와 HighStudent만 가능
+- `Course<? super Worker>` :  Worker, Person만 가능
+
+
+
 ### Unbounded Wildcards
 
 `List<?>` 와 같이 `?` 의 형태로 정의되며, 비한정적 와일드카드 타입이 사용될 수 있는 시나리오는 다음과 같다.
@@ -813,6 +854,8 @@ List<? extends Number> numbers = ints;
 numbers.add(Double.valueOf(3.14)); // compile error
 ```
 
+
+
 ### Lower Bounded Wildcards
 
 `<? super T>` 의 형태로, `List<? super T>` 와 같이 사용한다.
@@ -842,47 +885,292 @@ ints.add(new Number()); // compile error
 만약 ints가 `List<Integer>` 일 경우 `Number`는 `Integer`의 상위 클래스 이므로 원소를 추가할 수 없다.
 `List<Integer>`, `List<Number>`, `List<Object>` 중 어떠한 리스트가 올지 ints는 알지 못한다. 하지만 그 중 어떠한 리스트가 오더라도, `Integer`의 하위 클래스는 원소로 추가할 수 있다.
 
+### Wildcards and Subtyping
 
-
-
+비제네릭 클래스에서든 상위 클래스에 하위 클래스를 대입할 수 있다.
 
 ```java
-public class Couse<T>{
-    private String name;
-    private T[] students;
-    
-    public Course(String name, int capacity){
-        this.name = name;
-        // 타입 파라미터로 배열을 생성하려면 new T[n]형태가 아닌 (T[])(new T[n])의 형태로 생성해야한다.
-        students = (T[])(new Object[capacity]);
-    }
-    
-    public String getName(){ return name; }
-    public T[] getStudents(){ return students; }
-    public void add(T t){
-        for(int i=0;i<students.length;i++){
-            if(students[i] == null){
-                students[i]=t;
-                break;
-            }
-        }
+class A { /* ... */ }
+class B extends A { /* ... */ }
+```
+
+```java
+B b = new B();
+A a = b; // OK
+```
+
+하지만, 제네릭 클래스에서는 컴파일 오류가 발생한다.
+
+```java
+List<B> lb = new ArrayList<>();
+List<A> la = lb; //compile error
+```
+
+왜냐하면  `List<B>`는 `List<A>`의 하위 타입이 아니며, 아무런 관계가 없다.  `List<B>`와 `List<A>`의 공통 조상은  `List<?>`이다.
+그렇다면, `B`와 `A`의 요소를 받는 제네릭 타입을 만들고 싶을때는 상위 경계 와일드카드를 사용하면된다.
+
+```java
+List<? extends Integer> ints = new ArrayList<>();
+List<? extends Number> numbers = ints; // OK
+```
+
+`List<? extends Integer>`는 `List<? extends Number>`의 하위 타입이기 때문에 가능하다. 왜냐하면 `Integer`의 하위 타입은 `Number`의 하위타입이기 때문에, 아래와 같은 관계가 성립된다.
+
+![](https://docs.oracle.com/javase/tutorial/figures/java/generics-wildcardSubtyping.gif)
+
+
+
+### Wildcard Capture
+
+컴파일러는 어떠한 경우에, 와일드카드의 타입을 추론한다. 예를들어, `List<?>` 리스트가 정의되어있을때, 컴파일러는 코드에서 특정 타입을 추론한다. 이러한 시나리오를 와일드카드 캡처라고 한다.
+
+ **"capture of"** 오류 문구를 제외하고는 와일드카드 캡처를 신경쓰지 않아도 된다.
+
+```java
+public class WildcardError {
+    void foo(List<?> i) {
+        i.set(0, i.get(0)); // capture of compile error
     }
 }
 ```
 
-수강생이 될 수 있는 타입이 아래와 같다.
+위 예제에서는 `foo()` 메서드에서 `List.set(int, E)`를 호출할때 컴파일러는 `List`에 삽입되는 객체의 유형을 확인할 수 없기 때문에 오류를 발생시킨다. 이러한 유형의 오류가 발생하면 일반적으로 **컴파일러는 변수에 잘못된 타입의 값을 할당하고 있다고 믿는다는 것을 의미**한다. 이렇게 자바 컴파일타임에 타입안전을 추가하기위해 제네릭이 추가된 것이다.
 
-- Person
-  - Worker
-  - Student
-    - HighStudent
+```java
+public class WildcardFixed {
+
+    void foo(List<?> i) {
+        fooHelper(i);
+    }
 
 
+    // Helper method created so that the wildcard can be captured
+    // through type inference.
+    private <T> void fooHelper(List<T> l) {
+        l.set(0, l.get(0));
+    }
 
-- `Course<?>` : 수강생은 모든 타입(Person, Worker, Student, HightStudent)
-- `Course<? extends Students>` :  수강생는 Student와 HighStudent만 가능
-- `Course<? super Worker>` :  Worker, Person만 가능
+}
+```
 
+이러한 경우 `fooHelper()` 처럼 private helper method를 만들어서 문제를 해결할 수 있다.
+helper 메서드 덕분에 컴파일러는 `T`가 캡쳐 변수인 `CAP#1` 임을 추론할 수 있다. 일반적으로 helper 메서드는 `originalMethodNameHelper`로 지정된다.
+
+## Type Erasure
+
+제네릭은 타입의 안정성을 보장하며, 실행시간에 오버헤드가 발생하지 않도록 하기위해 추가됐다. 컴파일러는 컴파일 시점에 제네릭에 대해 원소 타입 소거(type erasure)를 한다. 즉, **컴파일 타임에만 타입 제약 조건을 정의하고, 런타임에는 타입을 제거**한다는 뜻이다.
+
+- **unbounded Type(`<?>`, `<T>`)은 `Object`로 변환**
+- **bound type(`<E extends Comparable>`)의 경우는 Object가 아닌 `Comprarable`로 변환**
+- 제네릭 타입을 사용할 수 있는 일반 클래스, 인터페이스, 메소드에만 소거 규칙을 적용
+- 타입 안정성 보존을 위해 필요시 type  casting
+- **확장된 제네릭 타입에서 다형성을 보존하기위해 bridge method 생성**
+
+하나씩 예제를 보면서 알아볼 것이다.
+
+#### unbounded Type(`<?>`, `<T>`)은 `Object`로 변환
+
+```java
+// 타입 소거 이전
+public class Node<T> {
+
+    private T data;
+    private Node<T> next;
+
+    public Node(T data, Node<T> next) {
+        this.data = data;
+        this.next = next;
+    }
+
+    public T getData() { return data; }
+    // ...
+}
+```
+
+```java
+// 런타임(타입 소거 후)
+public class Node {
+
+    private Object data;
+    private Node next;
+
+    public Node(Object data, Node next) {
+        this.data = data;
+        this.next = next;
+    }
+
+    public Object getData() { return data; }
+    // ...
+}
+```
+
+type erasure가 적용되면서 특정 타입으로 제한되지 않은 `<T>`는 다음과 같이 `Object`로 대체된다.
+
+제네릭 메서드에서도 동일하다.
+
+```java
+public static <T> int count(T[] anArray, T elem) {
+    int cnt = 0;
+    for (T e : anArray)
+        if (e.equals(elem))
+            ++cnt;
+        return cnt;
+}
+```
+
+```java
+public static int count(Object[] anArray, Object elem) {
+    int cnt = 0;
+    for (Object e : anArray)
+        if (e.equals(elem))
+            ++cnt;
+        return cnt;
+}
+```
+
+`T` 는 비한정적 타입이므로, 컴파일러가 `Object` 로 변환한다.
+
+#### bound type(`<E extends T>`)의 경우는 Object가 아닌 `T`로 변환
+
+```java
+// 컴파일 할 때 (타입 변환 전) 
+public class Node<T extends Comparable<T>> {
+
+    private T data;
+    private Node<T> next;
+
+    public Node(T data, Node<T> next) {
+        this.data = data;
+        this.next = next;
+    }
+
+    public T getData() { return data; }
+    // ...
+}
+```
+
+```java
+// 런타임 시
+public class Node {
+
+    private Comparable data;
+    private Node next;
+
+    public Node(Comparable data, Node next) {
+        this.data = data;
+        this.next = next;
+    }
+
+    public Comparable getData() { return data; }
+    // ...
+}
+```
+
+한정된 타입(bound type)에서는 컴파일 시점에 제한된 타입으로 변환된다. `Comparable` 로 변환된 것을 확인할  수 있다.
+
+```java
+public static <T extends Shape> void draw(T shape) { /* ... */ }
+```
+
+```java
+public static void draw(Shape shape) { /* ... */ }
+```
+
+여기서는 `Shape` 로 변환된 것을 확인할 수 있다.
+
+#### 확장된 제네릭 타입에서 다형성을 보존하기위해 bridge method 생성
+
+컴파일러가 컴파일 시점에 제네릭 타입 안정성을 위해 bridge method를 생성할 수 있다. 다음 예제를 살펴보자.
+
+```java
+public class Node<T> {
+
+    public T data;
+
+    public Node(T data) { this.data = data; }
+
+    public void setData(T data) {
+        System.out.println("Node.setData");
+        this.data = data;
+    }
+}
+
+public class MyNode extends Node<Integer> {
+    public MyNode(Integer data) { super(data); }
+
+    public void setData(Integer data) {
+        System.out.println("MyNode.setData");
+        super.setData(data);
+    }
+}
+```
+
+위 두개의 클래스가 있다. 이때 다음과 코드를 실행해야한다고 예를 들어보자.
+
+```java
+MyNode mn = new MyNode(5);
+Node n = mn;            // A raw type - compiler throws an unchecked warning
+n.setData("Hello");     // Causes a ClassCastException to be thrown.
+Integer x = mn.data;    
+
+```
+
+타입이 소거된 후에는 다음과 같이 적용되며,런타임시  `ClassCastException` 를 발생시키게 된다.
+
+```java
+MyNode mn = new MyNode(5);
+Node n = (MyNode)mn;         // A raw type - compiler throws an unchecked warning
+n.setData("Hello");          // Causes a ClassCastException to be thrown.
+Integer x = (String)mn.data; 
+```
+
+타입 소거 후에 `Node`와 `MyNode`는 다음과 같이 변환되는 것을 볼 수 있으며, 소거 후에는 `Node` 시그니처 메서드가 `setData(T data)` 에서 `setData(Object data)`로 바꾸기 때문에 `MyNode` 의 `setData(Integer data)`를 overriding 할 수  없게 된다.
+
+```java
+public class Node {
+
+    public Object data;
+
+    public Node(Object data) { this.data = data; }
+
+    public void setData(Object data) {
+        System.out.println("Node.setData");
+        this.data = data;
+    }
+}
+
+public class MyNode extends Node {
+
+    public MyNode(Integer data) { super(data); }
+
+    public void setData(Integer data) {
+        System.out.println("MyNode.setData");
+        super.setData(data);
+    }
+}
+```
+
+런타임 시에는 다음과 같이 타입이 소거된 상태로 변할 것이다. (`Object`로 변환) 그렇게 되면,  `Object` 로 변하게 되는 경우에 대한 불일치를 없애기 위해 컴파일러는 런타임에 해당 제네릭 타입의 타임 소거를 위한 bridge method를 생성해준다.
+
+```java
+class MyNode extends Node {
+
+    // Bridge method generated by the compiler
+    //
+    public void setData(Object data) {
+        setData((Integer) data);
+    }
+
+    public void setData(Integer data) {
+        System.out.println("MyNode.setData");
+        super.setData(data);
+    }
+
+    // ...
+}
+```
+
+그렇기때문에 `ClassCastException` 예외를 던지는 것을 알 수 있다.
 
 
 ## Generic Type의 상속과 구현
@@ -932,7 +1220,7 @@ public class StorageImpl<T> implements Storage<T>{
 ## 참고
 
 - [[10분 테코톡] 🌱 시드의 제네릭](https://www.youtube.com/watch?v=Vv0PGUxOzq0)
-- [https://docs.oracle.com/javase/tutorial/java/generics/capture.html](https://docs.oracle.com/javase/tutorial/java/generics/capture.html)
+- [https://docs.oracle.com/javase/tutorial/java/generics/index.html](https://docs.oracle.com/javase/tutorial/java/generics/index.html)
 - [https://johnie.site/language/java/Generics/7/](https://johnie.site/language/java/Generics/7/)
 - [https://jinbroing.tistory.com/228](https://jinbroing.tistory.com/228)
 - [https://blog.naver.com/PostView.nhn?blogId=zzang9ha&logNo=222059024135](https://blog.naver.com/PostView.nhn?blogId=zzang9ha&logNo=222059024135)
