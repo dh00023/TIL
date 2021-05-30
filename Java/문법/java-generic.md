@@ -1172,6 +1172,113 @@ class MyNode extends Node {
 
 그렇기때문에 `ClassCastException` 예외를 던지는 것을 알 수 있다.
 
+## Reifiable vs Non-Reifiable
+
+### Reifiable Type
+
+런타임시에 완전하게 오브젝트 정보를 표현할 수 있는 타입을 실체화 타입(Reifiable Type)이라고 한다. 즉, 컴파일 단계에서 타입소거에 의해 지워지지 않는 타입 정보이다.
+
+1. 원시 타입 (ex) `int`, `double`, `float`, `byte` 등등
+2. `Number`, `Integer`와 같은 일반 클래스와 인터페이스 타입
+3. 비한정 와일드카드(`?`)가 포함된 매개변수화 타입 (ex) `List<?>`, `ArrayList<?>`
+4. Raw type (ex) `List`, `ArrayList`, `Map`
+
+비한정적 와일드카드는 애초에 타입 정보를 전혀 명시하지 않았으므로, 컴파일시에 타입 소거를 한다고 해도 잃을 정보가 없기 때문에 실체화 타입이라 볼 수 있으며, 타입 소거에 의해 컴파일 시점에 `Object`로 변환된다.
+
+### Non-Reifiable Type
+
+컴파일 단계에서 타입소거에 의해서 타입 정보가 제거된 타입이다. 이 경우 런타임시에 런타임시에 알 수 있는 정보가 없다.
+
+1. Generic Type (ex) `List<E>`
+2. Parameterized Type (ex) `List<Number>`, `ArrayList<String>`
+3. Bounded wildcard Type (ex) `List<? extends Number>`, `List<? super String>`
+
+### Heap Pollution
+
+힙 오염은 파라미터화 된 타입의 변수가 해당 파라미터화된 타입이 아닌 객체를 참조할 때 발생한다. 
+
+- raw type과 파라미터화된 타입이 섞여 사용되는 경우
+- **unchecked cast**가 사용된 경우
+
+#### Potential Vulnerabilities of Varargs Methods with Non-Reifiable Formal Parameters
+
+가변인수(varargs) 매개변수를 포함한 제네릭 메서드는 힙 오염을 유발할 수 있다.
+
+```java
+public class ArrayBuilder {
+
+  public static <T> void addToList (List<T> listArg, T... elements) {
+    for (T x : elements) {
+      listArg.add(x);
+    }
+  }
+
+  public static void faultyMethod(List<String>... l) {
+    Object[] objectArray = l;     // Valid
+    objectArray[0] = Arrays.asList(42);
+    String s = l[0].get(0);       // ClassCastException thrown here
+  }
+
+}
+
+```
+
+```java
+public class HeapPollutionExample {
+
+  public static void main(String[] args) {
+
+    List<String> stringListA = new ArrayList<String>();
+    List<String> stringListB = new ArrayList<String>();
+
+    ArrayBuilder.addToList(stringListA, "Seven", "Eight", "Nine");
+    ArrayBuilder.addToList(stringListB, "Ten", "Eleven", "Twelve");
+    List<List<String>> listOfStringLists = new ArrayList<List<String>>();
+    ArrayBuilder.addToList(listOfStringLists, stringListA, stringListB);
+    ArrayBuilder.faultyMethod(Arrays.asList("Hello!"), Arrays.asList("World!"));
+  }
+}
+
+```
+
+컴파일시에 `addToList()` 메서드 정의 부분에 다음과 같은 경고 문구가 뜬다.
+
+```java
+Possible heap pollution from parameterized vararg type 
+```
+
+컴파일가 가변인수(varargs) 메서드를 만나게되면 가변인수(varargs) 파라미터를 배열로 변환시킨다. 하지만, 자바는 파라미터화된 타입의 배열의 생성을 허용하지 않는다. 
+위 예제에서  `ArrayBuilder.addToList` 가변인수 매개변수 `T...`를 `T[]` 배열로 변환하는데, 타입 소거에 의해서 컴파일러는 가변인수 파라미터를 `Object[]`로 변환시키게되고 결과적으로 힙오염의 가능성이 생기는 것이다.
+
+```java
+Object[] objectArray = l; 
+```
+
+ 구문은 힙오염을 잠재적으로 내재하고 있는데, 컴파일러는 경고문구를 생성하지 않고 있다. 왜냐하면, 컴파일는 `List<String>... l` 을 형식 파라미터 `List[]` 로 변환할 때 이미 경고를 만들었기 때문이다. 즉, 변수 `l`은 `Object[]`의 하위 타입인 `List[]` 타입을 갖게되고 이 구문은 유효하게 되는 것이다.
+
+```java
+objectArray[0] = Arrays.asList(42);
+```
+
+여기서 `objectArray`의 첫번째 원소에  `Integer`타입의 객체 리스트를 할당하고, 
+
+```java
+ ArrayBuilder.faultyMethod(Arrays.asList("Hello!"), Arrays.asList("World!"));
+```
+
+` ArrayBuilder.faultyMethod` 를 호출한다면, 런타임시에 `ClassCastException` 오류를 발생시키는 것이다.
+
+#### Prevent Warnings from Varargs Methods with Non-Reifiable Formal Parameters
+
+파라미터화 타입의 가변인수 메서드가 `ClassCastException` 을 발생시키지 않고, 비슷한 오류가 발생하지 않는 다는 것이 보장되면(타입 안전성이 보장) `static`과 생성자가 아닌 메서드 선언부에`@SafeVarargs` 어노테이션을 추가해 경고 문구를 지울 수 있다.
+이 어노테이션은 메서드 구현에서 **varargs** 형식 파라미터에 대해 부적절한 처리를하지 않았음을 나타낸다.
+좋은 방법은 아니지만 메서드 선언에 다음과 같은 방법으로도 경고 문구를 억제할 수 있다. 
+
+```java
+@SuppressWarnings({"unchecked", "varargs"})
+```
+
+단, 이경우에는 메서드 호출 부분에서 생성되는 경고를 막아주지는 않는다.
 
 ## Generic Type의 상속과 구현
 
