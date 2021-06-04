@@ -63,6 +63,7 @@
     * [ITEM 31 : 한정적 와일드카드를 사용해 API 유연성을 높여라](Java/effective_java/2021-05-30-use-bounded-wildcards.md)
     * [ITEM 32: 제네릭과 가변인수를 함께 쓸 때는 신중해라](Java/effective_java/2021-05-30-careful-when-using-generic-and-varargs.md)
     * [ITEM 33: 타입 안전 이종 컨테이너를 고려해라](Java/effective_java/2021-05-31-consider-type-safe-heterogeneous-container.md)
+    * [ITEM 34: int 상수 대신 열거 타입을 사용해라](Java/effective_java/2021-06-05-use-enum-type.md)
   * [객체지향 설계 원칙(SOLID)](Java/2020-03-21-SOLID.md)
   * [디자인패턴](Java/design_pattern/README.md)
     * [Strategy Pattern](Java/design_pattern/2020-03-21-strategy_pattern.md)
