@@ -32,6 +32,8 @@
 * Advanced
   * [OutOfMemoryError](Java/심화/2021-01-23-outOfMemoryError.md)
   * [AutoValue](Java/심화/2020-02-02-autoValue.md)
+  * annotation
+    * [@Retention](Java/심화/2021-06-12-retention-annotation.md)
 * [Effective Java 3/E](Java/effective_java/README.md)
   * [ITEM 1: Static Factory Method(정적 메소드)](Java/effective_java/2021-01-12-static-factory-methods.md)
   * [ITEM 2: Builder Pattern](Java/effective_java/2021-01-13-builder-pattern.md)
