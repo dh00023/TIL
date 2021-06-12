@@ -44,4 +44,5 @@
 * [ITEM 35: ordinal 메서드 대신 인스턴스 필드를 사용해라](./2021-06-06-use-instant-field.md)
 * [ITEM 36: 비트 필드 대신 EnumSet을 사용해라](./2021-06-06-use-enumset.md)
 * [ITEM 37: ordinal 인덱싱 대신 EnumMap을 사용해라](./2021-06-06-use-enummap.md)
-* [TEM 38 : 확장할 수 있는 열거타입이 필요하면 인터페이스를 사용해라](./2021-06-06-enum-type-implements-interface.md)
+* [ITEM 38: 확장할 수 있는 열거타입이 필요하면 인터페이스를 사용해라](./2021-06-06-enum-type-implements-interface.md)
+* [ITEM 39: 명명 패턴보다 애너테이션을 사용해라](./2021-06-13-use-annotation.md)
