@@ -199,7 +199,7 @@ public enum Operation {
 
     private final String symbol;
 
-    Operation2(String symbol) {
+    Operation(String symbol) {
         this.symbol = symbol;
     }
     @Override public String toString() {

@@ -48,3 +48,7 @@
 * [ITEM 39: 명명 패턴보다 애너테이션을 사용해라](./2021-06-13-use-annotation.md)
 * [ITEM 40: @Override 어노테이션을 일관되게 사용해라](./2021-06-14-consistently-use-override-annotation.md)
 * [ITEM 41: 정의하려는 것이 타입이라면 마커 인터페이스를 사용해라](./2021-06-14-use-marker-interfaces-to-define-types.md)
+* [ITEM 42: 익명 클래스보다는 람다를 사용해라](./2021-06-19-prefer-lambdas-to-anonymous-classes.md)
+* [ITEM 43: 람다보다는 메서드 참조를 사용해라](./2021-06-20-prefer-method-references-to-lambdas.md)
+* [ITEM 44: 표준 함수형 인터페이스를 사용해라](./2021-06-20-favor-the-use-of-standard-functional-interfaces.md)
+* [ITEM 45: 스트림은 주의해서 사용해라](./2021-06-20-use-streams-judiciously.md)
