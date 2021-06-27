@@ -82,6 +82,7 @@
   * [ITEM 43: 람다보다는 메서드 참조를 사용해라](Java/effective_java/2021-06-20-prefer-method-references-to-lambdas.md)
   * [ITEM 44: 표준 함수형 인터페이스를 사용해라](Java/effective_java/2021-06-20-favor-the-use-of-standard-functional-interfaces.md)
   * [ITEM 45: 스트림은 주의해서 사용해라](Java/effective_java/2021-06-20-use-streams-judiciously.md)
+  * [ITEM 46: 스트림에서 부작용 없는 함수를 사용해라](Java/effective_java/2021-06-27-prefer-side-effect-free-fucntional-interface.md)
 * [객체지향 설계 원칙(SOLID)](Java/2020-03-21-SOLID.md)
 * [Design Pattern](Java/design_pattern/README.md)
   * [Strategy Pattern](Java/design_pattern/2020-03-21-strategy_pattern.md)
