@@ -52,3 +52,6 @@
 * [ITEM 43: 람다보다는 메서드 참조를 사용해라](./2021-06-20-prefer-method-references-to-lambdas.md)
 * [ITEM 44: 표준 함수형 인터페이스를 사용해라](./2021-06-20-favor-the-use-of-standard-functional-interfaces.md)
 * [ITEM 45: 스트림은 주의해서 사용해라](./2021-06-20-use-streams-judiciously.md)
+* [ITEM 46: 스트림에서 부작용 없는 함수를 사용해라](./2021-06-27-prefer-side-effect-free-fucntional-interface.md)
+* [ITEM 47: 반환 타입으로는 스트림보다 컬렉션이 낫다.](./2021-06-28-prefer-collection-to-stream-as-retrun-type.md)
+* [ITEM 48: 스트림 병렬화는 주의해서 사용해라](./2021-06-28-use-caution-when-making-streams-pararrel.md)
