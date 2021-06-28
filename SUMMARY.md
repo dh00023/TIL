@@ -80,6 +80,8 @@
     * [ITEM 44: 표준 함수형 인터페이스를 사용해라](Java/effective_java/2021-06-20-favor-the-use-of-standard-functional-interfaces.md)
     * [ITEM 45: 스트림은 주의해서 사용해라](Java/effective_java/2021-06-20-use-streams-judiciously.md)
     * [ITEM 46: 스트림에서 부작용 없는 함수를 사용해라](Java/effective_java/2021-06-27-prefer-side-effect-free-fucntional-interface.md)
+    * [ITEM 47: 반환 타입으로는 스트림보다 컬렉션이 낫다.](Java/effective_java/2021-06-28-prefer-collection-to-stream-as-retrun-type.md)
+    * [ITEM 48: 스트림 병렬화는 주의해서 사용해라](Java/effective_java/2021-06-28-use-caution-when-making-streams-pararrel.md)
   * [객체지향 설계 원칙(SOLID)](Java/2020-03-21-SOLID.md)
   * [디자인패턴](Java/design_pattern/README.md)
     * [Strategy Pattern](Java/design_pattern/2020-03-21-strategy_pattern.md)
