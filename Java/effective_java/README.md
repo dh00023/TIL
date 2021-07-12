@@ -59,3 +59,7 @@
 * [ITEM 50: 적시에 방어적 복사본을 만들어라](./2021-07-04-make-defensive-copies-when-needed.md)
 * [ITEM 51: 메서드 시그니처를 신중히 설계해라](./2021-07-05-design-method-signatures-carefully.md)
 * [ITEM 52: 다중정의는 신중히 사용해라](./2021-07-05-use-overloading-judiciously.md)
+* [ITEM 53: 가변인수는 신중히 사용해라](./2021-07-11-use-varargs-judiciously.md)
+* [ITEM 54: null이 아닌, 빈 컬렉션이나 배열을 반환해라](./2021-07-12-return-empty-collections-or-arrays-not-null.md)
+* [ITEM 55: Optional 반환은 신중하게 해라](./2021-07-12-return-optionals-judiciouly.md)
+* [ITEM 56: 공개된 API 요소에는 항상 주석을 작성해라](./2021-07-12-write-doc-comments-for-all-exposed-api-elements.md)
