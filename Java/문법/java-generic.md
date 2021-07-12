@@ -1247,7 +1247,7 @@ public class HeapPollutionExample {
 Possible heap pollution from parameterized vararg type 
 ```
 
-컴파일가 가변인수(varargs) 메서드를 만나게되면 가변인수(varargs) 파라미터를 배열로 변환시킨다. 하지만, 자바는 파라미터화된 타입의 배열의 생성을 허용하지 않는다. 
+컴파일이 가변인수(varargs) 메서드를 만나게되면 가변인수(varargs) 파라미터를 배열로 변환시킨다. 하지만, 자바는 파라미터화된 타입의 배열의 생성을 허용하지 않는다. 
 위 예제에서  `ArrayBuilder.addToList` 가변인수 매개변수 `T...`를 `T[]` 배열로 변환하는데, 타입 소거에 의해서 컴파일러는 가변인수 파라미터를 `Object[]`로 변환시키게되고 결과적으로 힙오염의 가능성이 생기는 것이다.
 
 ```java
