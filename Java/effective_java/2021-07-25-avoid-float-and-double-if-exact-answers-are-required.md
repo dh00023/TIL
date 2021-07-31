@@ -24,4 +24,3 @@ System.out.println(BigDecimal.valueOf("1.00").subtract(BigDecimal.valueOf("9").m
 - 코딩 시의 불편함과 성능 저하를 신경 쓰지 않거나 큰 수를 계산하는 경우에는  `BigDecimal`을 사용
     - 8자리 10진수 이상인 경우
 - 성능이 중요하고 소수점을 직접 추적할 수 있고 숫자가 너무 크지 않다면 `int`나 `long`을 사용해라.
-    
