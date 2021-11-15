@@ -1,8 +1,10 @@
 # Spring Boot Mybatis 연동하기
 
-실무를 하다보면, Mybatis로 DB를 사용하는 경우가 많다.
+실무를 하다보면, Mybatis로 DB를 사용하는 경우가 많다. 스프링 부트 프로젝트에서 mybatis 연동하는 법에 대해서 정리할 것이다.
 
-## pom.xml
+## dependency 설정
+
+### maven pom.xml
 
 ```xml
         <dependency>
@@ -28,6 +30,7 @@ pom.xml에 mybatis관련 dependency를 추가해준다.
         </resources>
     </build>
 ```
+
 
 ## application.yml
 

@@ -2,6 +2,7 @@
 
 프로젝트에 따라 Datasource를 여러개 설정해야하는 경우가 있다. 이때 여러개의 DB를 설정하는 방법에 대해 알아볼 것이다.
 
+
 ## application.yml
 
 설정할 Database정보를 `application.yml` 에 추가해준다.

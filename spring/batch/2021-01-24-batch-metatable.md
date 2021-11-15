@@ -1,3 +1,5 @@
+
+
 # 배치 메타테이블 알아보기
 
 ![Spring Batch Meta-Data ERD](https://docs.spring.io/spring-batch/docs/current/reference/html/images/meta-data-erd.png)
@@ -42,7 +44,7 @@ public class SimpleJobConfiguration {
 }
 ```
 
-![image-20210124231035080](./assets/image-20210124231035080.png)
+![image-20210124231035080](../assets/image-20210124231035080.png)
 
 promgram arguements에 새로 추가한 jobParameter를 추가해준 후 실행하면, log도 정상적으로 찍히고, 새로운 BATCH_JOB_INSTANCE가 생긴것을 볼 수 있다.
 
@@ -54,7 +56,7 @@ promgram arguements에 새로 추가한 jobParameter를 추가해준 후 실행�
 2021-01-24 23:09:38.982  INFO 35371 --- [           main] o.s.batch.core.step.AbstractStep         : Step: [simpleStep] executed in 81ms
 ```
 
-![image-20210124231218392](./assets/image-20210124231218392.png)
+![image-20210124231218392](../assets/image-20210124231218392.png)
 
 만약 동일한 파라미터로 다시 수행을 했을때, 
 
@@ -75,7 +77,7 @@ Caused by: org.springframework.batch.core.repository.JobInstanceAlreadyCompleteE
 
 ### BATCH_JOB_EXECUTION
 
-![image-20210124231641820](./assets/image-20210124231641820.png)
+![image-20210124231641820](../assets/image-20210124231641820.png)
 
 여기서 보면, `JOB_INSTANCE_ID`는 2개가 있는 것을 볼 수 있다. 이는 각각 파라미터 없이 실행한 simpleJob, `requestDate=2021010`로 실행한  simpleJob임을 알 수 있따.
 
@@ -123,7 +125,7 @@ public class SimpleJobConfiguration {
 }
 ```
 
-![image-20210124233941054](./assets/image-20210124233941054.png)
+![image-20210124233941054](../assets/image-20210124233941054.png)
 
 파라미터를 `20210102` 로 변경한 후에 일부러 실패한 후 다시 똑같은 파라미터로 수행을 하면 다음과 같이 **FAILED, COMPLETED** 두개의 row가 생긴것을 볼 수 있다. 
 여기서 알 수 있는점은 **수행 결과가 성공한 기록이 있을때만 재수행이 안된다(실패)는 점**이다.
@@ -132,7 +134,7 @@ public class SimpleJobConfiguration {
 
 ### BATCH_JOB_EXECUTION_PARAMS
 
-![image-20210124234215270](./assets/image-20210124234215270.png)
+![image-20210124234215270](../assets/image-20210124234215270.png)
 
 JOB_EXECUTION으로 그 당시 입력된 Job Parameter값을 담고 있다.
 
