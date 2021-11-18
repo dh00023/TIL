@@ -2,7 +2,10 @@
 
 `Step`은 **실질적인 배치 처리를 정의하고 제어하는 데 필요한 모든 정보**가 들어있는 도메인 객체로, `Job`을 처리하는 실질적인 단위로 쓰인다.(**Job:Step = 1:M**)
 
-- Step은 Job을 구성하는 독립된 작업 단위
+- Step은 Job을 구성하는 **독립된** 작업 단위
+- 순차적으로 배치 처리 수행
+- Step은 모든 단위 작업의 조각으로 자체적으로 입력, 처리기, 출력을 다룬다.
+- 트랜잭션은 Step 내부에서 이루어짐
 - `org.springframework.batch.core.Step`
 
 ### StepExecution
@@ -48,12 +51,124 @@ public interface Tasklet {
 }
 ```
 
+#### `CallableTaskletAdapter`
+
+- `org.springframework.batch.core.step.tasklet.CallableTaskletAdapter`
+- `Callable<V>` 인터페이스의 구현체를 구성할 수 있게 해주는 Adapter
+    - 리턴값이 존재하기 때문에 공유 객체를 사용하지 않는다.
+    - 체크 예외를 외부로 던질 수 있다.
+- Step의 특정 로직을 해당 Step이 실행되는 스레드가 아닌 다른 스레드에서 실행하고 싶을 때 사용
+
+```java
+@EnableBatchProcessing
+@SpringBootApplication
+public class CallableTaskletConfiguration {
+
+    @Autowired
+    private JobBuilderFactory jobBuilderFactory;
+
+    @Autowired
+    private StepBuilderFactory stepBuilderFactory;
+
+    @Bean
+    public Job callableJob() {
+        return this.jobBuilderFactory.get("callableJob")
+                .start(callableStep())
+                .build();
+    }
+
+    @Bean
+    public Step callableStep() {
+        return this.stepBuilderFactory.get("callableStep")
+                .tasklet(callableTasklet())
+                .build();
+    }
+
+    @Bean
+    public Callable<RepeatStatus> callableObject() {
+        return () -> {
+            System.out.println("This was executed in another thread");
+            return RepeatStatus.FINISHED;
+        };
+    }
+
+    @Bean
+    public CallableTaskletAdapter callableTasklet() {
+
+        // CallableTaskletAdapter는 Step이 실행되는 스레드와 별개의 스레드에서 실행되지만
+        // Step과 병렬로 실행되는 것은 아니다.
+        CallableTaskletAdapter callableTaskletAdapter = new CallableTaskletAdapter();
+
+        callableTaskletAdapter.setCallable(callableObject());
+
+        return callableTaskletAdapter;
+    }
+
+}
+
+```
+
+#### `MethodInvokingTaskletAdapter`
+
+- `org.springframework.batch.core.step.tasklet.MethodInvokingTaskletAdapter`1
+- 다른 클래스 내의 메서드를 Tasklet처럼 실행 가능
+
+```java
+@EnableBatchProcessing
+@Configuration
+public class MethodInvokingTaskletConfiguration {
+    @Autowired
+    private JobBuilderFactory jobBuilderFactory;
+
+    @Autowired
+    private StepBuilderFactory stepBuilderFactory;
+
+    @Bean
+    public Job methodInvokingJob() {
+        return this.jobBuilderFactory.get("methodInvokingJob")
+                .start(methodInvokingStep())
+                .build();
+    }
+
+    @Bean
+    public Step methodInvokingStep() {
+        return this.stepBuilderFactory.get("methodInvokingStep")
+                .tasklet(methodInvokingTasklet())
+                .build();
+    }
+
+  	@StepScope
+    @Bean
+    public MethodInvokingTaskletAdapter methodInvokingTasklet(
+            @Value("#{jobParameters['message']}") String message) {
+        // 다른 클래스 내의 메서드를 Tasklet처럼 실행 가능
+        MethodInvokingTaskletAdapter methodInvokingTaskletAdapter = new MethodInvokingTaskletAdapter();
+
+        methodInvokingTaskletAdapter.setTargetObject(customerService()); // 호출할 메서드가 있는 객체
+        methodInvokingTaskletAdapter.setTargetMethod("serviceMethod"); // 호출할 메서드명
+        methodInvokingTaskletAdapter.setArguments(new String[] {message});
+
+        return methodInvokingTaskletAdapter;
+    }
+
+    @Bean
+    public CustomerService customerService() {
+        return new CustomerService();
+    }
+
+}
+
+```
+
+TargetMethod는 `ExitStatus.COMPLETED` default이며, `ExitStatus`를 반환하면 메서드가 반환한 값이 Tasklet에서 반환된다.
+
 ### `Chunk` 기반
 
 `ItemReader`, `ItemProcessor`, `ItemWriter` 3단계로 비지니스 로직을 분리해 역할을 명확하게 분리할 수 있다.
 
 - 비즈니스 로직 분리
 - 읽어온 배치 데이터와 쓰여질 데이터 타입이 다른 경우에 대한 대응
+- 각 Chunk는 자체 트랜잭션으로 실행되며, 처리에 실패하면 성공한 트랜잭션 이후부터 다시 시작 가능
 
  그러므로 읽어온 배치의 데이터와 저장할 데이터 타입이 다른 경우에 대응할 수 있다.
 
@@ -98,7 +213,7 @@ public interface ItemReader<T> {
 
   리스트의 데이터 수는 설정한 \*청크(Chunk) 단위로 불러온다.
 
-### 청크 지향 프로세싱
+#### 청크 지향 프로세싱
 
 ![https://github.com/cheese10yun/TIL/raw/master/assets/chun-process.png](../assets/chun-process.png)
 
