@@ -8,7 +8,7 @@
 - 트랜잭션은 Step 내부에서 이루어짐
 - `org.springframework.batch.core.Step`
 
-### StepExecution
+## StepExecution
 
 `Step`의 실행 정보를 담는 객체로, 각각의 `Step`이 실행될 때마다 `StepExecution`이 생성된다.
 
@@ -36,7 +36,7 @@ public class StepExecution extends Entity {
 }
 ```
 
-### `Tasklet` 기반
+## `Tasklet` 기반
 
 - `Tasklet`은 임의의 `Step`을 실행할 때 하나의 작업을 처리하는 방식
 - 읽기, 처리, 쓰기로 나뉜 방식이 청크 지향 프로세싱이라면 이를 **단일 작업으로 만드는 개념**이 `Tasklet`
@@ -50,6 +50,8 @@ public interface Tasklet {
     RepeatStatus execute(StepContribution var1, ChunkContext var2) throws Exception;
 }
 ```
+
+### Adapter
 
 #### `CallableTaskletAdapter`
 
@@ -108,7 +110,7 @@ public class CallableTaskletConfiguration {
 
 ```
 
-#### `MethodInvokingTaskletAdapter`
+### `MethodInvokingTaskletAdapter`
 
 - `org.springframework.batch.core.step.tasklet.MethodInvokingTaskletAdapter`1
 - 다른 클래스 내의 메서드를 Tasklet처럼 실행 가능
@@ -162,7 +164,7 @@ public class MethodInvokingTaskletConfiguration {
 
 TargetMethod는 `ExitStatus.COMPLETED` default이며, `ExitStatus`를 반환하면 메서드가 반환한 값이 Tasklet에서 반환된다.
 
-#### `SystemCommandTasklet`
+### `SystemCommandTasklet`
 
 - `org.springframework.batch.core.step.tasklet.SystemCommandTasklet`
 - 시스템 명령을 실행할 때 사용하며, 지정한 시스템 명령을 비동기로 실행한다.
@@ -269,7 +271,7 @@ public class SystemCommandConfiguration {
     }
     ```
 
-### `Chunk` 기반
+## `Chunk` 기반
 
 ![https://github.com/cheese10yun/TIL/raw/master/assets/chun-process.png](../assets/chun-process.png)
 
@@ -289,7 +291,7 @@ Chunk 지향 프로세싱은 1000개의 데이터에 대해 배치 로직을 실
 
  그러므로 읽어온 배치의 데이터와 저장할 데이터 타입이 다른 경우에 대응할 수 있다.
 
-#### ItemReader
+### ItemReader
 
 - `Step`의 대상이 되는 **배치 데이터(File, Xml, DB 등)를 읽어오는 인터페이스** 
 - `org.springframework.batch.item.ItemReader<T>`
@@ -302,7 +304,7 @@ public interface ItemReader<T> {
 }
 ```
 
-#### ItemProcessor
+### ItemProcessor
 
 - `ItemReader`로 읽어 온 **배치 데이터를 변환하는 역할**을 수행
 - `ItemProcessor`는 로직 처리만 수행하여 역할을 분리하고, 명확한 input/output을 `ItemProcessor`로 구현해놓으면 더 직관적인 코드가 될 것이다.
@@ -316,7 +318,7 @@ public interface ItemReader<T> {
   }
   ```
 
-#### ItemWriter
+### ItemWriter
 
   - **배치 데이터(DB, File 등)를 저장**한다.
   - `org.springframework.batch.item.ItemWriter<T>`
@@ -330,7 +332,516 @@ public interface ItemReader<T> {
 
   리스트의 데이터 수는 설정한 \*청크(Chunk) 단위로 불러온다.
 
+#### 청크 기반 Job 예시
+
+```java
+@EnableBatchProcessing
+@Configuration
+public class ChunkBasedConfiguration {
+
+    @Autowired
+    private JobBuilderFactory jobBuilderFactory;
+
+    @Autowired
+    private StepBuilderFactory stepBuilderFactory;
+
+    /**
+     * 실제 스프링 배치 Job 생성
+     */
+    @Bean
+    public Job chunkBasedJob() {
+        return this.jobBuilderFactory.get("chunkBasedJob")
+                .start(chunkStep())
+                .build();
+    }
+
+    @Bean
+    public Step chunkStep() {
+        return this.stepBuilderFactory.get("chunkStep")
+                .<String, String> chunk(1000) // chunk 기반, 커밋간격 1000
+                .reader(itemReader())
+                .writer(itemWriter())
+                .build();
+    }
+
+    @Bean
+    public ListItemReader<String> itemReader(){
+
+        List<String> items = new ArrayList<>(100000);
+
+        for (int i = 0; i < 100000; i++) {
+            items.add(UUID.randomUUID().toString());
+        }
+
+        return new ListItemReader<>(items);
+    }
+
+    @Bean
+    public ItemWriter<String> itemWriter() {
+        return items -> {
+            for (String item : items) {
+                System.out.println(">> current item = " + item);
+            }
+            System.out.println(">> end itemWriter chunk " + items.size());
+        };
+    }
+}
+```
+
+일반적으로는 위와 같이 커밋간격을 하드 코딩해 크기를 정의하지만, 크기가 동일하지 않은 청크를 처리해야하는 경우도 있다.
+스프링 배치는 `org.springframework.batch.repeat.CompletionPolicy` 인터페이스를 제공해 청크가 완료되는 시점을 정의할 수 있도록 제공해준다.
+
+### CompletionPolicy
+
+청크 완료 여부를 결정할 수 있는 결정로직을 구현할 수 있는 인터페이스로, `CompletionPolicy` 인터페이스의 구현체에 대해서 알아 볼 것이다.
+
+```java
+package org.springframework.batch.repeat;
+
+public interface CompletionPolicy {
+
+  // 청크 완료 여부의 상태를 기반으로 결정 로직 수행
+	boolean isComplete(RepeatContext context, RepeatStatus result);
+
+  // 내부 상태를 이용해 청크 완료 여부 판단
+	boolean isComplete(RepeatContext context);
+
+  // 청크의 시작을 알 수 있도록 정책을 초기화
+	RepeatContext start(RepeatContext parent);
+
+ 	// 각 item이 처리가되면 update 메서드가 호출되면서 내부 상태 갱신
+	void update(RepeatContext context);
+}
+```
+
+#### 직접 구현하는 방법
+
+`CompletionPolicy`를 구현하여 필수 메서드들을 각각 알맞게 로직을 구성하면된다.
+
+```java
+public class RandomChunkSizePolicy implements CompletionPolicy {
+
+    private int chunksize;
+    private int totalProcessed;
+    private Random random = new Random();
+
+  	// 청크 완료 여부의 상태를 기반으로 결정 로직 수행
+    @Override
+    public boolean isComplete(RepeatContext context, RepeatStatus result) {
+        if (RepeatStatus.FINISHED == result) {
+            return true;
+        } else {
+            return isComplete(context);
+        }
+    }
+
+  	// 내부 상태를 이용해 청크 완료 여부 판단
+    @Override
+    public boolean isComplete(RepeatContext context) {
+        return this.totalProcessed >= chunksize;
+    }
+
+  	// 청크의 시작을 알 수 있도록 정책을 초기화
+    @Override
+    public RepeatContext start(RepeatContext parent) {
+        this.chunksize = random.nextInt(20);
+        this.totalProcessed = 0;
+
+        System.out.println("chunk size has been set to => " + this.chunksize);
+        return parent;
+    }
+
+  	// 각 item이 처리가되면 update 메서드가 호출되면서 내부 상태 갱신
+    @Override
+    public void update(RepeatContext context) {
+        this.totalProcessed++;
+    }
+}
+```
+
+```
+chunk size has been set to => 5
+>> current item = b784cda0-961f-4faf-9737-4334e774f0d1
+>> current item = 9fc3ec22-5d54-4632-94e3-fcc28cc00260
+>> current item = 53452739-0122-4f8b-a52a-667e37cbf908
+>> current item = de9ad8ec-1bf7-40d4-b991-72b6699594f9
+>> current item = 352104aa-ae63-4928-96e2-460b3b145d43
+>> end itemWriter chunk 5
+chunk size has been set to => 10
+>> current item = 4116f3e9-cad3-4387-8f46-a871d825d7d9
+>> current item = 3e1f58b7-a1fa-45bd-b336-2484d1d543f3
+>> current item = a58e2401-37e8-402a-8ac3-daddaf2e91a0
+>> current item = 01162200-fc7d-4580-8533-d6deab7f3c65
+>> current item = 31280b14-49bf-4a03-b1d4-210585e4da40
+>> current item = 91b7d269-8105-41dc-ae6a-1d682913c168
+>> current item = abeead5f-751b-4862-aa37-4f32eb09439a
+>> current item = b6bf1a92-56e8-433a-a0ea-935e101cad6f
+>> current item = 84af0778-d6e1-4aef-bd8f-347b047bb276
+>> current item = b86477f3-b997-4b04-a3ca-27f517c9170f
+>> end itemWriter chunk 10
+chunk size has been set to => 11
+```
+
+다음과 같이 Random으로 지정된 수만큼 chunk가 수행되는 것을 확인 할 수 있다.
+
+#### SimpleCompletionPolicy
+
+가장 기본적인 구현체로, 미리 구성해둔 임곗값에 도달하면 청크 완료로 표시한다.
+
+```java
+public class SimpleCompletionPolicy extends DefaultResultCompletionPolicy {
+
+	public static final int DEFAULT_CHUNK_SIZE = 5;
+
+	int chunkSize = 0;
+
+	public SimpleCompletionPolicy() {
+		this(DEFAULT_CHUNK_SIZE);
+	}
+
+	public SimpleCompletionPolicy(int chunkSize) {
+		super();
+		this.chunkSize = chunkSize;
+	}
+```
+
+```java
+@Bean
+public Step chunkStep() {
+  return this.stepBuilderFactory.get("chunkStep")
+                .<String, String> chunk(completionPolicy()) // completePolicy 호출
+                .reader(itemReader())
+                .writer(itemWriter())
+                .build();
+}
 
 
+@Bean
+public CompletionPolicy completionPolicy() {
+    // 처리된 ITEM 개수를 세어, 이 개수가 임계값에 도달하면 chunk 완료로 표시
+    SimpleCompletionPolicy simpleCompletionPolicy = new SimpleCompletionPolicy(1000);
 
+    return simpleCompletionPolicy;
+}
+```
+
+#### TimeoutTerminationPolicy
+
+타임아웃 값을 구성해, 청크 내에서 처리 시간이 지정한 시간이 넘으면 청크가 완료된 것으로 간주하고, 모든 트랜잭션 처리를 정상적으로 한다는 것이다.
+`TimeoutTerminationPolicy` 만으로 청크 완료 시점을 결정하는 경우는 거의 존재하지 않으며, `CompositeCompletionPolicy`의 일부로 사용하는 경우가 많다.
+
+```java
+public class TimeoutTerminationPolicy extends CompletionPolicySupport {
+
+	/**
+	 * Default timeout value in milliseconds (the value equivalent to 30 seconds).
+	 */
+	public static final long DEFAULT_TIMEOUT = 30000L;
+
+	private long timeout = DEFAULT_TIMEOUT;
+
+	/**
+	 * Default constructor.
+	 */
+	public TimeoutTerminationPolicy() {
+		super();
+	}
+
+	/**
+	 * Construct a {@link TimeoutTerminationPolicy} with the specified timeout
+	 * value (in milliseconds).
+	 * 
+	 * @param timeout duration of the timeout.
+	 */
+	public TimeoutTerminationPolicy(long timeout) {
+		super();
+		this.timeout = timeout;
+	}
+```
+
+```java
+    @Bean
+    public CompletionPolicy timeoutCompletionPolicy() {
+        TimeoutTerminationPolicy timeoutTerminationPolicy = new TimeoutTerminationPolicy(3);
+        return timeoutTerminationPolicy;
+    }
+```
+
+`TimeoutTerminationPolicy`로 수행한 경우 각 chunk 단위를 확인해보면 다음과 같이 제각각인 것을 볼 수있다.
+
+```
+>> end itemWriter chunk 795
+>> end itemWriter chunk 679
+>> end itemWriter chunk 841
+>> end itemWriter chunk 1153
+>> end itemWriter chunk 1061
+>> end itemWriter chunk 1916
+>> end itemWriter chunk 1667
+>> end itemWriter chunk 1719
+>> end itemWriter chunk 931
+>> end itemWriter chunk 1634
+>> end itemWriter chunk 941
+>> end itemWriter chunk 667
+>> end itemWriter chunk 665
+>> end itemWriter chunk 547
+>> end itemWriter chunk 533
+>> end itemWriter chunk 973
+>> end itemWriter chunk 647
+>> end itemWriter chunk 1632
+>> end itemWriter chunk 676
+```
+
+#### CompositeCompletionPolicy
+
+`CompositeCompletionPolicy`는 청크 완료 여부를 결정하는 여러 정책을 함께 구성할 수 있다.
+포함하고 있는 여러 정책 중 하나라도 청크 완료라고 판단되면 해당 청크가 완료된 것으로 표시한다.
+
+```java
+		@Bean
+    public CompletionPolicy compositeCompletionPolicy() {
+        CompositeCompletionPolicy policy = new CompositeCompletionPolicy();
+
+        // 여러 정책 설정
+        policy.setPolicies(
+                new CompletionPolicy[]{
+                        new TimeoutTerminationPolicy(3),
+                        new SimpleCompletionPolicy(1000)
+                }
+        );
+      	return policy;
+    }
+```
+
+다음과 같이 수행한 경우에는 chunk 단위가 1000개를 넘어선 경우가 없는 것을 확인할 수 있다.
+
+```
+>> end itemWriter chunk 731
+>> end itemWriter chunk 1000
+>> end itemWriter chunk 690
+>> end itemWriter chunk 1000
+>> end itemWriter chunk 798
+>> end itemWriter chunk 1000
+>> end itemWriter chunk 980
+>> end itemWriter chunk 838
+>> end itemWriter chunk 850
+>> end itemWriter chunk 1000
+>> end itemWriter chunk 263
+>> end itemWriter chunk 556
+>> end itemWriter chunk 629
+>> end itemWriter chunk 962
+>> end itemWriter chunk 960
+>> end itemWriter chunk 1000
+>> end itemWriter chunk 1000
+>> end itemWriter chunk 1000
+>> end itemWriter chunk 898
+>> end itemWriter chunk 1000
+>> end itemWriter chunk 900
+>> end itemWriter chunk 798
+>> end itemWriter chunk 215
+```
+
+## Step Listener
+
+스탭과 청크의 시작과 끝에서 특정 로직을 처리할 수 있게 해준다.
+
+(`StepListener`는 모든 스탭 리스너가 상속하는 마커 인터페이스이다.)
+
+모든 수준에 리스너를 적용해 Job을 중단할 수 있으며, 일반적으로 전처리를 수행하거나 이후 결과를 평가하거나, 일부 오류처리에도 사용된다.
+
+### `StepExecutionListener`
+
+- `org.springframework.batch.core.StepExecutionListener`
+
+```java
+public interface StepExecutionListener extends StepListener {
+
+	void beforeStep(StepExecution stepExecution);
+
+  // Listener가 스텝이 반환한 ExitStatus를 Job에 전달하기 전에 수정할 수 있음.
+	@Nullable
+	ExitStatus afterStep(StepExecution stepExecution);
+}
+```
+
+`@BeforeStep`, `@AfterStep` 애너테이션 제공
+
+```java
+public class LoggingStepStartStopListener {
+
+    @BeforeStep
+    public void beforeStep(StepExecution stepExecution) {
+        System.out.println(stepExecution.getStepName() + " 시작");
+    }
+
+
+    @AfterStep
+    public ExitStatus afterStep(StepExecution stepExecution) {
+        System.out.println(stepExecution.getStepName() + " 종료");
+        return stepExecution.getExitStatus();
+    }
+}
+```
+
+```java
+    @Bean
+    public Step chunkStep() {
+        return this.stepBuilderFactory.get("chunkStep")
+                .<String, String> chunk(randomChunkSizePolicy())
+                .reader(itemReader())
+                .writer(itemWriter())
+                .listener(new LoggingStepStartStopListener()) // Listener 설정
+                .build();
+    }
+```
+
+### `ChunkListener`
+
+```java
+public interface ChunkListener extends StepListener {
+
+	static final String ROLLBACK_EXCEPTION_KEY = "sb_rollback_exception";
+
+	void beforeChunk(ChunkContext context);
+
+	void afterChunk(ChunkContext context);
+
+	void afterChunkError(ChunkContext context);
+}
+```
+
+`@BeforeChunk`, `@AfterChunk` 애너테이션 제공
+
+## Step Flow
+
+### 조건 로직
+
+스프링 배치의 Step은 `StepBuilder`의 `.next()` 메서드를 사용해 지정한 순서대로 실행된다.
+전이(transition)를 구성해 결과에 따른 다른 순서로 실행하는 것도 가능하다.
+
+```java
+    @Bean
+    public Job conditionalJob() {
+        return this.jobBuilderFactory.get("conditionalJob")
+                .start(firstStep())
+                .on("FAILED").to(failureStep())
+                .from(firstStep()).on("*").to(successStep())
+                .end()
+                .build();
+    }
+```
+
+스프링 배치는 기준에 따라 두개의 와일드 카드를 허용한다.
+
+- `*` : 0개 이상의 문자를 일치하는 것을 의미
+    - `C*` : COMPLETE, CORRECT
+- `?` :  1개의 문자를 일치 시키는 것을 의미
+    - `?AT` : CAT, KAT과 일치하지만, THAT과는 불일치
+
+#### JobExecutionDecider
+
+Job 실행 정보(`jobExecution`)와 스탭 실행정보( `stepExecution`)를 인자로 받아 모든 정보를 이용해 다음에 무엇을 수행할지에 대해 결정할 수 있다.
+
+```java
+public interface JobExecutionDecider {
+
+	/**
+	 * Strategy for branching an execution based on the state of an ongoing
+	 * {@link JobExecution}. The return value will be used as a status to
+	 * determine the next step in the job.
+	 * 
+	 * @param jobExecution a job execution
+	 * @param stepExecution the latest step execution (may be {@code null})
+	 * @return the exit status code
+	 */
+	FlowExecutionStatus decide(JobExecution jobExecution, @Nullable StepExecution stepExecution);
+
+}
+```
+
+ ```java
+ public class RandomDecider implements JobExecutionDecider {
+ 
+     private Random random = new Random();
+ 
+     @Override
+     public FlowExecutionStatus decide(JobExecution jobExecution, StepExecution stepExecution) {
+         if (random.nextBoolean()) {
+             return new FlowExecutionStatus(FlowExecutionStatus.COMPLETED.getName());
+         } else {
+             return new FlowExecutionStatus(FlowExecutionStatus.FAILED.getName());
+         }
+     }
+ }
+ ```
+
+```java
+    @Bean
+    public Job conditionalJob() {
+        return this.jobBuilderFactory.get("conditionalJob")
+                .start(firstStep())
+                .next(decider())
+                .from(decider())
+                .on("FAILED").to(failureStep())
+                .from(decider()).on("*").to(successStep())
+                .end()
+                .build();
+    }
+```
+
+### Job 종료하기
+
+스프링 배치에서는 Job을 종료할 때 아래 3가지 상태로 종료할 수 있다.
+
+| 상태            | 설명                                                         |
+| --------------- | ------------------------------------------------------------ |
+| Completed(완료) | 스프링 배치 처리가 성공적으로 종료됐음을 의미<br />`JobInstance`가 Completed로 종료되면 동일한 파라미터를 사용해 다시 실행할 수 없다. |
+| Failed(실패)    | 잡이 성공적으로 완료되지 않았음을 의미<br />Failed 상태로 종료된 잡은 스프링 배치를 사용해 동일한 파라미터로 다시 실행할 수 있다. |
+| Stopped(중지)   | Stopped 상태로 종료된 잡은 다시 수행 가능하다.<br />Job에 오류가 발생하지 않았어도, 중단된 위치에서 잡을 다시 시작할 수 있다.<br />사람의 개입이 필요하거나 다른 검사/처리가 필요한 상황에 유용하다. |
+
+`BatchStatus`를 판별할 때, `ExitStatus`를 평가하면서 식별된다. 
+`ExitStatus`는 스텝, 청크, 잡에서 반환될 수 있으며, `BatchStatus`는 `StepExecution` 이나 `JobExecution` 내에 보관되며, `JobRepository`에 저장된다.
+
+#### Completed 상태로 종료하기
+
+`.end()` 메서드 사용
+
+```java
+return this.jobBuilderFactory.get("conditionalJob")
+                .start(firstStep())
+                .on("FAILED").end()
+                .from(firstStep()).on("*").to(successStep())
+                .end()
+                .build();
+```
+
+`BATCH_STEP_EXECUTION` 테이블에 스텝이 반환한 `ExitStatus`가 저장되며, 스텝이 반환한 상태가 무엇이든 상관없이 `BATCH_JOB_EXECUTION`에 `COMPLETED`가 저장된다.
+
+#### Failed 상태로 종료하기
+
+`fail()` 메서드 사용
+
+```java
+return this.jobBuilderFactory.get("conditionalJob")
+                .start(firstStep())
+                .on("FAILED").fail()
+                .from(firstStep()).on("*").to(successStep())
+                .end()
+                .build();
+```
+
+여기서  `firstStep()` 이 FAILED로 끝나면, `JobRepository` 에 해당 Job이 실패한 것으로 저장되며, 동일한 파라미터를 사용해 다시 실행할 수 있다.
+
+#### Stopped 상태로 종료하기
+
+`.stopAndRestart()` 메서드로 잡을 다시 수행한다면, 미리 구성해둔 스텝부터 시작된다.
+아래 예제에서는 재수행시 `successStep()`부터 수행되는것을 볼 수 있다.
+
+```java
+return this.jobBuilderFactory.get("conditionalJob")
+                .start(firstStep())
+                .on("FAILED").stopAndRestart(successStep())
+                .from(firstStep()).on("*").to(successStep())
+                .end()
+                .build();
+```
 
