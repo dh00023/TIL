@@ -1,7 +1,8 @@
-# 테스트 시에만 H2 데이터베이스 사용하도록 설정하기
+# 데이터베이스 구성하기
 
+## H2
 
-## pom.xml 설정
+### pom.xml 설정
 
 사용할 DB에 대한 런타임의존성을 설정해준다.
 
@@ -18,7 +19,7 @@
 </dependency>
 ```
 
-## application.yml 설정
+### application.yml 설정
 
 ```yml
 spring:
@@ -34,7 +35,7 @@ spring:
       ddl-auto: create # 테스트용 DB 생성(실제 운영시 동일하게 사용하면, 애플리케이션 재기동시마다 삭제됨)
 ```
 
-## Test 파일 설정
+### Test 파일 설정
 
 ```java
 @RunWith(SpringRunner.class)
@@ -45,6 +46,8 @@ public class InactvieUserJobTest {
 ```
 
 `@AutoConfigureTestDatabase(connection = EmbeddedDatabaseConnection.H2)` 설정시, 테스트용 클래스에서 사용할 데이터베이스를 적용되게 하는 Annotation이다.
+
+
 
 
 ## 참고

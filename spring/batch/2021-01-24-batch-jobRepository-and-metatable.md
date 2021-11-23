@@ -254,6 +254,160 @@ JOB_EXECUTION으로 그 당시 입력된 Job Parameter값을 담고 있다.
 
 `Map` 객체기반의 `JobRepository`는 실제 운영 시 사용하지 않으며, 외부 데이터베이스 없이 배치 잡을 실행하려면 멀티 스레딩 및 트랜잭션 기능을 더 잘 지원하는 H2 혹은 HSQLDB와 같은 인메모리 데이터베이스를 사용하는 것을 권장한다.
 
+## Batch Infrastructure
+
+`@EnableBatchProcessing` 어노테이션을 사용하면, 추가적인 구성없이 스프링 배치가 제공하는 `JobRepository`를 사용할 수 있다.
+
+하지만  `JobRepository`를 커스터마이징 해야하는 경우도 있으므로, 커스터마이징하는 방법에 대해 추가로 정리할 것이다.
+
+### BatchConfigurer
+
+- `org.springframework.batch.core.configuration.annotation.BatchConfigurer`
+
+스프링 배치 인프라스트럭처 컴포넌트 구성을  커스터마이징하는데 사용되는 전략 인터페이스이다.
+
+```java
+public interface BatchConfigurer {
+
+   JobRepository getJobRepository() throws Exception;
+
+   PlatformTransactionManager getTransactionManager() throws Exception;
+
+   JobLauncher getJobLauncher() throws Exception;
+
+   JobExplorer getJobExplorer() throws Exception;
+}
+```
+
+각 메서드는 스프링 배치 인프라스트럭처의 주요 컴포넌트를 제공한다.
+
+- `PlatformTransactionManager`는 프레임워크가 제공하는 모든 트랜잭션 관리 시에 스프링 배치가 사용하는 컴포넌트
+- `JobExplorer`는 `JobRepository` 데이터를 읽는 용
+
+이 모든 인터페이스를 직접 구현할 필요는 없으며, `DefaultBatchConfigurer` 를 사용하면 모든 기본 옵션이 제공된다. 일반적인 경우에 `DefaultBatchConfigurer` 를 상속해 적절한 메서드를 재정의하는 것이 더 쉽다.
+
+#### JobRepository 커스터마이징
+
+`JobRepository`는 `JobRepositoryFactoryBean` 이라는 `FactoryBean`을 통해 생성된다. 
+
+`FactoryBean` 은 다음 각 애트리뷰트를 커스터마이징 할 수 있는 기능을 제공한다.
+
+| 접근자 이름                                                  | 설명                                                         |
+| ------------------------------------------------------------ | ------------------------------------------------------------ |
+| setClobType(int type)                                        | CLOB 컬럼에 사용할 타입을 나타내는 `java.sql.Type` 값을 받음 |
+| setSerializer(ExecutionContextSerializer serializer)         | `JobExecution`, `StepExecution`의 `ExecutionContext`를 직렬화/역직렬화 하는데 사용할 `ExecutionContextSerializer` 구현체 구성에 사용 |
+| setLobHandler(LobHandler lobHandler)                         | 실제로 LOB을 취급해야하는 Oracle 예전 버전을 사용할 때 필요한 설정 |
+| setMaxVarCharLength(int maxVarCharLength)                    | 짧은 실행 컨텍스트 컬럼, 종료 메세지의 길이를 자르는데 사용한다.<br />스프링 배치에서 제공하는 스키마를 수정하지 않는 한 변경해서는 안된다. |
+| setDataSource(DataSource dataSource)                         | `JobRepository` 와 같이 사용할 `DataSource`를 설정           |
+| setJdbcOperations(JdbcOperations jdbcOperations)             | `JdbcOperations ` 인스턴스를 지정하는 setter로, 지정하지 않으면 `setDataSource` 에 지정한 데이터 소스를 사용해 `JdbcOperations`를 생성한다. |
+| setDatabaseType(String dbType)                               | 데이터베이스 유형 설정<br />스프링 배치는 일반적으로 데이터베이스 유형을 자동으로 식별하므로, 특별한 경우 아니면 설정할 필요 없음. |
+| setTablePrefix(String tablePrefix)                           | 모든 테이블 이름에 기본적으로 사용되는 `BATCH_` 외의 접두어가 지정될 때 사용 |
+| setIncrementerFactory(DataFieldMaxValueIncrementerFactory incrementerFactory) | 테이블의 기본키를 증분하는데 사용되는 증분기 팩토리를 지정   |
+| setValidateTransactionState(boolean validateTransactionState) | `JobExecution` 이 생성될 때 기존 트랜잭션이 있는지 여부를 나타내는 플래그<br />(기본값 : true) |
+| setIsolationLevelForCreate(String isolationLevelForCreate)   | `JobExecution` 엔티티 생성시 사용되는 [트랜잭션 직렬화 수준](https://a07274.tistory.com/58)을 지정<br />(기본값 : ISOLATION_SERIALIZABLE) |
+| setTransactionManager(PlatformTransactionManager transactionManager) | 복수 개의 데이터 베이스 사용시, 두 데이터베이스를 동기화할 수 있게 2단계 커밋을 지원하는 TransactionManager를 지정 |
+
+보통 `DefaultBatchConfigurer`를 상속해 `createJobRepository()`를 재정의해야하는 경우는 두개 이상의 데이터 소스가 존재하는 경우이다.
+예를 들어 업무 데이터 용도의 데이터 소스와 `JobRepository` 용도의 데이터 소스가 별도로 각각 존재하면, `JobRepository`가 사용하는 데이터 소스는 명시적으로 구성해야한다.
+
+```java
+public class CustomBatchConfigurer extends DefaultBatchConfigurer {
+
+    @Autowired
+    @Qualifier("repositoryDataSource")
+    private DataSource dataSource;
+
+    @Override
+    protected JobRepository createJobRepository() throws Exception {
+        JobRepositoryFactoryBean factory = new JobRepositoryFactoryBean();
+        factory.setDatabaseType(DatabaseType.MYSQL.getProductName());
+
+      	// 테이블명이 BATCH_에서 FOO_로 구성
+        factory.setTablePrefix("FOO_");
+      
+      	// 데이터 생성시 트랜잭션 격리 수준
+        factory.setIsolationLevelForCreate("ISOLATION_REPEATABLE_READ"); 
+        factory.setDataSource(this.dataSource);
+        factory.afterPropertiesSet();
+        return factory.getObject();
+    }
+
+}
+```
+
+- `InintializingBean.afterPropertiesSet()`
+    `afterPropertiesSet()` 은 `InintializingBean` 인터페이스 메소드로 `BeanFactory`에 의해 모든 property 가 설정되고 난 뒤 실행되는 메소드입니다. 주로 실행시점의 custom 초기화 로직이 필요하거나 주입받은 property 를 확인하는 용도로 사용된다.
+- `FactoryBean.getObject()` : 
+    Instance를 생성하거나 획득하여 Spring에서 관리할 객체를 리턴해준다.
+
+`BatchConfigurer`의 메서드는 스프링 컨테이너에 직접 노출하지 않으므로, 반드시 아래 메서드를 호출해줘야한다.
+
+```java
+factory.afterPropertiesSet();
+return factory.getObject();
+```
+
+#### TransactionManager 커스터마이징
+
+```java
+public class CustomBatchConfigurer extends DefaultBatchConfigurer {
+
+    @Autowired
+    @Qualifier("batchTransactionManager")
+    private PlatformTransactionManager transactionManager;
+
+    @Override
+    public PlatformTransactionManager getTransactionManager() {
+        return this.transactionManager;
+    }
+}
+```
+
+`TransactionManager`가 생성되지 않은 경우에 `DefaultBatchConfigurer`가 기본적으로 `setDataSource` 수정자 내에서 `DataSourceTransactionManager`를 자동으로 생성하기 때문에 명시적으로 반환해 구현한 것이다.
+
+#### JobExplorer 커스터마이징
+
+`JobExplorer`는 배치 메타데이터를 읽기 전용으로 제공한다. 
+
+`JobRepository` 와 `JobExplorer` 는 데이터베이스로부터 데이터를 읽어들이는 데 사용되는 모든 애트리뷰트가 동일하다.
+
+`JobExplorerFactoryBean` 으로 커스터마이징을 할 수 있다.
+
+| 접근자 이름                                          | 설명                                                         |
+| ---------------------------------------------------- | ------------------------------------------------------------ |
+| setSerializer(ExecutionContextSerializer serializer) | `JobExecution`, `StepExecution`의 `ExecutionContext`를 직렬화/역직렬화 하는데 사용할 `ExecutionContextSerializer` 구현체 구성에 사용 |
+| setLobHandler(LobHandler lobHandler)                 | 실제로 LOB을 취급해야하는 Oracle 예전 버전을 사용할 때 필요한 설정 |
+| setDataSource(DataSource dataSource)                 | `JobRepository` 와 같이 사용할 `DataSource`를 설정           |
+| setJdbcOperations(JdbcOperations jdbcOperations)     | `JdbcOperations ` 인스턴스를 지정하는 setter로, 지정하지 않으면 `setDataSource` 에 지정한 데이터 소스를 사용해 `JdbcOperations`를 생성한다. |
+| setTablePrefix(String tablePrefix)                   | 모든 테이블 이름에 기본적으로 사용되는 `BATCH_` 외의 접두어가 지정될 때 사용 |
+
+```java
+
+    @Override
+    protected JobExplorer createJobExplorer() throws Exception {
+        JobExplorerFactoryBean jobExplorerFactoryBean = new JobExplorerFactoryBean();
+
+        jobExplorerFactoryBean.setDataSource(this.dataSource);
+        jobExplorerFactoryBean.setTablePrefix("FOO_");
+
+        jobExplorerFactoryBean.afterPropertiesSet();
+        return jobExplorerFactoryBean.getObject();
+    }
+```
+
+#### JobLauncher 커스터마이징
+
+`JobLauncher`는 스프링 배치 잡을 실행하는 진입점으로, 스프링 부트는 기본적으로 `SimpleJobLauncher` 를 사용한다.
+그러므로, 스프링 부트의 기본 메커니즘으로 Job을 실행할 때는 커스터마이징 할 필요가 없다.
+하지만, 별도의 방식으로 Job을 구동하는 방법을 외부에 제공하기 위해 `SimpleJobLauncher` 동작을 변경할 수 있다.
+
+| 접근자이름                                    | 설명                                                         |
+| --------------------------------------------- | ------------------------------------------------------------ |
+| setJobRepository(JobRepository jobRepository) | 사용할 JobRepository 설정                                    |
+| setTaskExecutor(TaskExecutor taskExecutor)    | `JobLauncher`에서 사용할 `TaskExecutor` 설정<br />(default : `SyncTaskExecutor`) |
+
+
+
 ## 참고
 
 - [기억보단 기록을 - 3. Spring Batch 가이드 - 메타테이블엿보기](https://jojoldu.tistory.com/326?category=902551)
