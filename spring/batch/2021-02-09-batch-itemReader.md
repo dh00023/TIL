@@ -10,9 +10,23 @@ Spring Batch의 Reader에서 읽어올 수 있는 데이터 유형은 다음과 
 - Java Message Service 등 다른 소스에서 읽어오기
 - 커스텀한 Reader로 읽어오기
 
+```java
+package org.springframework.batch.item;
+
+public interface ItemReader<T> {
+
+	@Nullable
+	T read() throws Exception, UnexpectedInputException, ParseException, NonTransientResourceException;
+
+}
+```
+
+`ItemReader`의 `read()`를 호출하면, 해당 메서드는 스텝 내에서 처리할 Item한개를 반환하며, 스텝에서는 아이템 개수를 세어 청크 내 데이터가 몇개가 처리됐는지 관리한다.
+해당 Item은 `ItemProcessor`로 전달되며, 그 뒤 `ItemWriter`로 전달된다.
+
 가장 대표적인 구현체인 `JdbcPagingItemReader`의 클래스 계층 구조를 보면 다음과 같다.
 
-![image-20210209153930033](./assets/image-20210209153930033.png)
+![image-20210209153930033](../assets/image-20210209153930033.png)
 
 여기서 `ItemReader`와 `ItemStream` 인터페이스도 같이 구현하고 있는 것을 볼 수 있다. 
 
@@ -27,9 +41,131 @@ public interface ItemStream {
 }
 ```
 
-`ItemStream`은 주기적으로 상태를 저장하고, 오류가 발생하면 해당 상태에서 복원하기 위한 마커인터페이스이다. 즉, **`ItemRader` 의 상태를 저장하고 실패한 곳에서 다시 실행할 수 있게 해주는 역할**을 한다. `ItemReader`와 `ItemStream` 인터페이스를 직접 구현하여 원하는 형태의 ItemReader를 만들 수 있다.
+`ItemStream`은 주기적으로 상태를 저장하고, 오류가 발생하면 해당 상태에서 복원하기 위한 마커인터페이스이다. 즉, **`ItemReader` 의 상태를 저장하고 실패한 곳에서 다시 실행할 수 있게 해주는 역할**을 한다. `ItemReader`와 `ItemStream` 인터페이스를 직접 구현하여 원하는 형태의 ItemReader를 만들 수 있다.
 
 - [공식문서](https://docs.spring.io/spring-batch/docs/4.0.x/reference/html/readersAndWriters.html#readersAndWriters)
+
+## 파일 입력
+
+### FlatFileItemReader
+
+- `org.springframework.batch.item.file.FlatFileItemReader`
+- flat file
+    - 한 개 혹은 그 이상의 레코드가 포함된 특정 파일
+    -  파일의 내용을 봐도 데이터의 의미를 알 수 없다.
+    - 파일 내 데이터의 포맷이나 의미를 정의하는 메타 데이터가 없다.
+
+| 옵션                  | 타입                  | default                      | 설명                                                         | 구현체                                                       |
+| --------------------- | --------------------- | ---------------------------- | ------------------------------------------------------------ | ------------------------------------------------------------ |
+| comments              | String[]              | null                         | 문자열 배열에 파일을 파싱할 떄 건너뛰어야할 주석 줄을 나타내는 접두어 지정 |                                                              |
+| encoding              | String                | 플랫폼의 기본 Charset        | 파일에 사용된 문자열 인코딩                                  |                                                              |
+| **lineMapper**        | **LineMapper**        | **null(필수)**               | **파일 한줄을 String으로 읽은 뒤 처리 대상인 도메인 객체(Item)으로 변환** | `DefaultLineMapper`<br />`JsonLineMapper`<br />`PassThroughLineMapper` |
+| lineToSkip            | int                   | 0                            | 파일을 읽어올 떄 몇 줄을 건너띄고 시작할지 지정              |                                                              |
+| recordSeparatorPolicy | RecordSeparatorPolicy | DefaultRecordSeparatorPolicy | 각 줄의 마지막을 정의하는데 사용<br />별도로 지정하지 않으면 개행 문자가 레코드의 끝 부분을 나타낸다. |                                                              |
+| **resource**          | **Resource**          | **null(필수)**               | **읽을 대상 리소스**                                         |                                                              |
+| skippedLinesCallback  | LineCallbackHandler   | null                         | 줄을 건너뛸 떄 호출되는 콜백 인터페이스<br />건너띈 모든 줄은 이 콜백이 호출된다. |                                                              |
+| strict                | boolean               | false                        | true로 지정시, 리소스를 찾을 수 없는 경우 Exception을 던진다. |                                                              |
+| saveState             | boolean               | true                         | true : 재시작 가능하도록 각 청크 처리 후 `ItemReader` 상태 저장<br />false : 다중 스레드 환경에선 false 지정 |                                                              |
+
+#### 고정된 너비 파일
+
+```
+Aimee      CHoover    7341Vel Avenue          Mobile          AL35928
+Jonas      UGilbert   8852In St.              Saint Paul      MN57321
+Regan      MBaxter    4851Nec Av.             Gulfport        MS33193
+Octavius   TJohnson   7418Cum Road            Houston         TX51507
+Sydnee     NRobinson  894 Ornare. Ave         Olathe          KS25606
+Stuart     KMckenzie  5529Orci Av.            Nampa           ID18562
+```
+
+```java
+    @Bean
+    @StepScope
+    public FlatFileItemReader<Customer> customerItemReader(@Value("#{jobParameters['customerFile']}") PathResource inputFile) {
+        return new FlatFileItemReaderBuilder<Customer>()
+                .name("customerItemReader") // 각 스텝의 ExecutionContext에 추가되는 특정키의 접두문자로 사용될 이름(saveState false인 경우 지정할 필요X)
+                .resource(inputFile)
+                .fixedLength() // FixedLengthBuilder
+                .columns(new Range[]{new Range(1,11), new Range(12,12), new Range(13,22), new Range(23,26)
+                        , new Range(27,46), new Range(47,62), new Range(63,64), new Range(65,69)}) // 고정너비
+                .names(new String[]{"firstName", "middleInitial", "lastName", "addressNumber", "street"
+                        , "city", "state", "zipCode"}) // 각 컬럼명
+//                .strict(false) // 정의된 파싱 정보 보다 많은 항목이 레코드에 있는 경우(true 예외)
+                .targetType(Customer.class) // BeanWrapperFieldSetMapper 생성해 도메인 클레스에 값을 채움
+                .build();
+    }
+```
+
+#### 구분자 파일
+
+```
+Aimee,C,Hoover,7341,Vel Avenue,Mobile,AL,35928
+Jonas,U,Gilbert,8852,In St.,Saint Paul,MN,57321
+Regan,M,Baxter,4851,Nec Av.,Gulfport,MS,33193
+Octavius,T,Johnson,7418,Cum Road,Houston,TX,51507
+Sydnee,N,Robinson,894,Ornare. Ave,Olathe,KS,25606
+Stuart,K,Mckenzie,5529,Orci Av.,Nampa,ID,18562
+```
+
+```java
+    @Bean
+    @StepScope
+    public FlatFileItemReader<Customer> delimitedCustomerItemReader(@Value("#{jobParameters['customerFile']}") PathResource inputFile) {
+        return new FlatFileItemReaderBuilder<Customer>()
+                .name("delimitedCustomerItemReader") // 각 스텝의 ExecutionContext에 추가되는 특정키의 접두문자로 사용될 이름(saveState false인 경우 지정할 필요X)
+                .resource(inputFile)
+                .delimited() // default(,) DelimitedLineTokenizer를 사용해 각 레코드를 FieldSet으로 변환
+                .names(new String[]{"firstName", "middleInitial", "lastName", "addressNumber", "street"
+                        , "city", "state", "zipCode"}) // 각 컬럼명
+                .targetType(Customer.class) // BeanWrapperFieldSetMapper 생성해 도메인 클레스에 값을 채움
+                .build();
+    }
+```
+
+#### FieldSetMapper 커스텀
+
+```java
+public interface FieldSetMapper<T> {
+	T mapFieldSet(FieldSet fieldSet) throws BindException;
+}
+```
+
+`org.springframework.batch.item.file.mapping.FieldSetMapper`를 구현하여 커스텀 매퍼를 만들 수 있다.
+
+```java
+public class CustomFieldSetMapper implements FieldSetMapper<Customer> {
+
+    @Override
+    public Customer mapFieldSet(FieldSet fieldSet) throws BindException {
+        Customer customer = new Customer();
+        customer.setAddress(fieldSet.readString("addressNumber") + " " + fieldSet.readString("street"));
+        customer.setCity(fieldSet.readString("city"));
+        customer.setFirstName(fieldSet.readString("firstName"));
+        customer.setLastName(fieldSet.readString("lastName"));
+        customer.setMiddleInitial(fieldSet.readString("middleInitial"));
+        customer.setState(fieldSet.readString("state"));
+        customer.setZipCode(fieldSet.readString("zipCode"));
+
+        return customer;
+    }
+}
+```
+
+```java
+    @Bean
+    @StepScope
+    public FlatFileItemReader<Customer> delimitedCustomerItemReader(@Value("#{jobParameters['customerFile']}") PathResource inputFile) {
+        return new FlatFileItemReaderBuilder<Customer>()
+                .name("delimitedCustomerItemReader")
+                .resource(inputFile)
+                .delimited() 
+                .names(new String[]{"firstName", "middleInitial", "lastName", 														"addressNumber", "street", "city", "state", "zipCode"})
+                .fieldSetMapper(new CustomFieldSetMapper()) // customMapper 설정
+                .build();
+    }
+```
+
+`.fieldSetMapper()`에 커스텀 매퍼를 지정하면 된다.
 
 ## Database Reader
 
