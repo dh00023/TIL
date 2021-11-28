@@ -170,8 +170,6 @@ public FlatFileItemReader<Partner> reader() {
 }
 ```
 
-
-
 **1. 시스템 변수를 사용하게 되는 경우 Spring Batch의  Job Parameter 관련 기능을 사용하지 못한다.**
 
 Spring Batch는 같은 JobParameter로 같은 Job을 두 번 수행하지 않는다. 하지만 시스템 변수를 사용하게 되는 경우에는 이 기능이 전혀 동작하지 않게 된다. 또한 Spring Batch에서 자동으로 관리해주는 Parameter 관련 메타 테이블에 전혀 관리가 되지 않게 된다.

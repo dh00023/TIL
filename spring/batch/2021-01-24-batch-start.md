@@ -1,6 +1,6 @@
 # Spring Boot Batch 시작
 
-## Config 설정
+## Annotation
 
 ### @EnableBatchProcessing
 
@@ -20,6 +20,22 @@ public class PracticeApplication {
 }
 ```
 
+배치 작업에 필요한 빈을 미리 등록하여 사용할 수 있도록 해준다. 
+
+| 기본 포함 bean               | bean name          | 설명                                                      |
+| ---------------------------- | ------------------ | --------------------------------------------------------- |
+| `JobRepository`              | jobRepository      | 실행 중인 Job의 상태를 기록하는 데 사용                   |
+| `JobLauncher`                | jobLauncher        | 잡을 구동하는데 사용                                      |
+| `JobExplorer`                | jobExplorer        | `JobRepository`를 사용해 읽기 전용 작업을 수행하는데 사용 |
+| `JobRegistry`                | jobRegistry        | 특정한 런처 구현체를 사용할 때 Job을 찾는 용도로 사용     |
+| `PlatformTransactionManager` | transactionManager | 잡 진행 과정에서 트랜젝션을 다루는데 사용                 |
+| `JobBuilderFactory`          | jobBuilders        | 잡을 생성하는 빌더                                        |
+| `StepBuilderFactory`         | stepBuilders       | 스텝을 생성하는 빌더                                      |
+
+`JobRepository`와 `PlatformTransactionManager`는 필요에 따라 데이터 소스를 사용할 수 있다.
+
+## Config 설정
+
 ```java
 @EnableBatchProcessing // 스프링부트 배치 스타터에 미리 정의된 설정들을 실행시키는 어노테이션으로 JobBuilder, StepBuilder 등 다양한 설정 주입
 @Configuration
@@ -33,16 +49,7 @@ public class TestJobConfig {
 }
 ```
 
-배치 작업에 필요한 빈을 미리 등록하여 사용할 수 있도록 해준다. 
 
-| 기본 포함 bean               | bean name          |
-| ---------------------------- | ------------------ |
-| `JobRepository`              | jobRepository      |
-| `JobLauncher`                | jobLauncher        |
-| `JobRegistry`                | jobRegistry        |
-| `PlatformTransactionManager` | transactionManager |
-| `JobBuilderFactory`          | jobBuilders        |
-| `StepBuilderFactory`         | stepBuilders       |
 
 #### DefaultBatchConfiguerer
 
@@ -85,7 +92,7 @@ Spring Batch에서는 메타 데이터 테이블이 필요하다.
 
 
 
-![image-20210124205536134](./assets/image-20210124205536134.png)
+![image-20210124205536134](../assets/image-20210124205536134.png)
 
 
 
@@ -132,7 +139,7 @@ spring:
       driver-class-name: com.mysql.jdbc.Driver
 ```
 
-![image-20210124224911352](./assets/image-20210124224911352.png)
+![image-20210124224911352](../assets/image-20210124224911352.png)
 
 Active profiles에 설정한 값이 `spring-profiles` 값이다. 다음과 같이 설정 후 실행해주면 mysql이 기본 DB로 실행되는 것을 볼 수 있다.
 
@@ -152,7 +159,7 @@ Spring Batch가 수행될 때, arguments로 `job.name`이 넘어오면 해당 �
 
 `${job.name:NONE}` 의 의미는 `job.name`이 있으면 `job.name`을 할당하고, 없으면 `NONE`을 할당하겠다는 의미이다. 여기서 `NONE`이 `spring.batch.job.names` 에 할당되면 어떠한 배치도 실행하지 않겠다는 의미이며, 혹시라도 값이 없는 경우에 모든 배치가 수행되지 않도록 막는 역할을 한다.
 
-![image-20210131194226674](./assets/image-20210131194226674.png)
+![image-20210131194226674](../assets/image-20210131194226674.png)
 
 ```
 --job.name=stepNextJob

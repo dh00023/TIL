@@ -62,7 +62,7 @@ public class StepNextJobConfiguration {
 
 Next는 순차적으로 Step의 순서를 제어하지만, 앞의 Step에서 오류가 발생하게 되면, 뒤의 Step들은 실행되지 못하게 된다. 하지만 상황에 따라 정상 수행인 경우엔 Step B로, 오류가 발생했을 땐 Step C로 수행해야하는 경우가 있다.
 
-![https://t1.daumcdn.net/cfile/tistory/99F9F0455B6FC6BB31](./assets/99F9F0455B6FC6BB31.png)
+![https://t1.daumcdn.net/cfile/tistory/99F9F0455B6FC6BB31](../assets/99F9F0455B6FC6BB31.png)
 
 이러한 경우에 대비해 조건별로 Step을 사용할 수 있다.
 
