@@ -779,34 +779,45 @@ public class Transaction {
 
 ![cursorvspaging](https://t1.daumcdn.net/cfile/tistory/99A202395CEB519E1D)
 
-- Cursor 방식은 DB와 커넥션을 맺은 후, Cursor를 한칸씩 옮기면서 지속적으로 데이터를 가져온다.
-  - JdbcCursorItemReader
-  - HibernateCursorItemReader
-  - StoredProcedureItemReader
-- Paging 방식은 한번에 지정한 PageSize만큼 데이터를 가져온다.
+Cursor는 표준 `java.sql.ResultSet`으로 구현되며, `ResultSet`이 open되면 `next()` 메서드를 호출할 때마다 데이터베이스에서 배치 레코드를 가져와 반환한다.
+
+즉, Cursor 방식은 DB와 커넥션을 맺은 후, Cursor를 한칸씩 옮기면서 지속적으로 데이터를 가져온다. 
+
+(CursorItemReader는 streaming으로 데이터를 처리)
+
+**Cursor는 하나의 Connection으로 Batch가 끝날때가지 사용되기 때문**에 Batch가 끝나기전에 DB와 어플리케이션 Connection이 끊어질 수 있으므로, **DB와  SocketTimeout을 충분히 큰 값으로 설정**해야한다. (네트워크 오버헤드 추가)
+추가로 `ResultSet`은 스레드 안전이 보장되지 않아 다중 스레드 환경에서는 사용할 수 없다.
+
+- JdbcCursorItemReader
+- HibernateCursorItemReader
+- StoredProcedureItemReader
+
+Paging 방식은 한번에 지정한 PageSize만큼 데이터를 가져온다.
+
+SpringBatch에서 offset과 limit을 PageSize에 맞게 자동으로 생성해준다. 다만 각 쿼리는 개별적으로 실행되므로, 페이징시 결과를 정렬(order by)하는 것이 중요하다.
+
+**Batch 수행시간이 오래 걸리는 경우에는 `PagingItemReader`를 사용**하는 것이 좋다. **Paging의 경우 한 페이지를 읽을때마다 Connection을 맺고 끊기 때문에 아무리 많은 데이터라도 타임아웃과 부하 없이 수행**될 수 있다.
+
   - JdbcPagingItemReader
   - HibernatePagingItemReader
   - JpaPagingItemReader
   - [MybatisItemReader](http://mybatis.org/spring/ko/batch.html)
 
-### CursorItemReader
-
-CursorItemReader는 streaming으로 데이터를 처리한다. 대표적인 CursorItemReader중 하나인 `JdbcCursorItemReader`와 Spring Batch v4.3.0  이후에 도입된 `JpaCursorItemReader`를 살펴볼 것이다.
+### JDBC
 
 #### JdbcCursorItemReader
 
 ```java
-
-@Slf4j
+/**
+ * --job.name=jdbcCursorItemReaderJob city=Chicago
+ */
 @RequiredArgsConstructor
 @Configuration
-public class JdbcCursorItemReaderJobConfiguration {
+public class JdbcCursorCustomerJob {
+
     private final JobBuilderFactory jobBuilderFactory;
     private final StepBuilderFactory stepBuilderFactory;
     private final DataSource dataSource;
-
-
-    private static final int CHUNK_SIZE = 10;
 
     @Bean
     public Job jdbcCursorItemReaderJob(){
@@ -814,194 +825,129 @@ public class JdbcCursorItemReaderJobConfiguration {
                 .start(jdbcCursorItemReaderStep())
                 .build();
     }
+
     @Bean
     public Step jdbcCursorItemReaderStep(){
         return stepBuilderFactory.get("jdbcCursorItemReaderStep")
-                .<Pay, Pay>chunk(CHUNK_SIZE)
-                .reader(jdbcCursorItemReader())
-                .writer(jdbcCursorItemWriter())
+                .<Customer, Customer>chunk(10)
+                .reader(customerJdbcCursorItemReader())
+                .writer(customerJdbcCursorItemWriter())
                 .build();
     }
+
     @Bean
-    public JdbcCursorItemReader<Pay> jdbcCursorItemReader(){
-        return new JdbcCursorItemReaderBuilder<Pay>()
-                .fetchSize(CHUNK_SIZE)
+    public JdbcCursorItemReader<Customer> customerJdbcCursorItemReader() {
+        return new JdbcCursorItemReaderBuilder<Customer>()
+                .name("customerJdbcCursorItemReader")
                 .dataSource(dataSource)
-                .rowMapper(new BeanPropertyRowMapper<>(Pay.class))
-                .sql("SELECT id, amount, tx_name, tx_date_time FROM pay")
-                .name("jdbcCursorItemReader")
+                .sql("select * from customer where city = ?")
+                .rowMapper(new BeanPropertyRowMapper<>(Customer.class))
+                .preparedStatementSetter(citySetter(null))      // 파라미터 설정
                 .build();
     }
+
+    /**
+     * 파라미터를 SQL문에 매핑
+     * ArgumentPreparedStatementSetter는 객체 배열에 담긴 순서대로 ?의 위치에 값으로 설정
+     * @param city
+     * @return
+     */
     @Bean
-    public ItemWriter<Pay> jdbcCursorItemWriter(){
-        return list -> {
-            for(Pay pay : list){
-                log.info("Current Pay={}", pay);
-            }
-        };
+    @StepScope
+    public ArgumentPreparedStatementSetter citySetter(@Value("#{jobParameters['city']}") String city) {
+        return new ArgumentPreparedStatementSetter(new Object[]{city});
+    }
+
+    @Bean
+    public ItemWriter customerJdbcCursorItemWriter() {
+        return (items) -> items.forEach(System.out::println);
     }
 }
+
 ```
 
 - `<T, T> chunk(int chunkSize)` : 첫번째 T는 Reader에서 반환할 타입, 두번째 T는 Writer에 파라미터로 넘어올 타입이다.
 - fetchSize : DB에서 한번에 가져올 데이터 양을 나타낸다. Paging은 실제 쿼리를 limit, offset으로 분할 처리하는 반면, Cursor는 분할 처리없이 실행되나 내부적으로 가져온는 데이터는 FetchSize만큼 가져와 `read()`를 통해서 하나씩 가져온다.
 - dataSource : DB에 접근하기 위해 사용할 DataSource객체
 - rowMapper : 쿼리 결과를 인스턴스로 매핑하기 위한 매퍼
+    - `BeanPropertyRowMapper` 를 사용해 도메인 객체와 매핑해준다.
+
 - sql : Reader에서 사용할 쿼리문
+- preparedStatementSetter: SQL문의 파라미터 설정
 - name : Reader의 이름, ExecutionContext에 저장되어질 이름
-
-```java
-@Slf4j
-@Configuration
-@RequiredArgsConstructor
-public class JpaCursorItemReaderJobConfiguration {
-
-    private final JobBuilderFactory jobBuilderFactory;
-    private final StepBuilderFactory stepBuilderFactory;
-    private final EntityManagerFactory entityManagerFactory;
-
-    private static final int CHUNK_SIZE = 10;
-
-
-    @Bean
-    public Job jpaCursorItemReaderJob() throws Exception {
-        return jobBuilderFactory.get("jpaCursorItemReaderJob")
-                .start(jpaCursorItemReaderStep())
-                .build();
-    }
-
-    @Bean
-    public Step jpaCursorItemReaderStep() throws Exception {
-        return stepBuilderFactory.get("jpaCursorItemReaderStep")
-                .<Pay, Pay>chunk(CHUNK_SIZE)
-                .reader(jpaCursorItemReader())
-                .writer(jpaCursorItemWriter())
-                .build();
-    }
-
-    @Bean
-    public JpaCursorItemReader<Pay> jpaCursorItemReader() throws Exception{
-        return new JpaCursorItemReaderBuilder<Pay>()
-                .name("jpaCursorItemReader")
-                .entityManagerFactory(entityManagerFactory)
-                .queryString("SELECT p FROM Pay p")
-                .build();
-    }
-
-    private ItemWriter<Pay> jpaCursorItemWriter() {
-        return list -> {
-            for (Pay pay: list) {
-                log.info("Current Pay={}", pay);
-            }
-        };
-    }
-
-}
-```
-
-
-
-Cursor는 하나의 Connection으로 Batch가 끝날때가지 사용되기 때문에 Batch가 끝나기전에 DB와 어플리케이션 Connection이 끊어질 수 있으므로, DB와  SocketTimeout을 충분히 큰 값으로 설정해야한다.
-
-**Batch 수행시간이 오래 걸리는 경우에는 `PagingItemReader`를 사용**하는 것이 좋다. **Paging의 경우 한 페이지를 읽을때마다 Connection을 맺고 끊기 때문에 아무리 많은 데이터라도 타임아웃과 부하 없이 수행**될 수 있다.
-
-
-
-### PagingItemReader
-
-SpringBatch에서 offset과 limit을 PageSize에 맞게 자동으로 생성해준다. 다만 각 쿼리는 개별적으로 실행되므로, 페이징시 결과를 정렬(order by)하는 것이 중요하다.
 
 #### JdbcPagingItemReader
 
 ```java
-package spring.batch.practice.jobs;
 
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.batch.core.Job;
-import org.springframework.batch.core.Step;
-import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
-import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
-import org.springframework.batch.item.ItemWriter;
-import org.springframework.batch.item.database.JdbcPagingItemReader;
-import org.springframework.batch.item.database.Order;
-import org.springframework.batch.item.database.PagingQueryProvider;
-import org.springframework.batch.item.database.builder.JdbcPagingItemReaderBuilder;
-import org.springframework.batch.item.database.support.SqlPagingQueryProviderFactoryBean;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.jdbc.core.BeanPropertyRowMapper;
-import spring.batch.practice.domain.Pay;
-
-import javax.sql.DataSource;
-import java.util.HashMap;
-import java.util.Map;
-
-@Slf4j
+/**
+ * --job.name=jdbcPagingItemReaderJob city=Chicago
+ */
 @RequiredArgsConstructor
 @Configuration
-public class JdbcPagingItemReaderJobConfiguration {
+public class JdbcPagingCustomerJob {
+
     private final JobBuilderFactory jobBuilderFactory;
     private final StepBuilderFactory stepBuilderFactory;
     private final DataSource dataSource;
 
-
-    private static final int CHUNK_SIZE = 10;
-
     @Bean
-    public Job jdbcPagingItemReaderJob() throws Exception {
+    public Job jdbcPagingItemReaderJob(){
         return jobBuilderFactory.get("jdbcPagingItemReaderJob")
                 .start(jdbcPagingItemReaderStep())
                 .build();
     }
+
     @Bean
-    public Step jdbcPagingItemReaderStep() throws Exception {
+    public Step jdbcPagingItemReaderStep(){
         return stepBuilderFactory.get("jdbcPagingItemReaderStep")
-                .<Pay, Pay>chunk(CHUNK_SIZE)
-                .reader(jdbcPagingItemReader())
-                .writer(jdbcPagingItemWriter())
+                .<Customer, Customer>chunk(10)
+                .reader(customerJdbcPagingItemReader(null, null))
+                .writer(customerJdbcPagingItemWriter())
                 .build();
-    }
-    @Bean
-    public JdbcPagingItemReader<Pay> jdbcPagingItemReader() throws Exception {
-        Map<String, Object> params = new HashMap<>();
-        params.put("amount", 2000);
-
-        return new JdbcPagingItemReaderBuilder<Pay>()
-                .fetchSize(CHUNK_SIZE)
-                .dataSource(dataSource)
-                .rowMapper(new BeanPropertyRowMapper<>(Pay.class))
-                .queryProvider(createQueryProvider())
-                .parameterValues(params)
-                .name("jdbcPagingItemReader")
-                .build();
-    }
-    @Bean
-    public ItemWriter<Pay> jdbcPagingItemWriter(){
-        return list -> {
-            for(Pay pay : list){
-                log.info("Current Pay={}", pay);
-            }
-        };
     }
 
     @Bean
-    public PagingQueryProvider createQueryProvider() throws Exception {
+    @StepScope
+    public JdbcPagingItemReader<Customer> customerJdbcPagingItemReader(
+            PagingQueryProvider pagingQueryProvider, @Value("#{jobParameters['city']}") String city) {
+
+        Map<String, Object> params = new HashMap<>(1);
+        params.put("city", city);
+
+
+        return new JdbcPagingItemReaderBuilder<Customer>()
+                .name("customerJdbcPagingItemReader")   // Reader의 이름, ExecutionContext에 저장되어질 이름
+                .dataSource(dataSource)                 // DB에 접근하기 위해 사용할 DataSource객체
+                .queryProvider(pagingQueryProvider)     // PagingQueryProvider
+                .parameterValues(params)                // SQL 문에 주입해야할 파라미터
+                .pageSize(10)                           // 각 페이지 크
+                .rowMapper(new BeanPropertyRowMapper<>(Customer.class)) // 쿼리 결과를 인스턴스로 매핑하기 위한 매퍼
+                .build();
+    }
+
+    @Bean
+    public ItemWriter customerJdbcPagingItemWriter() {
+        return (items) -> items.forEach(System.out::println);
+    }
+
+
+    @Bean
+    public SqlPagingQueryProviderFactoryBean pagingQueryProvider(){
         SqlPagingQueryProviderFactoryBean queryProvider = new SqlPagingQueryProviderFactoryBean();
-        queryProvider.setDataSource(dataSource);
-        queryProvider.setSelectClause("id, amount, tx_name, tx_date_time");
-        queryProvider.setFromClause("from pay");
-        queryProvider.setWhereClause("where amount >= :amount");
+        queryProvider.setDataSource(dataSource); // 제공된 데이터베이스의 타입을 결정(setDatabaseType 으로 데이터베이스 타입 설정도 가능)
+        queryProvider.setSelectClause("*");
+        queryProvider.setFromClause("from customer");
+        queryProvider.setWhereClause("where city = :city");
 
         Map<String, Order> sortKeys = new HashMap<>();
-        sortKeys.put("id", Order.ASCENDING);
+        sortKeys.put("lastName", Order.ASCENDING);
 
         queryProvider.setSortKeys(sortKeys);
 
-        return queryProvider.getObject();
+        return queryProvider;
     }
 }
-
 ```
 
 `PagingItemReader`는 `PagingQueryProvider`를 통해 쿼리를 생성한다. 이렇게 생성하는 이유는 각 DB에는 Paging을 지원하는 자체적인 전략이 있으며, Spring은 각 DB의 Paging 전략에 맞춰 구현되어야만 한다.
@@ -1026,65 +972,323 @@ public SqlPagingQueryProviderFactoryBean() {
 
 Spring Batch에서는 `SqlPagingQueryProviderFactoryBean`을 통해 DataSource 설정 값을 보고, 위 Provider중 하나를 자동 선택하도록 한다.
 
+SpringBatch에서 offset과 limit을 PageSize에 맞게 자동으로 생성해준다. 다만 각 쿼리는 개별적으로 실행되므로, 동일한 레코드 정렬 순서를 보장하려면  페이징시 결과를 정렬(order by)하는 것이 중요하다.
+
+또한, 이 정렬키가 `ResultSet` 내에서 중복되지 않아야한다.
+
 ```sql
-SELECT id, amount, tx_name, tx_date_time FROM pay WHERE amount >= :amount ORDER BY id ASC LIMIT 10
+SELECT * FROM customer WHERE city = :city ORDER BY lastName ASC LIMIT 10
 ```
 
-실행된 쿼리 로그를 보면 LIMIT 10이 들어간 것을 볼 수 있다.
+실행된 쿼리 로그를 보면 Paging Size인 LIMIT 10이 들어간 것을 볼 수 있다.
 
-#### JpaPagingItemReader
+### Hibernate
 
-Jpa에서는 Cursor 기반 DB 접근을 지원하지 않는다.
+- 자바 ORM 기술로, 애플리케이션에서 사용하는 객체 지향 모델을 관계형 데이터베이스로 매핑하는 기능을 제공
+- XML or Annotation을 사용해 객체를 데이터베이스 테이블로 매핑
+- 객체를 사용해 데이터베이스에 질의하는 프레임워크를 제공
+
+Hibernate 세션 구현체에 따라서 다르게 작동한다.
+
+- 별도 설정없이 Hibernate를 사용하면 일반적인 stateful 세션 구현체를 사용
+    - 예를 들어 백만건의 아이템을 읽고 처리한다면 Hibernate 세션이 데이터베이스에서 조회할 때 아이템을 캐시에 쌓으며 **OutOfMemoryException**이 발생
+- Persistence로 사용하면, 직접 JDBC를 사용할 때보다 더 큰 부하를 유발
+    - 레코드 백만 건을 처리할 때는 한건당 ms 단위의 차이도 거대한 차이가 된다.
+
+- 스프링 배치는 이러한 문제를 해결하도록 `HibernateCursorItemReader`, `HibernatePagingItemReader`를 개발
+    - 커밋시 세션을 flush하며 배치 처리에 관계가 있는 추가 기능을 제공해준다.
+
+#### build.gradle 의존성 추가
+
+```groovy
+compileOnly 'org.springframework.boot:spring-boot-starter-data-jpa'
+```
+
+#### Domain  객체 수정
 
 ```java
+@Entity
+@Table(name = "customer")
+public class Customer {
 
-@Slf4j
+    @Id
+    private Long id; // pk
+    private String firstName;
+    private String middleInitial;
+    private String lastName;
+    private String address;
+    private String city;
+    private String state;
+    private String zipCode;
+}
+```
+
+| 어노테이션 | 설명                            |
+| ---------- | ------------------------------- |
+| @Entity    | 매핑할 객체가 Entity임을 나타냄 |
+| @Table     | Entity가 매핑되는 테이블 지정   |
+| @Id        | PK값 지정                       |
+
+#### TransactionManager 커스텀
+
+하이버네이트 세션과 Datasource를 합친 `TransactionManager`가 필요하다.
+
+```java
+@Component
+public class HibernateBatchConfigurer extends DefaultBatchConfigurer {
+
+    private DataSource dataSource;
+    private SessionFactory sessionFactory;
+    private PlatformTransactionManager transactionManager;
+
+    /**
+     * Datasource connection과 하이버네이트 세션 설정
+     * @param dataSource
+     * @param entityManagerFactory
+     */
+    public HibernateBatchConfigurer(DataSource dataSource,
+                                    EntityManagerFactory entityManagerFactory) {
+        super(dataSource);
+        this.dataSource = dataSource;
+        this.sessionFactory = entityManagerFactory.unwrap(SessionFactory.class);
+
+        // 하이버네이트 트랜잭션 설정
+        this.transactionManager = new HibernateTransactionManager(this.sessionFactory);
+    }
+
+    @Override
+    public PlatformTransactionManager getTransactionManager() {
+        return this.transactionManager;
+    }
+}
+```
+
+`BatchConfigurer`의 커스텀 구현체를 사용해 `HibernateTransactionManager`를 구성했다.
+
+#### HibernateCursorItemReader
+
+```java
+/**
+ * --job.name=hibernateCursorItemReaderJob city=Chicago
+ */
 @RequiredArgsConstructor
 @Configuration
-public class JpaPagingItemReaderJobConfiguration {
+public class HibernateCursorCustomerJob {
+
     private final JobBuilderFactory jobBuilderFactory;
     private final StepBuilderFactory stepBuilderFactory;
     private final EntityManagerFactory entityManagerFactory;
 
+    @Bean
+    public Job hibernateCursorItemReaderJob(){
+        return jobBuilderFactory.get("hibernateCursorItemReaderJob")
+                .start(hibernateCursorItemReaderStep())
+                .build();
+    }
 
-    private static final int CHUNK_SIZE = 10;
+    @Bean
+    public Step hibernateCursorItemReaderStep(){
+        return stepBuilderFactory.get("hibernateCursorItemReaderStep")
+                .<Customer, Customer>chunk(10)
+                .reader(customerHibernateCursorItemReader(null))
+                .writer(customerHibernateCursorItemWriter())
+                .build();
+    }
 
     @Bean
-    public Job jpaPagingItemReaderJob() {
-        return jobBuilderFactory.get("jpaPagingItemReaderJob")
-                .start(jpaPagingItemReaderStep())
+    @StepScope
+    public HibernateCursorItemReader<Customer> customerHibernateCursorItemReader(@Value("#{jobParameters['city']}") String city) {
+        return new HibernateCursorItemReaderBuilder<Customer>()
+                .name("customerHibernateCursorItemReader") // Reader의 이름, ExecutionContext에 저장되어질 이름
+                .sessionFactory(entityManagerFactory.unwrap(SessionFactory.class))
+                .queryString("from Customer where city = :city")        // HQL 쿼리
+                .parameterValues(Collections.singletonMap("city", city)) // SQL 문에 주입해야할 파라미터
                 .build();
     }
+
     @Bean
-    public Step jpaPagingItemReaderStep() {
-        return stepBuilderFactory.get("jpaPagingItemReaderStep")
-                .<Pay, Pay>chunk(CHUNK_SIZE)
-                .reader(jpaPagingItemReader())
-                .writer(jpaPagingItemWriter())
-                .build();
-    }
-    @Bean
-    public JpaPagingItemReader<Pay> jpaPagingItemReader(){
-        return new JpaPagingItemReaderBuilder<Pay>()
-                .name("jpaPagingItemReader")
-                .entityManagerFactory(entityManagerFactory)
-                .pageSize(CHUNK_SIZE)
-                .queryString("SELECT p FROM Pay p WHERE amount >= 2000")
-                .build();
-    }
-    @Bean
-    public ItemWriter<Pay> jpaPagingItemWriter(){
-        return list -> {
-            for(Pay pay : list){
-                log.info("Current Pay={}", pay);
-            }
-        };
+    public ItemWriter customerHibernateCursorItemWriter() {
+        return (items) -> items.forEach(System.out::println);
     }
 }
 
 ```
 
-`.entityManagerFactory`를 설정하는 것 이외에 Jdbc와 크게 다른 점은 없다.
+하이버네이트 쿼리를 수행하는 방법은 4가지가 존재한다.
+
+| 옵션          | 타입                   | 설명                                                         | 예제                                             |
+| ------------- | ---------------------- | ------------------------------------------------------------ | ------------------------------------------------ |
+| queryName     | String                 | 하이버네이트 구성에 포함된 네임드 하이버네이트 쿼리 참조     | https://www.baeldung.com/hibernate-named-query   |
+| queryString   | String                 | 스프링 구성에 추가하는 HQL 쿼리                              | .queryString("from Customer where city = :city") |
+| queryProvider | HibernateQueryProvider | 하이버네이트 쿼리(HQL)를 프로그래밍으로 빌드                 |                                                  |
+| nativeQuery   | String                 | 네이티브 SQL 쿼리를 실행한 뒤 결과를 하이버네이트로 매핑하는데 사용 | https://data-make.tistory.com/616                |
+
+#### HibernatePagingItemReader
+
+```java
+/**
+ * --job.name=hibernatePagingItemReaderJob city=Chicago
+ */
+@RequiredArgsConstructor
+@Configuration
+public class HibernatePagingCustomerJob {
+
+    private final JobBuilderFactory jobBuilderFactory;
+    private final StepBuilderFactory stepBuilderFactory;
+    private final EntityManagerFactory entityManagerFactory;
+
+    @Bean
+    public Job hibernatePagingItemReaderJob() {
+        return jobBuilderFactory.get("hibernatePagingItemReaderJob")
+                .start(hibernatePagingItemReaderStep())
+                .build();
+    }
+
+    @Bean
+    public Step hibernatePagingItemReaderStep() {
+        return stepBuilderFactory.get("hibernatePagingItemReaderStep")
+                .<Customer, Customer>chunk(10)
+                .reader(customerHibernatePagingItemReader(null))
+                .writer(customerHibernatePagingItemWriter())
+                .build();
+    }
+
+    @Bean
+    @StepScope
+    public HibernatePagingItemReader<Customer> customerHibernatePagingItemReader(@Value("#{jobParameters['city']}") String city) {
+        return new HibernatePagingItemReaderBuilder<Customer>()
+                .name("customerHibernatePagingItemReader") // Reader의 이름, ExecutionContext에 저장되어질 이름
+                .sessionFactory(entityManagerFactory.unwrap(SessionFactory.class))
+                .queryString("from Customer where city = :city")        // HQL 쿼리
+                .parameterValues(Collections.singletonMap("city", city)) // SQL 문에 주입해야할 파라미터
+                .pageSize(10)       // Cursor와 유일한 차이점! pageSize 설정
+                .build();
+    }
+
+    @Bean
+    public ItemWriter customerHibernatePagingItemWriter() {
+        return (items) -> items.forEach(System.out::println);
+    }
+}
+```
+
+Cursor 방법과 유일하게 다른 점은 `.pageSize()`로 사용할 페이지 크기를 지정해야하는 것이다.
+
+### JPA
+
+JPA(Java Persisstence API)는 ORM 영역에서 표준화된 접근법을 제공한다.
+Hibernate가 초기 JPA에 영감을 줬으며, 현재는  Hibernate가 JPA 명세를 구현하고 있다.
+
+#### build.gradle 의존성 추가
+
+```groovy
+compileOnly 'org.springframework.boot:spring-boot-starter-data-jpa'
+```
+
+`spring-boot-starter-data-jpa`는 JPA를 사용하는데 필요한 모든 필수 컴포넌트가 포함돼있다.
+
+#### JpaCursorItemReader
+
+Spring Batch 4.3이 릴리즈 되면서 JpaCursorItemReader 가 도입되었다. 이전버전까지느 제공하지 않았다.
+
+```java
+/**
+ * --job.name=jpaCursorItemReaderJob city=Chicago
+ */
+@RequiredArgsConstructor
+@Configuration
+public class JpaCursorCustomerJob {
+
+    private final JobBuilderFactory jobBuilderFactory;
+    private final StepBuilderFactory stepBuilderFactory;
+    private final EntityManagerFactory entityManagerFactory;
+
+    @Bean
+    public Job jpaCursorItemReaderJob(){
+        return jobBuilderFactory.get("jpaCursorItemReaderJob")
+                .start(jpaCursorItemReaderStep())
+                .build();
+    }
+
+    @Bean
+    public Step jpaCursorItemReaderStep(){
+        return stepBuilderFactory.get("jpaCursorItemReaderStep")
+                .<Customer, Customer>chunk(10)
+                .reader(customerJpaCursorItemReader(null))
+                .writer(customerJpaCursorItemWriter())
+                .build();
+    }
+
+    @Bean
+    @StepScope
+    public JpaCursorItemReader<Customer> customerJpaCursorItemReader(@Value("#{jobParameters['city']}") String city) {
+        return new JpaCursorItemReaderBuilder<Customer>()
+                .name("customerJpaCursorItemReader")
+                .entityManagerFactory(entityManagerFactory)
+                .queryString("select c from Customer c where c.city = :city")
+                .parameterValues(Collections.singletonMap("city", city))
+                .build();
+    }
+
+    @Bean
+    public ItemWriter customerJpaCursorItemWriter() {
+        return (items) -> items.forEach(System.out::println);
+    }
+}
+```
+
+#### JpaPagingItemReader
+
+```java
+/**
+ * --job.name=jpaPagingItemReaderJob city=Chicago
+ */
+@RequiredArgsConstructor
+@Configuration
+public class JpaPagingCustomerJob {
+
+    private final JobBuilderFactory jobBuilderFactory;
+    private final StepBuilderFactory stepBuilderFactory;
+    private final EntityManagerFactory entityManagerFactory;
+
+    @Bean
+    public Job jpaPagingItemReaderJob(){
+        return jobBuilderFactory.get("jpaPagingItemReaderJob")
+                .start(jpaPagingItemReaderStep())
+                .build();
+    }
+
+    @Bean
+    public Step jpaPagingItemReaderStep(){
+        return stepBuilderFactory.get("jpaPagingItemReaderStep")
+                .<Customer, Customer>chunk(10)
+                .reader(customerJpaPagingItemReader(null))
+                .writer(customerJpaPagingItemWriter())
+                .build();
+    }
+
+    @Bean
+    @StepScope
+    public JpaPagingItemReader<Customer> customerJpaPagingItemReader(@Value("#{jobParameters['city']}") String city) {
+        return new JpaPagingItemReaderBuilder<Customer>()
+                .name("customerJpaPagingItemReader")
+                .entityManagerFactory(entityManagerFactory)
+                .queryString("select c from Customer c where c.city = :city")
+                .parameterValues(Collections.singletonMap("city", city))
+                .pageSize(10)
+                .build();
+    }
+
+    @Bean
+    public ItemWriter customerJpaPagingItemWriter() {
+        return (items) -> items.forEach(System.out::println);
+    }
+}
+```
+
+`.entityManagerFactory`를 설정하는 것 이외에 Jdbc와 크게 다른 점은 없으며, Cursor와 다른점은 `pageSize()`를 설정하는 것이다.
+
+JPA에서는  `.queryProvider()`로 Query 객체를 사용해 쿼리를 수행할 수도 있다.
 
 ### MyBatisPagingItemReader
 
@@ -1228,7 +1432,7 @@ public class MybatisPagingItemReaderJobConfiguration {
 
 ## 주의 사항
 
-- `JpaRepository`를 `ListItemReader`, `QueueItemReader`에 사용하면 안된다.
+- **`JpaRepository`를 `ListItemReader`, `QueueItemReader`에 사용하면 안된다.**
   - 이렇게 구현하는 경우 Spring Batch의 장점인 Paging & Cursor 구현이 없어 대규모 데이터 처리가 불가능하다.
   - `JpaRepository`를 사용해야하는 경우 `RepositoryItemReader`를 사용하는 것을 권장한다.
 - Hibernate, JPA등 영속성 컨텍스트가 필요한 Reader 사용시 fetch size와 chunk size는 동일한 값을 유지해야 한다.
