@@ -1428,11 +1428,281 @@ public class MybatisPagingItemReaderJobConfiguration {
 }
 ```
 
+### Spring Data Repository
+
+Spring Data는 스프링 데이터가 제공하는 특정 인터페이스 중 하나를 상속하는 인터페이스를 사용자가 정의하기만 하면 스프링 데이터가 해당 인터페이스의 구현을 처리하는 기능을 제공한다.
+
+스프링 배치는 스프링 데이터의 `PagingAndSotringRepository`를 활용하기 때문에, 스프링 데이터와 호환성이 좋다.
+
+#### RepositoryItemReader
+
+`RepositoryItemReader`는 `JdbcPagingItemReader` 나 `HibernatePagingItemReader`를 사용할때와 동일하게 `PagingAndSotringRepository`를 사용해서 Paging 쿼리를 실행한다.
+
+`RepositoryItemReader`는 어떤 저장소건 상관없이 해당 데이터 저장소에 질의를 수행할 수 있다는 점에서 `ItemReader`와 차이가 있다.
+
+```java
+public interface CustomerRepository extends JpaRepository<Customer, Long> {
+    Page<Customer> findByCity(String city, Pageable pageRequest);
+}
+```
+
+`PagingAndSotringRepository`를 상속하는 Repository를 생성해 city 조건으로 조회하는 메서드를 정의하였다.
+
+```java
+		@Bean
+    @StepScope
+    public RepositoryItemReader<Customer> customerRepositoryItemReader(@Value("#{jobParameters['city']}") String city) {
+        return new RepositoryItemReaderBuilder<Customer>()
+                .name("customerRepositoryItemReader")
+                .arguments(Collections.singletonList(city)) // pageable 파라미터를 제외한 arguments
+                .methodName("findByCity")                   // 호출할 메서드명
+                .repository(customerRepository)             // Repository 구현체
+                .sorts(Collections.singletonMap("lastName", Sort.Direction.ASC))
+                .build();
+    }
+```
 
 
-## 주의 사항
+
+### 주의 사항
 
 - **`JpaRepository`를 `ListItemReader`, `QueueItemReader`에 사용하면 안된다.**
   - 이렇게 구현하는 경우 Spring Batch의 장점인 Paging & Cursor 구현이 없어 대규모 데이터 처리가 불가능하다.
   - `JpaRepository`를 사용해야하는 경우 `RepositoryItemReader`를 사용하는 것을 권장한다.
 - Hibernate, JPA등 영속성 컨텍스트가 필요한 Reader 사용시 fetch size와 chunk size는 동일한 값을 유지해야 한다.
+
+## ItemReaderAdapter
+
+Adapter는 다른 엘리멘트와 래핑하여 스프링 배치가 해당 엘리먼트와 통신할 수 있게 하는데 사용한다.
+
+- `org.springframework.batch.item.adapter.ItemReaderAdapter`
+
+```java
+public class ItemReaderAdapter<T> extends AbstractMethodInvokingDelegator<T> implements ItemReader<T> {
+
+	/**
+	 * @return return value of the target method.
+	 */
+	@Nullable
+	@Override
+	public T read() throws Exception {
+		return invokeDelegateMethod();
+	}
+
+}
+```
+
+호출 대상 서비스의 참조와 호출할 메서드의 이름을 의존성으로 받는다.
+
+- `ItemReaderAdapter`가 매번 호출할 때마다 반환되는 객체는  `ItemReader`가 반환하는 객체이다.
+- 입력 데이터를 모두 처리하면 서비스 메서드는 반드시 `null`을 반환해야한다. 스프링 배치에게 해당 step의 입력을 모두 완료했음을 알리는 것이다.
+
+```java
+
+@Component
+public class CustomerService {
+    private List<Customer> customers;
+    private int curIndex;
+
+    private String [] firstNames = {"Michael", "Warren", "Ann", "Terrence",
+            "Erica", "Laura", "Steve", "Larry"};
+    private String middleInitial = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    private String [] lastNames = {"Gates", "Darrow", "Donnelly", "Jobs",
+            "Buffett", "Ellison", "Obama"};
+    private String [] streets = {"4th Street", "Wall Street", "Fifth Avenue",
+            "Mt. Lee Drive", "Jeopardy Lane",
+            "Infinite Loop Drive", "Farnam Street",
+            "Isabella Ave", "S. Greenwood Ave"};
+    private String [] cities = {"Chicago", "New York", "Hollywood", "Aurora",
+            "Omaha", "Atherton"};
+    private String [] states = {"IL", "NY", "CA", "NE"};
+
+    private Random generator = new Random();
+
+    public CustomerService() {
+        curIndex = 0;
+
+        customers = new ArrayList<>();
+
+        for(int i = 0; i < 100; i++) {
+            customers.add(buildCustomer());
+        }
+    }
+
+    private Customer buildCustomer() {
+        Customer customer = new Customer();
+
+        customer.setId((long) generator.nextInt(Integer.MAX_VALUE));
+        customer.setFirstName(
+                firstNames[generator.nextInt(firstNames.length - 1)]);
+        customer.setMiddleInitial(
+                String.valueOf(middleInitial.charAt(
+                        generator.nextInt(middleInitial.length() - 1))));
+        customer.setLastName(
+                lastNames[generator.nextInt(lastNames.length - 1)]);
+        customer.setAddress(generator.nextInt(9999) + " " +
+                streets[generator.nextInt(streets.length - 1)]);
+        customer.setCity(cities[generator.nextInt(cities.length - 1)]);
+        customer.setState(states[generator.nextInt(states.length - 1)]);
+        customer.setZipCode(String.valueOf(generator.nextInt(99999)));
+
+        return customer;
+    }
+
+    public Customer getCustomer() {
+        Customer cust = null;
+
+        if(curIndex < customers.size()) {
+            cust = customers.get(curIndex);
+            curIndex++;
+        }
+
+        return cust;
+    }
+}
+```
+
+Customer 객체의 목록을 무작위로 생성하는 서비스이다.
+
+```java
+    @Bean
+    public ItemReaderAdapter<Customer> customerServiceItemReader() {
+        ItemReaderAdapter<Customer> adapter = new ItemReaderAdapter<>();
+
+        adapter.setTargetObject(customerService);
+        adapter.setTargetMethod("getCustomer");
+
+        return adapter;
+    }
+```
+
+`ItemReaderAdapter`에 기존 서비스 오브젝트와 메서드명을 전달하면된다.
+
+## 오류 처리
+
+입력에서 레코드를 읽는 중에 오류가 발생한 경우 처리할 수 있는 방법은 여러가지이다.
+
+1. 예외를 던쳐 처리를 멈추기
+2. 특정 예외가 발생한 경우 레코드 건너띄기(skip)
+
+### Skip
+
+1. 어떤 조건에서 레코드를 skip할지(어떤 예외를 무시할 것인지)
+2. 얼마나 많은 레코드를 skip 할 수 있게 할것인지
+
+레코드를 skip할지 여부를 결정할 때 위 두가지 요소를 고려해야한다.
+
+Skip을 사용하기 위해서는 우선 `faultToLerant()`라는 메서드를 호출해야한다.
+
+| 메서드         | 설명                                                         |
+| -------------- | ------------------------------------------------------------ |
+| `skipLimit()`  | skip 허용 회수. 허용 회수를 넘어가면 job은 실패한다. skip()과 반드시 같이 써야 한다 |
+| `skip()`       | 해당 exception이 발생했을때 skip                             |
+| `noSkip()`     | 해당 exception이 발생하면 skip을 하지 않고 오류를 내겠다는 것 |
+| `skipPolicy()` | 용자 정의로 skip에 대한 policy를 만들어서 적용하고 싶을때 사용 |
+
+```java
+    @Bean
+    public Step skipRecordCopyFileStep() {
+        return this.stepBuilderFactory.get("skipRecordCopyFileStep")
+                .<Customer, Customer>chunk(10)
+                .reader(null)
+                .writer(null)
+                .faultTolerant()
+                .skip(Exception.class)
+                .noSkip(ParseException.class)
+                .skipLimit(10)
+                .build();
+    }
+```
+
+#### SkipPolicy
+
+```java
+public interface SkipPolicy {
+
+	boolean shouldSkip(Throwable t, int skipCount) throws SkipLimitExceededException;
+}
+```
+
+`SkipPolicy` 구현체는 skip할 예외와 허용 횟수를 판별할 수 있으며, `boolean` 값으로 내부 로직을 수정할 수 있다.
+
+```java
+public class FileVerificationSkipper implements SkipPolicy {
+    @Override
+    public boolean shouldSkip(Throwable t, int skipCount) throws SkipLimitExceededException {
+        
+        if (t instanceof FileNotFoundException) {
+            return false;
+        } else if (t instanceof ParseException && skipCount < 10) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+}
+```
+
+### 오류 로그 남기기
+
+`ItemListener`를 사용해 잘못된 레코드를 기록하는 방법을 다룰 것이다.
+
+```java
+public interface ItemReadListener<T> extends StepListener {
+
+	void beforeRead();
+	
+	void afterRead(T item);
+	
+	void onReadError(Exception ex);
+}
+```
+
+잘못된 레코드를 읽었을 때 로그를 남기기 위해서  `onReadError` 메서드를 오바라이드해 `ItemListenerSupport`를 사용하여 에러를 기록한다.
+
+단순히 파일을 읽어올 때는 위와 같이 처리하면 되지만, DB를 이용한 오류가 발생한 경우에는 실제 DB입출력을 스프링 자체나 하이버네이트와 같은 다른 프레임워크가 처리하므로, 스프링 배치에서 처리할 예외가 많지 않다.
+
+#### onReadError 파일 오류 로그 남기기
+
+```java
+@Slf4j
+public class CustomerItemListener {
+
+    @OnReadError
+    public void onReadError(Exception e) {
+        if (e instanceof FlatFileParseException) {
+            FlatFileParseException ffpe = (FlatFileParseException) e;
+
+            StringBuilder sb = new StringBuilder();
+            sb.append("오류 발생 라인 : ");
+            sb.append(ffpe.getLineNumber());
+            sb.append("입력값 : ");
+            sb.append(ffpe.getInput());
+
+            log.error(sb.toString(), ffpe);
+        } else {
+            log.error("오류 발생", e);
+        }
+    }
+}
+```
+
+```java
+    @Bean
+		public CustomerItemListener customerItemListener(){
+      	return new CustomerItemListener();
+    }
+    @Bean
+    public Step copyFileStep() {
+        return this.stepBuilderFactory.get("skipRecordCopyFileStep")
+                .<Customer, Customer>chunk(10)
+                .reader(null)
+                .writer(null)
+                .faultTolerant()
+                .skip(Exception.class)
+                .skipLimit(10)
+          			.listener(customerItemListener())
+                .build();
+    }
+```
+
