@@ -69,13 +69,11 @@ Spring Batch 에서는 자주 사용하는 용도의 Processor를 미리 클래�
 
 하지만 최근에는 대부분 processor를 직접 구현하는 경우가 많고, 람다식으로 빠르게 구현할때도 많다. 그래서 `ItemProcessorAdapter`와 `ValidatingItemProcessor`는 거의 사용하지 않는다.
 
-### ValidatingItemProcessor
-
 입력 데이터 유효성 검증에 사용하는 ItemProcessor 구현체이다. 입력 아이템의 유효성 검증을 수행하는 스프링배치 `Validator`를 사용할 수 있으며, 유효성 검증이 실패하면, `ValidationException`이 발생한다.
 
 - `org.springframework.batch.item.validator.ValidatingItemProcessor`
 
-#### BeanValidatingItemProcessor
+### BeanValidatingItemProcessor
 
 JSR 303은 빈 유효성 검증을 위한 것으로, 스프링 배치는 미리 정의된 유효성 검증 기능을 어노테이션으로 제공해준다.
 해당 어노테이션을 사용하려면, 다음 의존성을 추가해줘야한다.
@@ -151,7 +149,7 @@ Field error in object 'item' on field 'middleInitial': rejected value [YS]; code
 
 다음과 같이 지정한 validation에 맞지 않으면 예외가 발생하는 것을 볼 수 있다.
 
-#### ValidatingItemProcessor
+### ValidatingItemProcessor
 
 데이터셋 내에서 한개의 필드의 값이 고유해야하는 경우가 있을 수 있다.
 고유한 값의 필드를 `ItemStream` 인터페이스를 구현하여, 각 커밋과 필드 값을 `ExecutionContext`에 저장해 상태를 유지할 수 있다.
@@ -233,9 +231,81 @@ Validator를 구현한 후 Step을 다음과 같이 구현하면 된다.
     }
 ```
 
+### ItemProcessorAdapter
+
+- `org.springframework.batch.item.adapter.ItemProcessorAdapter`
+
+서비스를 `ItemProcessor` 역할을 하도록 만들 수 있다.
+
+```java
+@Service
+public class UpperCaseNameService {
+    public Customer upperCase(Customer customer) {
+
+        Customer newCustomer = new Customer(customer);
+
+        newCustomer.setFirstName(newCustomer.getFirstName().toUpperCase());
+        newCustomer.setLastName(newCustomer.getLastName().toUpperCase());
+        newCustomer.setMiddleInitial(newCustomer.getMiddleInitial().toUpperCase());
+
+        return newCustomer;
+    }
+}
+```
+
+고객의 이름을 대문자로 바꿔주는 서비스이다. 이 서비스를 `ItemProcessorAdapter`를 사용하여 Processor로 사용할 수 있다.
+
+```java
+@Bean
+public Step validationDelimitedFileStep() {
+  	return this.stepBuilderFactory.get("validationDelimitedFileStep")
+                .<Customer, Customer>chunk(10)
+                .reader(validationDelimitedCustomerItemReader(null))
+                .processor(customerItemProcessorAdapter())
+                .writer(validationDelimitedCustomerItemWriter())
+                .stream(uniqueLastNameValidator())
+                .build();
+}
 
 
+@Bean
+public ItemProcessorAdapter<Customer, Customer> customerItemProcessorAdapter() {
+		ItemProcessorAdapter<Customer, Customer> adapter = new ItemProcessorAdapter<>();
+    adapter.setTargetObject(upperCaseNameService);
+    adapter.setTargetMethod("upperCase");
+    return adapter;
+}
+```
 
+### ScriptItemProcessor
+
+Ruby, JavaScript, Groovy 등 다양한 스크립트 언어를 실행할 수 있다.
+
+- `org.springframework.batch.item.support.ScriptItemProcessor`
+
+```js
+// lowerCase.js
+item.setFirstName(item.getFirstName().toLowerCase());
+item;
+```
+
+```java
+@Bean
+@StepScope
+public ScriptItemProcessor<Customer, Customer> scriptItemProcessor(@Value("#{jobParameters['script']}") Resource script) {
+  	ScriptItemProcessor<Customer, Customer> itemProcessor = new ScriptItemProcessor<>();
+
+    itemProcessor.setScript(script);
+
+    return itemProcessor;
+}
+```
+
+수행하고 싶은 스크립트를 다음과 같이 바인딩하여 사용할 수 있다.
+
+### CompositeItemProcessor
+
+![https://media.springernature.com/original/springer-static/image/chp%3A10.1007%2F978-1-4842-3724-3_8/MediaObjects/215885_2_En_8_Fig1_HTML.png](../assets/composite-processor.png)
 
 `CompositeItemProcessor`는 **ItemProcessor간의 체이닝을 지원**하는 Processor이다.
 
@@ -275,7 +345,100 @@ Validator를 구현한 후 Step을 다음과 같이 구현하면 된다.
 
 하지만, 여기서 제네릭 타입은 사용하지 못하며, 만약 제네릭타입을 사용하게 되면 `delegates`에 포함된 `ItemProcessor`는 모두 같은 제네릭 타입을 가져야한다. 만약 같은 제네릭 타입을 사용할 수 있는 ItemProcessor간 체이닝이라면 제네릭을 선언하는 것이 더 안전한 코드가 될 수 있다.
 
+### ClassifierCompositeItemProcessor
 
+-  `org.springframework.batch.item.support.ClassifierCompositeItemProcessor`
+
+`Classifier` 구현체로 사용할 ItemProcessor를 선정해 `classify` 메서드를 수행해 분류 처리를 할 수 있다.
+
+```java
+public interface Classifier<C, T> extends Serializable {
+
+	T classify(C classifiable);
+
+}
+```
+
+다음은 우편번호를 짝수 홀수로 분류한 `Classifier` 구현체이다.
+
+```java
+@AllArgsConstructor
+public class ZipCodeClassifier implements Classifier<Customer, ItemProcessor<Customer, Customer>> {
+
+    private ItemProcessor<Customer, Customer> oddProcessor;
+    private ItemProcessor<Customer, Customer> evenProcessor;
+
+
+    @Override
+    public ItemProcessor<Customer, Customer> classify(Customer classifiable) {
+        if (Integer.parseInt(classifiable.getZipCode()) % 2 == 0) {
+            return evenProcessor;
+        } else {
+            return oddProcessor;
+        }
+    }
+}
+
+```
+
+구현한 `Classifier`를 `ClassifierCompositeItemProcessor`로 구현하여 수행할 수 있다.
+
+```java
+		// 홀수, 짝수 프로세서 설정
+		@Bean
+    public Classifier classifier() {
+        return new ZipCodeClassifier(customerItemProcessorAdapter(), scriptItemProcessor());
+    }
+
+    @Bean
+    public ClassifierCompositeItemProcessor<Customer, Customer> classifierCompositeItemProcessor() {
+        ClassifierCompositeItemProcessor<Customer, Customer> itemProcessor = new ClassifierCompositeItemProcessor<>();
+        itemProcessor.setClassifier(classifier());
+        return itemProcessor;
+    }
+
+```
+
+홀수인 경우에는 upperCase출력, 짝수인 경우 lowerCase로 분류해서 출력하도록 구현하였으며, 다음과 같이 정상적으로 출력되는걸 확인할 수 있다.
+
+```
+Customer(firstName=aimee, middleInitial=C, lastName=Hoover, addressNumber=7341, street=Vel Avenue, city=Mobile, state=AL, zipCode=35928, address=null, transactions=null)
+Customer(firstName=JONAS, middleInitial=U, lastName=GILBERT, addressNumber=8852, street=In St., city=Saint Paul, state=MN, zipCode=57321, address=null, transactions=null)
+Customer(firstName=REGAN, middleInitial=M, lastName=BAXTER, addressNumber=4851, street=Nec Av., city=Gulfport, state=MS, zipCode=33193, address=null, transactions=null)
+Customer(firstName=OCTAVIUS, middleInitial=T, lastName=DAUGHERTY, addressNumber=7418, street=Cum Road, city=Houston, state=TX, zipCode=51507, address=null, transactions=null)
+Customer(firstName=stuart, middleInitial=K, lastName=Mckenzie, addressNumber=5529, street=Orci Av., city=Nampa, state=ID, zipCode=18562, address=null, transactions=null)
+Customer(firstName=PETRA, middleInitial=Z, lastName=LARA, addressNumber=8401, street=Et St., city=Georgia, state=GA, zipCode=70323, address=null, transactions=null)
+Customer(firstName=cherokee, middleInitial=T, lastName=Laradd, addressNumber=8516, street=Mauris St., city=Seattle, state=WA, zipCode=28720, address=null, transactions=null)
+Customer(firstName=athena, middleInitial=Y, lastName=Burt, addressNumber=4951, street=Mollis Rd., city=Newark, state=DE, zipCode=41034, address=null, transactions=null)
+Customer(firstName=kaitlin, middleInitial=M, lastName=Macias, addressNumber=5715, street=Velit St., city=Chandler, state=AZ, zipCode=86176, address=null, transactions=null)
+Customer(firstName=LEROY, middleInitial=X, lastName=CHERRY, addressNumber=7810, street=Vulputate St., city=Seattle, state=WA, zipCode=37703, address=null, transactions=null)
+```
+
+### ItemProcessor 직접 구현하기
+
+커스텀 프로세서를 생성하여 짝수 우편번호는 필터링하고 홀수 우편번호만 남겨두는 `ItemProcessor` 예제를 살펴볼 것이다.
+
+`ItemProcessor`는 **`null`**을 반환하면 해당 아이템은 그 이후 수행되는 `ItemProcessor`나  `ItemWriter`로 전달되지 않고, 필터링된다. 이렇게 필터링된 레코드의 수를 `JobRepository`에 관리하고 있다.
+
+```java
+public class EvenFilteringItemProcessor implements ItemProcessor<Customer, Customer> {
+    @Override
+    public Customer process(Customer item) throws Exception {
+        return Integer.parseInt(item.getZipCode()) % 2 == 0 ? null : item;
+    }
+}
+```
+
+다음과 같이 `ItemProcessor`를 구현하여, `process` 메서드에 원하는 로직을 작성해주면 된다.
+
+```sql
+SELECT	STEP_EXECUTION_ID AS ID, STEP_NAME, COMMIT_COUNT, READ_COUNT, FILTER_COUNT, WRITE_COUNT
+FROM		BATCH_STEP_EXECUTION;
+```
+
+`BATCH_STEP_EXECUTION` 내에 성공한 수, 필터링 걸린 아이템 수를 확인할 수 있다.
+
+![image-20211203232101096](../assets/filterItemCount.png)
 
 ## 참고
 
