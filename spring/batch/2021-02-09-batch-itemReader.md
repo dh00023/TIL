@@ -1189,7 +1189,7 @@ compileOnly 'org.springframework.boot:spring-boot-starter-data-jpa'
 
 #### JpaCursorItemReader
 
-Spring Batch 4.3이 릴리즈 되면서 JpaCursorItemReader 가 도입되었다. 이전버전까지느 제공하지 않았다.
+Spring Batch 4.3이 릴리즈 되면서 JpaCursorItemReader 가 도입되었다. 이전버전까지는 제공하지 않았다.
 
 ```java
 /**
