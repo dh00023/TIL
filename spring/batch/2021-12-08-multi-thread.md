@@ -52,4 +52,37 @@ implements org.springframework.beans.factory.InitializingBean
 ItemStreamReader implementation based on JPA Query.getResultStream(). It executes the JPQL query when initialized and iterates over the result set as AbstractItemCountingItemStreamItemReader.read() method is called, returning an object corresponding to the current row. The query can be set directly using setQueryString(String), or using a query provider via setQueryProvider(JpaQueryProvider). The implementation is not thread-safe.
 ```
 
+여기서 또 한가지 알아둬야할 점이 있다. 멀티쓰레드로 각 chunk들이 개별로 진행되는 경우 실패 지점에서 재시작하는 것이 불가능하다. 왜냐하면, 멀티쓰레드의 경우 1~n개의 chunk가 동시에 실행되며, 5번째 chunk가 실패했다고 해서 1~4 chunk가 모두 성공했다는 보장이 없다.
+
+그래서 멀티쓰레드 적용시 일반적으로 ItemReader의 `saveState` 옵션을 false로 설정한다.
+
+> saveState : `ItemStream#update(ExecutionContext)` 메소드로 `ExectuionContext`에  reader의 상태값을 저장할지 결정한다.
+> (Defualt : true)
+
+### Thread-safe
+
+#### PagingItemReader
+
+- [Multithread Job구현시 이슈사항 정리](./2021-12-09-multithread-error.md) 
+
+위에서 봤듯이 PagingItemReader는 thread-safe한 것을 알 수 있다.
+멀티쓰레드로 수행하는 배치가 있다면, DB접근시 PagingItemReader를 사용하는 것을 권장한다.
+
+- application.yaml
+
+    ```yaml
+    spring:
+      datasource:
+        hikari:
+          driver-class-name: com.mysql.cj.jdbc.Driver
+          jdbc-url: jdbc:mysql://localhost:3306/spring_batch
+          username: spring
+          password: Springtest2021!
+          maximum-pool-size: 10 # pool에 유지할 최대 connection 수
+          auto-commit: false # 자동 commit 여부
+    ```
+    
+    
+    
+- 
 
