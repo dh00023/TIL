@@ -84,7 +84,12 @@ spring:
 
 만약 빈 overriding을 가능하게 하고 싶으면 다음과 같이 설정하면 된다.
 
+## 
+
+
+
 ## 참고
 
 - [https://oingdaddy.tistory.com/178](https://oingdaddy.tistory.com/178)
+- [https://stackoverflow.com/questions/53326271/spring-nullable-annotation-generates-unknown-enum-constant-warning](https://stackoverflow.com/questions/53326271/spring-nullable-annotation-generates-unknown-enum-constant-warning)
 
