@@ -1,6 +1,5 @@
 # Today I Learned
 
-<<<<<<< HEAD
 ## [Git](git)
 
 * [Basic](git/2019-01-09-git-basic.md)
@@ -15,6 +14,9 @@
 * [Jenkins 시작하기](./devops/2021-11-28-jenkins.md)
 * [Airflow 시작하기](./devops/2021-11-28-airflow.md)
 
+## 개발 방법론
+
+* [TDD](./2021-12-27-TDD.md)
 
 ## [Spring](spring)
 
