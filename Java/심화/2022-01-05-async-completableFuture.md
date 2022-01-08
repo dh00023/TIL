@@ -59,59 +59,35 @@ Future는 다양한 메서드를 제공하지만, 이 메서드만으로 간결�
 
 ```java
 public class CompletableFuture<T> implements Future<T>, CompletionStage<T> {
-// ...
-    public T get() throws InterruptedException, ExecutionException {
-        Object r;
-        if ((r = result) == null)
-            r = waitingGet(true);
-        return (T) reportGet(r);
-    }
-
-    @SuppressWarnings("unchecked")
-    public T get(long timeout, TimeUnit unit)
-        throws InterruptedException, ExecutionException, TimeoutException {
-        long nanos = unit.toNanos(timeout);
-        Object r;
-        if ((r = result) == null)
-            r = timedGet(nanos);
-        return (T) reportGet(r);
-    }
-// ...
-    public CompletableFuture<T> exceptionally(
-        Function<Throwable, ? extends T> fn) {
-        return uniExceptionallyStage(null, fn);
-    }
-
-    public CompletableFuture<T> exceptionallyAsync(
-        Function<Throwable, ? extends T> fn) {
-        return uniExceptionallyStage(defaultExecutor(), fn);
-    }
-
-    public CompletableFuture<T> exceptionallyAsync(
-        Function<Throwable, ? extends T> fn, Executor executor) {
-        return uniExceptionallyStage(screenExecutor(executor), fn);
-    }
-
-    public CompletableFuture<T> exceptionallyCompose(
-        Function<Throwable, ? extends CompletionStage<T>> fn) {
-        return uniComposeExceptionallyStage(null, fn);
-    }
-
-    public CompletableFuture<T> exceptionallyComposeAsync(
-        Function<Throwable, ? extends CompletionStage<T>> fn) {
-        return uniComposeExceptionallyStage(defaultExecutor(), fn);
-    }
-
-    public CompletableFuture<T> exceptionallyComposeAsync(
-        Function<Throwable, ? extends CompletionStage<T>> fn,
-        Executor executor) {
-        return uniComposeExceptionallyStage(screenExecutor(executor), fn);
-    }
-    //...
-}
 ```
 
-`Future`를 구현한 `CompletableFuture`에서는 런타임 `get()` 메서드 예외를 처리할 수 있는 기능을 제공하고, 예외에서 회복할 수 있도록 `exceptionally()` 와 같은 메서드도 제공한다.
+`CompletableFuture`는 `Future`와 `CompletionStage`를 구현한 클래스이다.
+
+-  `Future`이지만 직접 쓰레드를 생성하지 않고 async로 작업을 처리할 수 있음.
+
+- 여러 `CompletableFuture`를 병렬로 처리하거나, 병합하여 처리할 수 있음. 
+
+- Cancel, Error를 처리할 수 있는 방법을 제공
+
+  - `exceptionally()` 
+
+  - 런타임 `get()` 메서드 예외를 처리할 수 있는 기능을 제공
+
+  - ```java
+    // ...
+        public T get() throws InterruptedException, ExecutionException {
+            Object r;
+            if ((r = result) == null)
+                r = waitingGet(true);
+            return (T) reportGet(r);
+        }
+    
+    // ...
+        public CompletableFuture<T> exceptionally(
+            Function<Throwable, ? extends T> fn) {
+            return uniExceptionallyStage(null, fn);
+        }
+    ```
 
 리액티브 형식의 비동기 API에서는 return대신 기존 콜백이 호출되므로 예외 발생시 실행될 추가 콜백을 만들어 인터페이스를 바꿔줘야한다.
 
@@ -206,7 +182,60 @@ class ShopTest {
 Price : 130.6716180974313
 ```
 
-### supplyAsync
+### cancle()에 의한 예외 처리
+
+```java
+public boolean cancel(boolean mayInterruptIfRunning) {
+        boolean cancelled = (result == null) &&
+            internalComplete(new AltResult(new CancellationException()));
+        postComplete();
+        return cancelled || isCancelled();
+    }
+    public boolean isCancelled() {
+        Object r;
+        return ((r = result) instanceof AltResult) &&
+            (((AltResult)r).ex instanceof CancellationException);
+    }
+```
+
+쓰레드에서 `cancle()`을 호출될 수 있다.
+이때, `get()`에서 `CancellationException`이 발생하므로, 해당 예외처리가 필요하다.
+
+```java
+ CompletableFuture<String> future
+                = new CompletableFuture<>();
+        Executors.newCachedThreadPool().submit(() -> {
+            Thread.sleep(2000);
+            future.cancel(false);
+            return null;
+        });
+
+        String result = null;
+        try {
+            result = future.get();
+        } catch (CancellationException e) {
+            e.printStackTrace();
+            result = "Canceled!";
+        }
+
+        System.out.println(result);
+```
+
+```
+java.util.concurrent.CancellationException
+	at java.base/java.util.concurrent.CompletableFuture.cancel(CompletableFuture.java:2478)
+	at async.FutureEx.lambda$main$4(FutureEx.java:91)
+	at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:264)
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1136)
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:635)
+	at java.base/java.lang.Thread.run(Thread.java:833)
+Canceled!
+```
+
+### supplyAsync()
+
+직접 쓰레드를 생성하지 않고, 작업을 async로 처리할 수 있다.
+인자로 전달된 람다는 다른 쓰레드에서 비동기적으로 처리된다.
 
 ```java
     public static <U> CompletableFuture<U> supplyAsync(Supplier<U> supplier) {
@@ -228,6 +257,260 @@ public Future<Double> getPriceAsyncBySupplyAsync(String product) {
         return CompletableFuture.supplyAsync(() -> caclulatePrice(product));
     }
 ```
+
+### runAsync()
+
+```java
+    public static CompletableFuture<Void> runAsync(Runnable runnable) {
+        return asyncRunStage(ASYNC_POOL, runnable);
+    }
+
+    public static CompletableFuture<Void> runAsync(Runnable runnable,
+                                                   Executor executor) {
+        return asyncRunStage(screenExecutor(executor), runnable);
+    }
+```
+
+`supplyAsync()`와 다르게 `runAsync()`는 반환값이 `Void`로  없다.
+결과가 완료될 때까지 `get()`은 블록되지만, `null`을 반환한다.
+
+```java
+CompletableFuture<Void> future
+        = CompletableFuture.runAsync(() -> System.out.println("future example"));
+
+log("get(): " + future.get());
+```
+
+ ```
+ 15:47:01.328 (ForkJoinPool.commonPool-worker-1) future example
+ 15:47:01.328 (main) get(): null
+ ```
+
+### Exception handling
+
+작업을 처리하는 중에 Exception이 발생할 수 있으며, 이때 `handle()`으로 예외처리를 할 수 있다.
+
+```java
+CompletableFuture<String> future = CompletableFuture.supplyAsync(() -> {
+	String name = null;
+    if (name == null) {
+    	throw new RuntimeException("Computation error!");
+    }
+    return "Hello, " + name;
+}).handle((s, t) -> s != null ? s : "Hello, Stranger!");
+
+System.out.println(future.get()); // Hello, Stranger!
+
+```
+
+### `thenApply()` 반환 값이 있는 작업 수행
+
+`supplyAsync()`로 작업이 처리되면, **그 결과를 가지고 다른 작업을 수행하도록 구현**할 수 있다.
+
+```java
+    public <U> CompletableFuture<U> thenApply(
+        Function<? super T,? extends U> fn) {
+        return uniApplyStage(null, fn);
+    }
+```
+
+인자와 리턴 값이 있는 람다를 수행하며, 여기서 인자는 `supplyAsync()`에서 리턴되는 값이다.
+
+```java
+CompletableFuture<String> future1
+                = CompletableFuture.supplyAsync(() -> "Future1");
+
+CompletableFuture<String> future2 = future1.thenApply(
+                s -> s + " + Future2");
+
+System.out.println("future1.get(): " + future1.get());
+System.out.println("future2.get(): " + future2.get());
+```
+
+```java
+future1.get(): Future1
+future2.get(): Future1 + Future2
+```
+
+다음과 같이 한번에 정의할 수도 있다.
+
+```java
+CompletableFuture<String> future = CompletableFuture
+                .supplyAsync(() -> "Future1")
+                .thenApply(s -> s + " + Future2")
+    			.thenApply(s -> s + " + Future3");
+```
+
+### thenAccept() 반환 값이 없는 작업 수행
+
+```java
+public CompletableFuture<Void> thenAccept(Consumer<? super T> action) {
+        return uniAcceptStage(null, action);
+}
+```
+
+인자는 있지만 반환값이 없는 람다를 처리할 수 있으며, 반환값이 없기 때문에 `CompletableFuture<Void>`를 반환한다.
+
+```java
+CompletableFuture<Void> nullFuture = CompletableFuture
+                .supplyAsync(() -> "Future")
+                .thenAccept(s -> System.out.println(s + " + Future2"));
+
+System.out.println("nullFuture.get() : " + nullFuture.get());
+```
+
+```
+Future + Future2
+nullFuture.get() : null
+```
+
+`CompletableFuture`는 완료 즉시 응답하는것이 좋으므로 `thenAcceptAsync`는 사용하지 않는다. 오히려 `thenAcceptAsync()` 사용시 새로운 스레드를 이용할 때까지 기다려야하는 상황이 발생할 수 도 있다.
+
+### thenCompose() 여러작업 순차적 수행
+
+```java
+public <U> CompletableFuture<U> thenCompose(Function<? super T, ? extends CompletionStage<U>> fn) {
+    return uniComposeStage(null, fn);
+}
+```
+
+chain처럼 두개의 `CompletableFuture`를 하나의 `CompletableFuture`로 만들어주는 역할을 한다.
+첫번째 future의 결과가 반환되면 그 결과를 두번째 future에 전달하여 순차적으로 작업이 처리된다.
+
+```java
+CompletableFuture<String> completableFuture = CompletableFuture
+                .supplyAsync(() -> "Future1")
+                .thenCompose(s -> CompletableFuture.supplyAsync(() -> s + " + Future2"));
+System.out.println(completableFuture.get());
+```
+
+```
+Future1 + Future2
+```
+
+### thenCombine() 여러 작업 동시 수행
+
+```java
+    public <U,V> CompletableFuture<V> thenCombine(
+        CompletionStage<? extends U> other,
+        BiFunction<? super T,? super U,? extends V> fn) {
+        return biApplyStage(null, other, fn);
+    }
+```
+
+`thenCombine()`은 여러개의 `CompletableFuture`를 병렬로 처리되도록 하며, 모든 처리가 완료되고 그 결과를 하나로 합칠 수 있다.
+
+```java
+CompletableFuture<String> future1 = CompletableFuture
+                .supplyAsync(() -> "Future1")
+                .thenApplyAsync((s) -> {
+                    System.out.println("Starting future1");
+                    try {
+                        Thread.sleep(2000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    return s + "!";
+                });
+
+CompletableFuture<String> future2 = CompletableFuture
+                .supplyAsync(() -> "Future2")
+                .thenApplyAsync((s) -> {
+                    System.out.println("Starting future2");
+                    try {
+                        Thread.sleep(2000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    return s + "!";
+                });
+
+future1.thenCombine(future2, (s1, s2) -> s1 + " + " + s2)
+                .thenAccept((s) -> System.out.println(s));
+```
+
+```
+(ForkJoinPool.commonPool-worker-2) Starting future2
+(ForkJoinPool.commonPool-worker-1) Starting future1
+(ForkJoinPool.commonPool-worker-1) Future1! + Future2!
+```
+
+### anyOf()
+
+여러개의 `CompletableFuture`중 빨리 처리되는 1개의 결과만 가져오는 메소드.
+
+```java
+CompletableFuture<String> future1 = CompletableFuture
+                .supplyAsync(() -> {
+                    System.out.println("starting future1");
+                    return "Future1";
+                });
+
+CompletableFuture<String> future2 = CompletableFuture
+                .supplyAsync(() -> {
+                    System.out.println("starting future2");
+                    return "Future2";
+                });
+
+CompletableFuture<String> future3 = CompletableFuture
+                .supplyAsync(() -> {
+                    System.out.println("starting future3");
+                    return "Future3";
+                });
+
+CompletableFuture.anyOf(future1, future2, future3)
+                .thenAccept(s -> System.out.println("Result: " + s));
+
+```
+
+```
+starting future1
+starting future2
+starting future3
+Result: Future1
+```
+
+### allOf()
+
+모든 future의 결과를 받아서 처리하는 메소드.
+
+```java
+        CompletableFuture<String> future1 = CompletableFuture
+                .supplyAsync(() -> "Future1");
+
+        CompletableFuture<String> future2 = CompletableFuture
+                .supplyAsync(() -> "Future2");
+
+        CompletableFuture<String> future3 = CompletableFuture
+                .supplyAsync(() -> "Future3");
+
+        CompletableFuture<Void> combinedFuture
+                = CompletableFuture.allOf(future1, future2, future3);
+
+        System.out.println("get() : " + combinedFuture.get());
+        System.out.println("future1.isDone() : " + future1.isDone());
+        System.out.println("future2.isDone() : " + future2.isDone());
+        System.out.println("future3.isDone() : " + future3.isDone());
+
+        String combined = Stream.of(future1, future2, future3)
+                .map(CompletableFuture::join)
+                .collect(Collectors.joining(" + "));
+        System.out.println("Combined: " + combined);
+```
+
+```
+get() : null
+future1.isDone() : true
+future2.isDone() : true
+future3.isDone() : true
+Combined: Future1 + Future2 + Future3
+```
+
+Stream api를 사용하여 결과를 처리할 수 있다.
+
+### Async method
+
+메소드 뒤에 `Async()`로 끝나는 메소드들이 있다. 이 메소드는 동일한 쓰레드를 사용하지 않고 다른 쓰레드를 사용해 처리하고 싶을 때 사용하면된다.
 
 ### Non-blocking
 
@@ -385,5 +668,8 @@ public class CFCombine {
 
 ## 참고
 
-\- [모던 자바 인 액션]()
+-  [모던 자바 인 액션]()
+- [https://codechacha.com/ko/java-completable-future/](https://codechacha.com/ko/java-completable-future/)
+
+
 
