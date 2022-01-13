@@ -1,0 +1,307 @@
+# Future/Executor(Java5)
+
+## ExecutorService
+
+```java
+public interface ExecutorService extends Executor {
+
+    void shutdown();
+
+    List<Runnable> shutdownNow();
+
+    boolean isShutdown();
+
+    boolean isTerminated();
+
+    boolean awaitTermination(long timeout, TimeUnit unit)
+        throws InterruptedException;
+
+    <T> Future<T> submit(Callable<T> task);
+    
+    <T> Future<T> submit(Runnable task, T result);
+
+    Future<?> submit(Runnable task);
+
+    <T> List<Future<T>> invokeAll(Collection<? extends Callable<T>> tasks)
+        throws InterruptedException;
+
+    <T> List<Future<T>> invokeAll(Collection<? extends Callable<T>> tasks,
+                                  long timeout, TimeUnit unit)
+        throws InterruptedException;
+
+    <T> T invokeAny(Collection<? extends Callable<T>> tasks)
+        throws InterruptedException, ExecutionException;
+
+    <T> T invokeAny(Collection<? extends Callable<T>> tasks,
+                    long timeout, TimeUnit unit)
+        throws InterruptedException, ExecutionException, TimeoutException;
+}
+```
+
+`ExecutorService`는 재사용이 가능한 ThreadPool로 `Executor` 인터페이스를 확장하여 Thread의 라이프사이클을 제어한다.
+Thread의 라이프 사이클과 발생할 수 있는 여러 가지 사항들을 개발자들이 신경쓰지 않도록 편리하게 추상화 한 것이다.
+
+`ExecutorServices`는 `Runnable`과 `Callable` 모두 실행할 수 있다.
+
+`ExecutorService`에 Task를 지정해주면 ThreadPool을 이용하여 Task를 실행되며, Task는 큐로 관리된다.
+
+### 초기화
+
+- new 키워드
+
+  ```java
+  ExecutorService es = new ThreadPoolExecutor(10, 10, 0L, TimeUnit.MILLISECONDS, new LinkedBlockingQueue());
+  ```
+
+  `ExecutorService` 를 구현한 구현체로 초기화 할 수 있다.
+
+- `Excutors` 에서 제공하는 Factory Method
+
+  ```java
+  // 1. 10개 고정 사이즈의 ThreadPool 생성 
+  ExecutorService executorService = Executors.newFixedThreadPool(10);
+  // 2. 1개 고정 사이즈의 ThreadPool 생성
+  ExecutorService executorService = Executors.newSingleThreadExecutor();
+  // 3. 캐싱 ThreadPool 생성
+  ExecutorService executorService = Executors.newCachedThreadPool();
+  ```
+
+  - CachedThreadPool : 일정시간동안 쓰레드가 사용이 되지 않으면 pool에서 제거
+  
+  - FixedThreadPool : 고정된 개수를 가진 쓰레드풀
+  
+  - SingleThreadExecutor :  한 개의 쓰레드로 작업을 처리하는 쓰레드풀
+  
+  - ScheduledThreadPool : 일정 시간 뒤에 실행되는 작업이나, 주기적으로 수행되는 작업이 있는 경우 사용
+  
+    ```java
+    public class ScheduledExecutorServiceEx {
+    
+        public static void main(String[] args) {
+            ScheduledExecutorService executorService = Executors.newScheduledThreadPool(1);
+    
+            work1();
+    
+            // work1 수행이 끝난 후 10초뒤에 work2를 개별 Task로 스케쥴
+            executorService.schedule(ScheduledExecutorServiceEx::work2, 10, TimeUnit.SECONDS);
+            executorService.shutdown();
+        }
+    
+        public static void work1() {
+            System.out.println("work1");
+        }
+    
+        public static void work2() {
+            System.out.println("work2");
+        }
+    }
+    ```
+  
+    
+
+### 실행 메서드
+
+| 메서드      | 설명                                                         | 예제                                                         |
+| ----------- | ------------------------------------------------------------ | ------------------------------------------------------------ |
+| execute()   | 반환 값이 없으며, Task의 실행 결과나 Task의 상태를 알 수 없다. | executorService.execute(runnableTask);                       |
+| submit()    | Task를 할당하고 `Future` 타입의 결과값을 반환한다.<br />결과가 반환되어야 하므로 주로 Callable을 구현한 Task를 넘긴다. | Future future = executorService.submit(callableTask);        |
+| invokeAny() | Task를 Collection에 넣어서 넘겨줄 수 있다.<br />이때, 실행에 성공한 Task 중 하나의 결과값을 반환한다. | String result = executorService.invokeAny(callableTasks);    |
+| invokeAll() | Task를 Collection에 넣어서 넘겨줄 수 있다.<br />이때, 모든 Task의 결과값을 반환한다. | List\<Future\> futures = executorService.invokeAll(callableTasks); |
+
+### 종료
+
+실행 명령한 Task가 모두 수행되더라도 `ExecutorService`는 자동 종료되지 않는다. 앞으로 들어올 Task를 처리하기 위해 wait상태로 대기하고 있다. 종료하기 위해서는 `shutdown()`이나 `shutdownNow()`를 호출해줘야한다.
+
+```java
+// 실행중인 모든 Task가 수행되면 종료
+// 더 이상 쓰레드 풀에 Task 추가하지 못함
+executorService.shutdown();
+
+// 실행중인 Thread를 모두 즉시 종료시킴
+// 하지만 모든 Thread가 동시에 종료되는 것을 보장하지 않으며, 실행되지 않은 Task반환
+List<Runnable> notExecutedTasks = executorService.shutDownNow();
+```
+
+### 사용 예제
+
+```java
+public class CallableEx {
+
+    static class TestCallable implements Callable<String> {
+
+        @Override
+        public String call() throws Exception {
+            String result = "Called at " + LocalDateTime.now();
+            return result;
+        }
+    }
+
+    public static void main(String[] args) throws ExecutionException, InterruptedException {
+        TestCallable callable = new TestCallable();
+        
+        ExecutorService executor = Executors.newSingleThreadExecutor();
+        Future<String> future = executor.submit(callable);
+
+        executor.submit(() -> {
+            String threadName = Thread.currentThread().getName();
+            System.out.println("Job2 " + threadName);
+        });
+
+        System.out.println("result : " + future.get());
+
+        // 쓰레드 종료
+        executor.shutdown();
+
+        // 종료되지 않은 Task를 기다리고,
+        // 특정시간 이후에도 완료되지 않으면 false return
+        if (executor.awaitTermination(20, TimeUnit.SECONDS)) {
+            System.out.println(LocalDateTime.now() + " All jobs are terminated");
+        } else {
+            System.out.println(LocalDateTime.now() + " some jobs are not terminated");
+
+            // 모든 Task를 강제 종료
+            executor.shutdownNow();
+        }
+    }
+}
+```
+
+## Future
+
+`Future`는 비동기 처리 결과를 알 수 있다.
+
+- 작업중인 쓰레드 말고 별도 쓰레드를 생성해 작업을 수행
+- 다른 쓰레드에서 수행한 작업물의 결과를 가져올 때 사용
+
+```java
+// ExecutorService
+<T> Future<T> submit(Callable<T> task);
+```
+
+`ExecutorService`의 `submit()`은 Future객체를 반환하며,  메인쓰레드에서 쓰레드풀에서 처리한 결과를 알 수 있다.
+
+```java
+public interface Future<V> {
+    boolean cancel(boolean mayInterruptIfRunning);
+
+    boolean isCancelled();
+
+    boolean isDone();
+
+    V get() throws InterruptedException, ExecutionException;
+
+    V get(long timeout, TimeUnit unit)
+        throws InterruptedException, ExecutionException, TimeoutException;
+}
+```
+
+- `get()`으로 결과 값을 가져올 수 있는데, `get()`은 결과 수행이 완료될때까지 기다리는 blocking 메소드이다.
+  - 이때 timeout시간을 같이 전달해 특정 시간 내 응답이 없는 경우 다음 작업을 처리하도록 만들 수 있다.
+- `isDone` :  해당 작업이 수행이 완료됐는지 확인이 가능
+- `cancle(boolean)` : Task 취소
+- `isCancelled()` : Task가 취소 되었는지 확인
+
+```java
+public class FutureEx {
+
+    interface SuccessCallback{
+        void onSuccess(String result);
+    }
+
+    interface ExceptionCallback{
+        void onError(Throwable t);
+    }
+
+    public static class CallbackFutureTask extends FutureTask<String> {
+        SuccessCallback sc;
+        ExceptionCallback ec;
+        public CallbackFutureTask(Callable<String> callable, SuccessCallback sc, ExceptionCallback ec) {
+            super(callable);
+            this.sc = Objects.requireNonNull(sc);
+            this.ec = Objects.requireNonNull(ec);
+        }
+
+        @Override
+        protected void done() {
+            try {
+                sc.onSuccess(get());
+            } catch (InterruptedException e) {
+                // 작업을 수행하지말고 종료해라
+                Thread.currentThread().interrupt();
+            } catch (ExecutionException e) {
+                // 비동기 작업 수행중 예외 발생
+                ec.onError(e.getCause());
+            }
+        }
+    }
+
+    public static void main(String[] args) throws ExecutionException, InterruptedException {
+        // thread pool
+        ExecutorService es = Executors.newCachedThreadPool();
+
+        CallbackFutureTask future = new CallbackFutureTask(() -> {
+            Thread.sleep(2000);
+//            if(1 == 1) throw new RuntimeException("Async Error");
+
+            log.info("Aysnc");
+            return "COMPLETE";
+        }       , s-> System.out.println("Result: " + s)
+                , e-> System.out.println("Error : " + e.getMessage()));
+
+        es.execute(future);
+
+        System.out.println(future.isDone());
+        Thread.sleep(2100);
+
+        log.info("Exit");
+        System.out.println(future.isDone());
+
+        es.shutdown(); // 비동기 처리 완료되면 종료
+
+    }
+}
+
+```
+
+## FutureTask
+
+```java
+public class FutureTask<V> implements RunnableFuture<V> {
+```
+
+```java
+public interface RunnableFuture<V> extends Runnable, Future<V> {
+    /**
+     * Sets this Future to the result of its computation
+     * unless it has been cancelled.
+     */
+    void run();
+}
+
+```
+
+FutureTask는 Future와 Runnable(1.6)의 구현체이다. 그러므로 `Executor`에 의해서 실행될 수 있다.
+
+```java
+        // thread pool
+        ExecutorService es = Executors.newCachedThreadPool();
+		
+		FutureTask<String> future = new FutureTask<>((){
+            @Override
+            protected void done() {
+                try {
+                    get();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                } catch (ExecutionException e) {
+                    e.printStackTrace();
+                }
+            }
+        };                                                     			es.execute(future);
+```
+
+## 참고
+- [토비의 봄 TV 8회 스프링 리액티브 프로그래밍 (4) 자바와 스프링의 비동기 기술](https://www.youtube.com/watch?v=aSTuQiPB4Ns)
+- [https://codechacha.com/ko/java-executors/](https://codechacha.com/ko/java-executors/)
+- [https://yangbox.tistory.com/28](https://yangbox.tistory.com/28)
+- [https://gunju-ko.github.io/java/2018/07/05/Future.html](https://gunju-ko.github.io/java/2018/07/05/Future.html)
