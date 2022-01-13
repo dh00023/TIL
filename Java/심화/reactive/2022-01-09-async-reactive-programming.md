@@ -2,7 +2,7 @@
 
 리액티브 프로그래밍에서는 다양한 시스템과 소스에서 들어오는 데이터 항목 스트림을 비동기적으로 처리하고 합친다. 한 개의 컴포넌트나 애플리케이션뿐 아니라 전체의 리액티브 시스템을 구성하는 여러 컴포넌트를 조절하는 데도 리액티브 기법을 사용할 수 있다.
 
-여기서 리액티브 시스템이란 런타임 환경이 변화에 대응하도록 전체 아키텍처가 설계된 프로그램이다.
+여기서 리액티브 시스템이란 런타임 환경이 변화에 대응하도록 전체 아키텍처가 설계된 프로그램이다.₩
 
 ## [Reactive Manifesto](https://www.reactivemanifesto.org/ko)
 
@@ -409,4 +409,6 @@ Publisher는 여러 구독자를 가지고 있으므로 backpressure가 한 연�
 ## 참고
 
 - [모던 자바 인 액션]()
+- [https://gist.github.com/casamia918/93b8db69beb9ee06b92a96b2a234d48e](https://gist.github.com/casamia918/93b8db69beb9ee06b92a96b2a234d48e)
+- [https://brunch.co.kr/magazine/reactor](https://brunch.co.kr/magazine/reactor)
 
