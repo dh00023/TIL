@@ -6,7 +6,7 @@
 
 ![https://github.com/cheese10yun/TIL/raw/master/assets/batch-obejct-relrationship.png](../assets/batch-obejct-relrationship.png)
 
-`JobRepository`는 **배치 처리 정보**를 담고 있는 \*매커니즘이다. 
+`JobRepository`는 **배치 처리 정보**를 담고 있는 \**매커니즘*이다. 
 
 - 배치 수행과 관련된 수치 데이터(시작/종료 시간, 상태, 읽기/쓰기 횟수)
 - Job의 상태 유지 관리

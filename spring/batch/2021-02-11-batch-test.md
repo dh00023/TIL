@@ -12,6 +12,15 @@
         </dependency>
 ```
 
+- gradle
+
+```groovy
+dependencies {
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'org.springframework.batch:spring-batch-test'
+}
+```
+
 스프링 부트 배치 테스트 사용시 의존성에 반드시 `spring-boot-starter-test`가 포함되어 있어야한다.
 
 

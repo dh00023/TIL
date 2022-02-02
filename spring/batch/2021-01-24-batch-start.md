@@ -77,7 +77,7 @@ public class MyBatchConfig {
 
 - 참고 : [https://stackoverflow.com/questions/25540502/use-of-multiple-datasources-in-spring-batch](https://stackoverflow.com/questions/25540502/use-of-multiple-datasources-in-spring-batch)
 
-## MySQL 환경에서 Spring Batch  실행하기
+## Spring Batch  실행하기
 
 Spring Batch에서는 메타 데이터 테이블이 필요하다. 
 
@@ -101,7 +101,7 @@ Spring Batch에서는 메타 데이터 테이블이 필요하다.
 ### pom.xml
 
 ```xml
-				<dependency>
+		<dependency>
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
             <scope>runtime</scope>
