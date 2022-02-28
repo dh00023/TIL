@@ -20,8 +20,6 @@
 
 ## [Spring](spring)
 
-* [Build Tools](spring/2021-01-24-build-tools.md)
-	* [Maven](spring/2020-03-16-maven.md)
 * [IoC](spring/2020-03-21-IoC.md)
 * [Is Spring Bean Thread-Safe?](spring/2020-04-09-bean-threadsafe.md)
 * [Spring Singleton](spring/2021-01-19-spring-singleton.md)
@@ -311,17 +309,17 @@
 
 ## [Vue.js](vuejs)
 
-	* [환경설정](vuejs/2019-10-01-settings.md)
-	* [Vue.js란?](vuejs/2019-10-15-vuejs.md)
-	* [Vue Instance](./vuejs/2019-10-15-instance.md)
-	* [Vue Component](./vuejs/2019-10-15-component.md)
-	* [Vue Router](./vuejs/2019-10-17-router.md)
-	* [HTTP 통신](./vuejs/2019-10-17-http.md)
-	* [Template](./vuejs/2019-10-22-template.md)
-	* [Single File Component](./vuejs/2019-10-22-singleFileComponent.md)
-	* [Vue Animation](./vuejs/2019-10-23-vueAnimation.md)
-	* [Vuex](./vuejs/2019-10-23-vuex.md)
-	* [Djnago와 연동하기](https://dh00023.github.io/web/2019/10/29/web-djangoAndVuejs/)
+* [환경설정](vuejs/2019-10-01-settings.md)
+* [Vue.js란?](vuejs/2019-10-15-vuejs.md)
+* [Vue Instance](./vuejs/2019-10-15-instance.md)
+* [Vue Component](./vuejs/2019-10-15-component.md)
+* [Vue Router](./vuejs/2019-10-17-router.md)
+* [HTTP 통신](./vuejs/2019-10-17-http.md)
+* [Template](./vuejs/2019-10-22-template.md)
+* [Single File Component](./vuejs/2019-10-22-singleFileComponent.md)
+* [Vue Animation](./vuejs/2019-10-23-vueAnimation.md)
+* [Vuex](./vuejs/2019-10-23-vuex.md)
+* [Djnago와 연동하기](https://dh00023.github.io/web/2019/10/29/web-djangoAndVuejs/)
 
 ## [Backbone.js](javascript/backbone)
 * [Model](javascript/backbone/2019-01-28-model.md)
