@@ -3,8 +3,7 @@
 매일 공부한 내용을 기록하는 Repository 입니다.
 
 ## [Spring](spring)
-* [Build Tools](spring/2021-01-24-build-tools.md)
-	* [Maven](spring/2020-03-16-maven.md)
+
 * [IoC](spring/2020-03-21-IoC.md)
 * [Is Spring Bean Thread-Safe?](spring/2020-04-09-bean-threadsafe.md)
 * [Spring Singleton](spring/2021-01-19-spring-singleton.md)
